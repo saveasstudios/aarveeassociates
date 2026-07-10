@@ -1,0 +1,2453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AARVEE ASSOCIATES - Loan Management System</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
+}
+
+body{
+background:#f5f7fb;
+overflow:hidden;
+}
+
+/* LOGIN */
+
+#loginPage{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#0b7a3e,#0f9d58);
+}
+
+.login-box{
+
+width:380px;
+background:#fff;
+padding:35px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,.2);
+
+}
+
+.login-box h1{
+
+text-align:center;
+color:#0b7a3e;
+margin-bottom:5px;
+
+}
+
+.login-box p{
+
+text-align:center;
+margin-bottom:30px;
+color:#777;
+
+}
+
+.login-box input{
+
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:15px;
+
+}
+
+.login-box button{
+
+width:100%;
+padding:12px;
+background:#0b7a3e;
+color:white;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+
+}
+
+.login-box button:hover{
+
+background:#086232;
+
+}
+
+/* APP */
+
+#app{
+
+display:none;
+width:100%;
+height:100vh;
+
+}
+
+/* SIDEBAR */
+
+.sidebar{
+
+width:240px;
+background:#0b7a3e;
+color:white;
+height:100vh;
+float:left;
+
+}
+
+.logo{
+
+padding:20px;
+font-size:22px;
+font-weight:bold;
+text-align:center;
+background:#086232;
+
+}
+
+.menu{
+
+list-style:none;
+
+}
+
+.menu li{
+
+padding:15px 20px;
+cursor:pointer;
+
+}
+
+.menu li:hover{
+
+background:#13a65c;
+
+}
+
+/* MAIN */
+
+.main{
+
+margin-left:240px;
+height:100vh;
+background:#f5f7fb;
+
+}
+
+.header{
+
+height:60px;
+background:white;
+padding:18px 25px;
+font-size:22px;
+font-weight:bold;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+
+}
+
+.content{
+
+padding:25px;
+
+}
+
+/* CARDS */
+
+.cards{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:20px;
+
+}
+
+.card{
+
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+.card h3{
+
+color:#888;
+font-size:14px;
+
+}
+
+.card h1{
+
+margin-top:10px;
+color:#0b7a3e;
+
+}
+/* MODAL */
+
+.modal{
+
+display:none;
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(0,0,0,.5);
+
+justify-content:center;
+
+align-items:center;
+
+z-index:999;
+
+}
+
+.modal-box{
+
+width:450px;
+
+background:white;
+
+padding:25px;
+
+border-radius:10px;
+
+}
+
+.modal-box h2{
+
+margin-bottom:20px;
+
+color:#0b7a3e;
+
+}
+
+.modal-box input,
+.modal-box select{
+
+width:100%;
+
+padding:12px;
+
+margin-bottom:15px;
+
+border:1px solid #ccc;
+
+border-radius:8px;
+
+}
+
+.modal-buttons{
+
+display:flex;
+
+justify-content:flex-end;
+
+gap:10px;
+
+}
+
+.modal-buttons button{
+
+padding:10px 20px;
+
+background:#0b7a3e;
+
+border:none;
+
+color:white;
+
+border-radius:6px;
+
+cursor:pointer;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="loginPage">
+
+<div class="login-box">
+
+<h1>AARVEE ASSOCIATES</h1>
+
+<p>Loan Management System</p>
+
+<input id="user" placeholder="User ID">
+
+<input id="pin" type="password" placeholder="PIN">
+
+<button onclick="login()">LOGIN</button>
+
+</div>
+
+</div>
+
+<!-- APP -->
+
+<div id="app">
+
+<div class="sidebar">
+
+<div class="logo">
+
+AARVEE
+
+</div>
+
+<ul class="menu">
+
+<li onclick="showPage('dashboard')">🏠 Dashboard</li>
+
+<li onclick="showPage('groups')">👥 Group Entry</li>
+
+<li onclick="showPage('customers')">👤 Customer Entry</li>
+
+<li onclick="showPage('loan')">💰 Loan Entry</li>
+
+<li onclick="showPage('dailyCollection')">📅 Daily Collection</li>
+
+<li onclick="showPage('collection')">💵 Collection History</li>
+
+<li onclick="showPage('history')">📒 Collection History</li>
+
+<li onclick="showPage('reports')">📄 Reports</li>
+
+<li onclick="logout()">🚪 Logout</li>
+
+</ul>
+
+</div>
+
+<div class="main">
+
+<div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+
+<div id="pageTitle">Dashboard</div>
+
+<div style="font-size:14px;color:#666;">
+
+👤 <b id="currentUser">Guest</b>
+
+</div>
+
+</div>
+
+<div class="content" id="content">
+
+<div class="cards">
+
+<div class="card">
+
+<h3>Total Groups</h3>
+
+<h1 id="groupCount">0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Total Customers</h3>
+
+<h1>0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Active Loans</h3>
+
+<h1>${JSON.parse(localStorage.getItem("loans")||"[]").length}</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Today's Collection</h3>
+
+<h1>₹0</h1>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const users = {
+
+vivek: "2710",
+
+generol: "1234",
+
+rasak: "0786"
+
+};
+
+let editingGroupIndex = -1;
+let editingCustomerIndex = -1;
+let customerPhoto="";
+
+function login(){
+
+let username = document.getElementById("user").value.trim().toLowerCase();
+
+let password = document.getElementById("pin").value.trim();
+
+if(users[username] && users[username] === password){
+
+document.getElementById("loginPage").style.display="none";
+
+document.getElementById("app").style.display="block";
+
+document.getElementById("currentUser").innerHTML =
+username.charAt(0).toUpperCase() + username.slice(1);
+
+loadDashboard();
+showDashboard();
+
+}else{
+
+alert("Invalid Username or Password");
+
+}
+
+}
+
+function logout(){
+
+location.reload();
+
+}
+
+function loadDashboard(){
+
+let groups=JSON.parse(localStorage.getItem("groups"))||[];
+
+document.getElementById("groupCount").innerHTML=groups.length;
+
+}
+function showDashboard(){
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let activeLoans = loans.filter(l => l.status === "Active").length;
+
+let closedLoans = loans.filter(l => l.status === "Closed").length;
+
+let outstanding = loans.reduce((t,l)=>t+(l.balance||0),0);
+
+let groups=JSON.parse(localStorage.getItem("groups"))||[];
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+document.getElementById("content").innerHTML=`
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Groups</h3>
+<h1>${groups.length}</h1>
+</div>
+
+<div class="card">
+<h3>Total Customers</h3>
+<h1>${customers.length}</h1>
+</div>
+
+<div class="card">
+<h3>Active Loans</h3>
+<h1>${activeLoans}</h1>
+</div>
+
+<div class="card">
+<h3>Closed Loans</h3>
+<h1>${closedLoans}</h1>
+</div>
+
+<div class="card">
+<div class="card">
+
+<h3>Today's Collection</h3>
+
+<h1 id="todayCollection">₹0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Weekly Collection</h3>
+
+<h1 id="weeklyCollection">₹0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Monthly Collection</h3>
+
+<h1 id="monthlyCollection">₹0</h1>
+
+</div>
+<h1>₹${outstanding.toFixed(2)}</h1>
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+function showGroups(){
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;margin-bottom:20px;">
+
+<h2>Group Entry</h2>
+
+<button onclick="openGroupModal()" style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
++ Add Group
+</button>
+
+</div>
+
+<input id="searchGroup"
+
+placeholder="Search Group"
+
+onkeyup="loadGroups()"
+
+style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:15px;">
+
+<table width="100%" border="1" cellpadding="10" cellspacing="0">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>ID</th>
+
+<th>Group Name</th>
+
+<th>Area</th>
+
+<th>Meeting Day</th>
+
+<th>Collection Day</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="groupTable">
+
+</tbody>
+
+</table>
+
+`;
+
+loadGroups();
+
+}
+
+function showPage(page){
+
+    document.getElementById("pageTitle").innerHTML =
+    page.charAt(0).toUpperCase() + page.slice(1);
+
+    if(page=="dashboard"){
+        loadDashboard();
+        showDashboard();
+    }
+
+    if(page=="groups"){
+        showGroups();
+    }
+
+    if(page=="customers"){
+        showCustomers();
+    }
+
+    if(page=="loan"){
+        showLoans();
+    }
+
+    if(page=="collection"){
+        showCollections();
+    }
+    if(page=="dailyCollection"){
+    showDailyCollection();
+}
+    if(page=="history"){
+    showHistory();
+}
+    if(page=="reports"){
+    showReports();
+}
+
+}
+function showCollections(){
+
+    document.getElementById("pageTitle").innerHTML="Daily Collection";
+
+    document.getElementById("content").innerHTML=`
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+        <h2>Weekly Collection</h2>
+
+    </div>
+
+    <input
+        id="searchCollection"
+        placeholder="Search Customer"
+        style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:20px;"
+        onkeyup="loadCollections()">
+
+    <table width="100%" cellpadding="10" cellspacing="0" border="1">
+
+        <thead style="background:#0b7a3e;color:white;">
+
+            <tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Father</th>
+
+<th>Mobile</th>
+
+<th>Aadhaar</th>
+
+<th>Group</th>
+
+<th>Action</th>
+
+</tr>
+
+        </thead>
+
+        <tbody id="collectionTable"></tbody>
+
+    </table>
+
+    `;
+
+    loadCollections();
+
+}
+function showDailyCollection(){
+
+document.getElementById("pageTitle").innerHTML="Daily Collection Sheet";
+
+document.getElementById("content").innerHTML=`
+
+<h2>Today's Collection Sheet</h2>
+
+<br>
+
+<table width="100%" border="1" cellpadding="10" cellspacing="0">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Loan ID</th>
+
+<th>Customer</th>
+
+<th>Group</th>
+
+<th>Weekly EMI</th>
+
+<th>Balance</th>
+
+<th>Status</th>
+
+<th>Receive</th>
+
+</tr>
+
+</thead>
+
+<tbody id="dailyCollectionTable">
+
+</tbody>
+
+</table>
+
+`;
+
+loadDailyCollection();
+
+}
+function loadDailyCollection(){
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let html="";
+
+loans.forEach((loan,index)=>{
+
+if(loan.status=="Active"){
+
+html+=`
+
+<tr>
+
+<td>${loan.id}</td>
+
+<td>${loan.customerName}</td>
+
+<td>${loan.group}</td>
+
+<td>₹${loan.weekly}</td>
+
+<td>₹${loan.balance.toFixed(2)}</td>
+
+<td>
+
+<span style="
+background:#28a745;
+padding:5px 10px;
+border-radius:20px;
+color:white;">
+
+${loan.status}
+
+</span>
+
+</td>
+
+<td>
+
+<button
+
+style="
+background:#0b7a3e;
+color:white;
+padding:6px 12px;
+border:none;
+border-radius:5px;"
+
+onclick="collectEMI(${index})">
+
+Collect
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("dailyCollectionTable").innerHTML=html;
+
+}
+function showHistory(){
+
+document.getElementById("pageTitle").innerHTML="Collection History";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+<h2>Collection History</h2>
+
+<input
+id="historySearch"
+placeholder="Search Customer"
+style="padding:10px;width:300px;border:1px solid #ccc;border-radius:6px;"
+onkeyup="loadHistory()">
+
+</div>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Receipt</th>
+
+<th>Date</th>
+
+<th>Loan ID</th>
+
+<th>Customer</th>
+
+<th>Amount</th>
+
+<th>Balance</th>
+
+<th>Collected By</th>
+
+<th>Print</th>
+
+</tr>
+
+</thead>
+
+<tbody id="historyTable">
+
+</tbody>
+
+</table>
+
+`;
+
+loadHistory();
+
+}
+function loadHistory(){
+
+let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+let keyword = document.getElementById("historySearch")?.value.toLowerCase() || "";
+
+let html = "";
+
+history.forEach((h,index)=>{
+
+if(h.customer.toLowerCase().includes(keyword)){
+
+html += `
+
+<tr>
+
+<td>RCPT${String(index+1).padStart(4,"0")}</td>
+
+<td>${h.date}</td>
+
+<td>${h.loanId}</td>
+
+<td>${h.customer}</td>
+
+<td>₹${h.amount.toFixed(2)}</td>
+
+<td>₹${h.balance.toFixed(2)}</td>
+
+<td>${h.collectedBy}</td>
+
+<td>
+
+<button
+
+style="background:#007bff;color:white;border:none;padding:5px 10px;border-radius:5px;"
+
+onclick="printReceipt(${index})">
+
+Print
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("historyTable").innerHTML=html;
+
+}
+function printReceipt(index){
+
+let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+let h = history[index];
+
+let w = window.open("", "_blank", "width=500,height=700");
+
+w.document.write(`
+
+<html>
+
+<head>
+
+<title>Receipt</title>
+
+<style>
+
+body{
+
+font-family:Arial;
+
+padding:20px;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+td{
+
+padding:8px;
+
+border:1px solid #ccc;
+
+}
+
+h2{
+
+text-align:center;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>AARVEE ASSOCIATES</h2>
+
+<h3 style="text-align:center;">Collection Receipt</h3>
+
+<table>
+
+<tr><td>Receipt No</td><td>RCPT${String(index+1).padStart(4,"0")}</td></tr>
+
+<tr><td>Date</td><td>${h.date}</td></tr>
+
+<tr><td>Loan ID</td><td>${h.loanId}</td></tr>
+
+<tr><td>Customer</td><td>${h.customer}</td></tr>
+
+<tr><td>Amount</td><td>₹${h.amount.toFixed(2)}</td></tr>
+
+<tr><td>Balance</td><td>₹${h.balance.toFixed(2)}</td></tr>
+
+<tr><td>Collected By</td><td>${h.collectedBy}</td></tr>
+
+</table>
+
+<br><br>
+
+<div style="text-align:center;">
+
+Thank you.
+
+</div>
+
+</body>
+
+</html>
+
+`);
+
+w.document.close();
+
+w.print();
+
+}
+function showReports(){
+
+document.getElementById("pageTitle").innerHTML="Reports";
+
+document.getElementById("content").innerHTML=`
+
+<h2 style="margin-bottom:20px;">Reports</h2>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>Total Groups</h3>
+
+<h1 id="rGroups">0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Total Customers</h3>
+
+<h1 id="rCustomers">0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Total Loans</h3>
+
+<h1 id="rLoans">0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Total Outstanding</h3>
+
+<h1 id="rOutstanding">₹0</h1>
+
+</div>
+
+</div>
+
+<br>
+
+<button onclick="exportBackup()"
+<br><br>
+
+<input
+
+type="file"
+
+id="restoreFile"
+
+accept=".json"
+
+onchange="restoreBackup(event)">
+
+style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
+
+Download Backup
+
+</button>
+
+`;
+
+loadReport();
+
+}
+function loadReport(){
+
+let groups=JSON.parse(localStorage.getItem("groups"))||[];
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+let outstanding=0;
+
+loans.forEach(l=>{
+
+outstanding+=Number(l.balance);
+
+});
+
+document.getElementById("rGroups").innerHTML=groups.length;
+
+document.getElementById("rCustomers").innerHTML=customers.length;
+
+document.getElementById("rLoans").innerHTML=loans.length;
+
+document.getElementById("rOutstanding").innerHTML="₹"+outstanding.toFixed(2);
+
+}
+function exportBackup(){
+
+let backup={
+
+groups:JSON.parse(localStorage.getItem("groups"))||[],
+
+customers:JSON.parse(localStorage.getItem("customers"))||[],
+
+loans:JSON.parse(localStorage.getItem("loans"))||[],
+
+history:JSON.parse(localStorage.getItem("collectionHistory"))||[]
+
+};
+
+let blob=new Blob(
+
+[JSON.stringify(backup,null,2)],
+
+{type:"application/json"}
+
+);
+
+let url=URL.createObjectURL(blob);
+
+let a=document.createElement("a");
+
+a.href=url;
+
+a.download="AARVEE_Backup.json";
+
+a.click();
+
+URL.revokeObjectURL(url);
+
+}
+function restoreBackup(event){
+
+let file=event.target.files[0];
+
+if(!file)return;
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+let data=JSON.parse(e.target.result);
+
+localStorage.setItem("groups",JSON.stringify(data.groups||[]));
+
+localStorage.setItem("customers",JSON.stringify(data.customers||[]));
+
+localStorage.setItem("loans",JSON.stringify(data.loans||[]));
+
+localStorage.setItem("collectionHistory",JSON.stringify(data.history||[]));
+
+alert("Backup Restored Successfully.");
+
+showDashboard();
+
+};
+
+reader.readAsText(file);
+
+}
+
+function openGroupModal(){
+
+editingGroupIndex=-1;
+
+document.getElementById("gName").value="";
+
+document.getElementById("gArea").value="";
+
+document.getElementById("gMeeting").selectedIndex=0;
+
+document.getElementById("gCollection").selectedIndex=0;
+
+document.getElementById("groupModal").style.display="flex";
+
+}
+function closeGroupModal(){
+
+document.getElementById("groupModal").style.display="none";
+
+}
+function saveGroup(){
+
+let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+if(editingGroupIndex==-1){
+
+let id="GRP"+String(groups.length+1).padStart(4,"0");
+
+groups.push({
+
+id:id,
+
+name:document.getElementById("gName").value,
+
+area:document.getElementById("gArea").value,
+
+meeting:document.getElementById("gMeeting").value,
+
+collection:document.getElementById("gCollection").value
+
+});
+
+}else{
+
+groups[editingGroupIndex].name=document.getElementById("gName").value;
+
+groups[editingGroupIndex].area=document.getElementById("gArea").value;
+
+groups[editingGroupIndex].meeting=document.getElementById("gMeeting").value;
+
+groups[editingGroupIndex].collection=document.getElementById("gCollection").value;
+
+editingGroupIndex=-1;
+
+}
+
+localStorage.setItem("groups",JSON.stringify(groups));
+
+document.getElementById("gName").value="";
+
+document.getElementById("gArea").value="";
+
+closeGroupModal();
+
+loadGroups();
+
+showDashboard();
+
+}
+
+function loadGroups(){
+
+let groups=JSON.parse(localStorage.getItem("groups"))||[];
+
+let search=document.getElementById("searchGroup");
+
+let keyword="";
+
+if(search){
+
+keyword=search.value.toLowerCase();
+
+}
+
+let html="";
+
+groups.forEach((g,index)=>{
+
+if(
+
+g.name.toLowerCase().includes(keyword) ||
+
+g.area.toLowerCase().includes(keyword)
+
+){
+
+html+=`
+
+<tr>
+
+<td>${g.id}</td>
+
+<td>${g.name}</td>
+
+<td>${g.area}</td>
+
+<td>${g.meeting}</td>
+
+<td>${g.collection}</td>
+
+<td>
+
+<button
+style="background:#007bff;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;"
+onclick="editGroup(${index})">
+
+Edit
+
+</button>
+
+<button
+style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;"
+onclick="deleteGroup(${index})">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+let table=document.getElementById("groupTable");
+
+if(table){
+
+table.innerHTML=html;
+
+}
+
+}
+function deleteGroup(index){
+
+if(confirm("Delete this Group?")){
+
+let groups=JSON.parse(localStorage.getItem("groups"))||[];
+
+groups.splice(index,1);
+
+localStorage.setItem("groups",JSON.stringify(groups));
+
+loadGroups();
+
+showDashboard();
+
+}
+
+}
+function editGroup(index){
+
+let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+let g = groups[index];
+
+editingGroupIndex = index;
+
+document.getElementById("gName").value = g.name;
+
+document.getElementById("gArea").value = g.area;
+
+document.getElementById("gMeeting").value = g.meeting;
+
+document.getElementById("gCollection").value = g.collection;
+
+document.getElementById("groupModal").style.display = "flex";
+
+}
+function openCustomerModal(){
+
+editingCustomerIndex=-1;
+
+document.getElementById("customerModal").style.display="flex";
+
+let groups=JSON.parse(localStorage.getItem("groups"))||[];
+
+let html="";
+
+groups.forEach(g=>{
+
+html+=`<option>${g.name}</option>`;
+
+});
+
+document.getElementById("cGroup").innerHTML=html;
+
+document.getElementById("cName").value="";
+
+document.getElementById("cMobile").value="";
+
+}
+
+function closeCustomerModal(){
+
+document.getElementById("customerModal").style.display="none";
+
+}
+function previewPhoto(event){
+
+let file=event.target.files[0];
+
+if(!file) return;
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+customerPhoto=e.target.result;
+
+document.getElementById("photoPreview").src=customerPhoto;
+
+document.getElementById("photoPreview").style.display="block";
+
+}
+
+reader.readAsDataURL(file);
+
+}
+
+function saveCustomer(){
+    if(document.getElementById("cName").value.trim()==""){
+
+    alert("Customer Name is required.");
+
+    return;
+
+}
+
+if(document.getElementById("cMobile").value.trim()==""){
+
+    alert("Mobile Number is required.");
+
+    return;
+
+}
+
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+    if(editingCustomerIndex == -1){
+
+        let id = "CUS" + String(customers.length + 1).padStart(4,"0");
+
+        customers.push({
+
+            id: id,
+
+            photo:customerPhoto,
+
+            name: document.getElementById("cName").value,
+
+            father: document.getElementById("cFather").value,
+
+            mobile: document.getElementById("cMobile").value,
+
+            altMobile: document.getElementById("cAltMobile").value,
+
+            aadhaar: document.getElementById("cAadhaar").value,
+
+            pan: document.getElementById("cPan").value,
+
+            address: document.getElementById("cAddress").value,
+
+            group: document.getElementById("cGroup").value
+
+        });
+
+    }else{
+
+        customers[editingCustomerIndex].name = document.getElementById("cName").value;
+
+        customers[editingCustomerIndex].father = document.getElementById("cFather").value;
+
+        customers[editingCustomerIndex].mobile = document.getElementById("cMobile").value;
+
+        customers[editingCustomerIndex].altMobile = document.getElementById("cAltMobile").value;
+
+        customers[editingCustomerIndex].aadhaar = document.getElementById("cAadhaar").value;
+
+        customers[editingCustomerIndex].pan = document.getElementById("cPan").value;
+
+        customers[editingCustomerIndex].address = document.getElementById("cAddress").value;
+
+        customers[editingCustomerIndex].photo = customerPhoto;
+
+        customers[editingCustomerIndex].group = document.getElementById("cGroup").value;
+
+        editingCustomerIndex = -1;
+
+    }
+
+    localStorage.setItem("customers", JSON.stringify(customers));
+
+    // Clear form
+    document.getElementById("cName").value = "";
+    document.getElementById("cFather").value = "";
+    document.getElementById("cMobile").value = "";
+    document.getElementById("cAltMobile").value = "";
+    document.getElementById("cAadhaar").value = "";
+    document.getElementById("cPan").value = "";
+    document.getElementById("cAddress").value = "";
+    customerPhoto="";
+
+document.getElementById("cPhoto").value="";
+
+document.getElementById("photoPreview").style.display="none";
+    document.getElementById("cGroup").selectedIndex = 0;
+
+    closeCustomerModal();
+
+    loadCustomers();
+
+    showDashboard();
+
+}
+function loadCustomers(){
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+let search=document.getElementById("searchCustomer");
+
+let keyword="";
+
+if(search){
+
+keyword=search.value.toLowerCase();
+
+}
+
+let html="";
+
+customers.forEach((c,index)=>{
+
+if(
+
+c.name.toLowerCase().includes(keyword) ||
+
+c.mobile.includes(keyword)
+
+){
+
+html += `
+
+<tr>
+
+<td>
+
+${c.photo ?
+
+`<img src="${c.photo}"
+style="width:45px;height:45px;border-radius:50%;object-fit:cover;">`
+
+:
+
+`<div style="
+width:45px;
+height:45px;
+border-radius:50%;
+background:#ddd;"></div>`
+
+}
+
+</td>
+
+<td>${c.id}</td>
+
+<td>${c.name}</td>
+
+<td>${c.father || ""}</td>
+
+<td>${c.mobile}</td>
+
+<td>${c.aadhaar || ""}</td>
+
+<td>${c.group}</td>
+
+<td>
+
+<button
+style="background:#17a2b8;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;"
+onclick="viewCustomer(${index})">
+
+View
+
+</button>
+
+<button
+style="background:#007bff;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;"
+onclick="editCustomer(${index})">
+
+Edit
+
+</button>
+
+<button
+style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;"
+onclick="deleteCustomer(${index})">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+let table=document.getElementById("customerTable");
+
+if(table){
+
+table.innerHTML=html;
+
+}
+
+}
+function deleteCustomer(index){
+
+if(confirm("Delete Customer?")){
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+customers.splice(index,1);
+
+localStorage.setItem("customers",JSON.stringify(customers));
+
+loadCustomers();
+
+showDashboard();
+
+}
+
+}
+function editCustomer(index){
+
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+    let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+    editingCustomerIndex = index;
+
+    let customer = customers[index];
+
+    let html = "";
+
+    groups.forEach(g=>{
+
+        html += `<option value="${g.name}" ${
+            g.name===customer.group ? "selected" : ""
+        }>${g.name}</option>`;
+
+    });
+
+    document.getElementById("cGroup").innerHTML = html;
+
+    document.getElementById("cName").value = customer.name || "";
+
+    document.getElementById("cFather").value = customer.father || "";
+
+    document.getElementById("cMobile").value = customer.mobile || "";
+
+    document.getElementById("cAltMobile").value = customer.altMobile || "";
+
+    document.getElementById("cAadhaar").value = customer.aadhaar || "";
+
+    document.getElementById("cPan").value = customer.pan || "";
+
+    document.getElementById("cAddress").value = customer.address || "";
+    customerPhoto = customer.photo || "";
+
+if(customerPhoto!=""){
+
+document.getElementById("photoPreview").src=customerPhoto;
+
+document.getElementById("photoPreview").style.display="block";
+
+}else{
+
+document.getElementById("photoPreview").style.display="none";
+
+}
+
+    document.getElementById("customerModal").style.display="flex";
+
+}
+function showCustomers(){
+
+document.getElementById("pageTitle").innerHTML="Customer Management";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+<h2>Customer Management</h2>
+
+<button onclick="openCustomerModal()"
+style="background:#0b7a3e;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;">
+
++ Add Customer
+
+</button>
+
+</div>
+
+<input
+
+id="searchCustomer"
+
+placeholder="Search Customer"
+
+style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:15px;"
+
+onkeyup="loadCustomers()">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Photo</th>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Mobile</th>
+
+<th>Group</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="customerTable"></tbody>
+
+</table>
+
+`;
+
+loadCustomers();
+
+}
+function viewCustomer(index){
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+let c = customers[index];
+
+let customerLoans = loans.filter(l => l.customerId == c.id);
+
+let customerHistory = history.filter(h => h.customer == c.name);
+
+let loanHTML = "";
+
+if(customerLoans.length==0){
+
+loanHTML="<p style='color:red;'>No Active Loan</p>";
+
+}else{
+
+customerLoans.forEach(l=>{
+
+loanHTML += `
+
+<div style="padding:15px;border:1px solid #ddd;border-radius:8px;margin-bottom:10px;">
+
+<b>Loan ID :</b> ${l.id}<br>
+
+<b>Loan Amount :</b> ₹${l.amount}<br>
+
+<b>Outstanding :</b> ₹${l.balance.toFixed(2)}<br>
+
+<b>Status :</b> ${l.status}
+
+</div>
+
+`;
+
+});
+
+}
+
+let historyHTML="";
+
+if(customerHistory.length==0){
+
+historyHTML="<p>No Collection History</p>";
+
+}else{
+
+customerHistory.forEach(h=>{
+
+historyHTML+=`
+
+<tr>
+
+<td>${h.date}</td>
+
+<td>₹${h.amount}</td>
+
+<td>₹${h.balance.toFixed(2)}</td>
+
+<td>${h.collectedBy}</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+document.getElementById("pageTitle").innerHTML="Customer Profile";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:grid;grid-template-columns:300px 1fr;gap:25px;">
+
+<div style="background:white;padding:20px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,.1);text-align:center;">
+
+<img
+
+src="${c.photo || ''}"
+
+style="
+width:180px;
+height:180px;
+border-radius:50%;
+object-fit:cover;
+background:#ddd;
+border:3px solid #0b7a3e;">
+
+<h2>${c.name}</h2>
+
+<p>${c.group}</p>
+
+</div>
+
+<div style="background:white;padding:20px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,.1);">
+
+<h3>Customer Details</h3>
+
+<hr><br>
+
+<b>Customer ID :</b> ${c.id}<br><br>
+
+<b>Father Name :</b> ${c.father || ""}<br><br>
+
+<b>Mobile :</b> ${c.mobile}<br><br>
+
+<b>Alternate :</b> ${c.altMobile || ""}<br><br>
+
+<b>Aadhaar :</b> ${c.aadhaar || ""}<br><br>
+
+<b>PAN :</b> ${c.pan || ""}<br><br>
+
+<b>Address :</b> ${c.address || ""}
+
+</div>
+
+</div>
+
+<br>
+
+<h2>Loan Details</h2>
+
+${loanHTML}
+
+<br>
+
+<h2>Collection History</h2>
+
+<table width="100%" border="1" cellpadding="10">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Date</th>
+
+<th>Amount</th>
+
+<th>Balance</th>
+
+<th>Collected By</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+${historyHTML}
+
+</tbody>
+
+</table>
+
+<br>
+
+<button
+
+onclick="showCustomers()"
+
+style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
+
+← Back
+
+</button>
+
+`;
+
+}
+function openLoanModal(){
+
+document.getElementById("loanModal").style.display="flex";
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+let html="";
+
+customers.forEach(c=>{
+
+html+=`<option value="${c.id}">${c.name} (${c.group})</option>`;
+
+});
+
+document.getElementById("loanCustomer").innerHTML=html;
+
+}
+
+function closeLoanModal(){
+
+document.getElementById("loanModal").style.display="none";
+
+}
+function showLoans(){
+
+document.getElementById("pageTitle").innerHTML="Loan Management";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+<h2>Loan Management</h2>
+
+<button onclick="openLoanModal()"
+style="background:#0b7a3e;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;">
+
++ New Loan
+
+</button>
+
+</div>
+
+<input
+id="searchLoan"
+placeholder="Search Customer / Loan ID"
+style="width:320px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:15px;"
+onkeyup="loadLoans()">
+
+<table width="100%" cellspacing="0" cellpadding="10" border="1">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Loan ID</th>
+
+<th>Customer</th>
+
+<th>Loan Type</th>
+
+<th>Loan Date</th>
+
+<th>Loan Amount</th>
+
+<th>Balance</th>
+
+<th>Weekly EMI</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+
+</tr>
+
+</thead>
+
+<tbody id="loanTable"></tbody>
+
+</table>
+
+`;
+
+loadLoans();
+
+}
+function saveLoan(){
+    
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+let customerId=document.getElementById("loanCustomer").value;
+
+let customer=customers.find(c=>c.id===customerId);
+
+let amount=parseFloat(document.getElementById("loanAmount").value);
+
+if(!customer){
+
+alert("Please select a customer.");
+
+return;
+
+}
+
+if(isNaN(amount) || amount<=0){
+
+alert("Enter a valid loan amount.");
+
+return;
+
+}
+
+let processing=parseFloat(document.getElementById("processingFee").value)||0;
+
+let insurance=parseFloat(document.getElementById("insuranceFee").value)||0;
+
+let loanDate=document.getElementById("loanDate").value;
+
+let loanType=document.getElementById("loanType").value;
+
+let interest=parseFloat(document.getElementById("loanInterest").value);
+
+let weeks=parseInt(document.getElementById("loanWeeks").value);
+
+let interestAmount=(amount*interest)/100;
+
+let total=amount+interestAmount+processing+insurance;
+
+let weekly=(total/weeks).toFixed(2);
+
+let loan={
+    processing,
+
+insurance,
+
+loanDate,
+
+loanType,
+
+paid:0,
+
+balance:total,
+
+id:"LOAN"+String(loans.length+1).padStart(4,"0"),
+
+customerId:customer.id,
+
+customerName:customer.name,
+
+group:customer.group,
+
+amount,
+
+interest,
+
+interestAmount,
+
+total,
+
+weeks,
+
+weekly,
+
+status:"Active"
+
+};
+
+loans.push(loan);
+
+localStorage.setItem("loans",JSON.stringify(loans));
+
+closeLoanModal();
+
+loadLoans();
+
+showDashboard();
+
+}
+
+function loadLoans(){
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+let keyword=document.getElementById("searchLoan")?.value.toLowerCase()||"";
+
+let html="";
+
+loans.forEach((loan,index)=>{
+
+if(
+
+loan.customerName.toLowerCase().includes(keyword) ||
+
+loan.id.toLowerCase().includes(keyword)
+
+){
+
+html+=`
+
+<tr>
+
+<td>${loan.id}</td>
+
+<td>${loan.customerName}</td>
+
+<td>${loan.loanType}</td>
+
+<td>${loan.loanDate}</td>
+
+<td>₹${loan.amount.toFixed(2)}</td>
+
+<td>₹${loan.balance.toFixed(2)}</td>
+
+<td>₹${loan.weekly}</td>
+
+<td>
+
+<span style="background:#28a745;color:white;padding:4px 10px;border-radius:20px;">
+
+${loan.status}
+
+</span>
+
+</td>
+
+<td>
+
+<button
+style="background:red;color:white;border:none;padding:5px 12px;border-radius:5px;"
+onclick="deleteLoan(${index})">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("loanTable").innerHTML=html;
+
+}
+function deleteLoan(index){
+
+if(confirm("Delete this loan?")){
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+loans.splice(index,1);
+
+localStorage.setItem("loans",JSON.stringify(loans));
+
+loadLoans();
+
+showDashboard();
+
+}
+
+}
+function loadCollections(){
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+let keyword=document.getElementById("searchCollection")?.value.toLowerCase()||"";
+
+let html="";
+
+loans.forEach((loan,index)=>{
+
+if(
+
+loan.customerName.toLowerCase().includes(keyword)
+
+){
+
+html+=`
+
+<tr>
+
+<td>${loan.id}</td>
+
+<td>${loan.customerName}</td>
+
+<td>₹${loan.weekly}</td>
+
+<td>₹${loan.balance.toFixed(2)}</td>
+
+<td>${loan.status}</td>
+
+<td>
+
+<button
+
+style="background:#0b7a3e;color:white;border:none;padding:6px 12px;border-radius:5px;cursor:pointer;"
+
+onclick="collectEMI(${index})">
+
+Collect
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("collectionTable").innerHTML=html;
+
+}
+function collectEMI(index){
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+let loan=loans[index];
+
+if(loan.balance<=0){
+
+alert("Loan already closed.");
+
+return;
+
+}
+
+loan.balance-=parseFloat(loan.weekly);
+
+loan.paid=(loan.paid||0)+parseFloat(loan.weekly);
+loan.lastCollectionDate = new Date().toLocaleDateString();
+
+let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+history.push({
+
+receiptNo:"RCPT"+String(history.length+1).padStart(4,"0"),
+
+    loanId: loan.id,
+
+    customer: loan.customerName,
+
+    amount: parseFloat(loan.weekly),
+
+    date: new Date().toLocaleDateString(),
+
+    balance: loan.balance,
+
+    collectedBy: document.getElementById("currentUser").innerText
+
+});
+
+localStorage.setItem("collectionHistory", JSON.stringify(history));
+
+localStorage.setItem("loans", JSON.stringify(loans));
+
+loadCollections();
+
+loadLoans();
+
+showDashboard();
+
+alert("Weekly EMI Collected Successfully.");
+
+if(loan.balance<0){
+
+loan.balance=0;
+
+}
+
+if(loan.balance==0){
+
+loan.status="Closed";
+
+}
+
+localStorage.setItem("loans",JSON.stringify(loans));
+
+loadCollections();
+
+loadDailyCollection();
+
+loadLoans();
+
+showDashboard();
+
+alert("Weekly EMI Collected Successfully.");
+
+}
+
+</script>
+
+<!-- CUSTOMER MODAL -->
+
+<div id="customerModal" class="modal">
+
+<div class="modal-box">
+
+<h2>Add Customer</h2>
+
+<input id="cName" placeholder="Customer Name">
+
+<input id="cFather" placeholder="Father / Husband Name">
+
+<input
+
+id="cMobile"
+
+type="tel"
+
+maxlength="10"
+
+placeholder="Mobile Number">
+
+<input id="cAltMobile" placeholder="Alternate Mobile">
+
+<input
+
+id="cAadhaar"
+
+maxlength="12"
+
+placeholder="Aadhaar Number">
+
+<input id="cPan" placeholder="PAN Number">
+
+<textarea
+id="cAddress"
+placeholder="Address"
+style="width:100%;height:80px;padding:10px;margin-bottom:15px;border:1px solid #ccc;border-radius:8px;"></textarea>
+
+<select id="cGroup"></select>
+
+<label style="font-weight:bold;">Customer Photo</label>
+
+<input
+type="file"
+id="cPhoto"
+accept="image/*"
+onchange="previewPhoto(event)">
+
+<img
+id="photoPreview"
+style="width:120px;height:120px;border-radius:10px;border:1px solid #ccc;margin-top:10px;display:none;object-fit:cover;">
+
+<div class="modal-buttons">
+
+<button onclick="saveCustomer()">Save</button>
+
+<button onclick="closeCustomerModal()">Cancel</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- GROUP MODAL -->
+
+<div id="groupModal" class="modal">
+
+<div class="modal-box">
+
+<h2>Add Group</h2>
+
+<input id="gName" placeholder="Group Name">
+
+<input id="gArea" placeholder="Area">
+
+<select id="gMeeting">
+
+<option>Monday</option>
+<option>Tuesday</option>
+<option>Wednesday</option>
+<option>Thursday</option>
+<option>Friday</option>
+<option>Saturday</option>
+
+</select>
+
+<select id="gCollection">
+
+<option>Monday</option>
+<option>Tuesday</option>
+<option>Wednesday</option>
+<option>Thursday</option>
+<option>Friday</option>
+<option>Saturday</option>
+
+</select>
+
+<div class="modal-buttons">
+
+<button onclick="saveGroup()">Save</button>
+
+<button onclick="closeGroupModal()">Cancel</button>
+
+</div>
+
+</div>
+
+</div>
+<!-- LOAN MODAL -->
+
+<div id="loanModal" class="modal">
+
+<div class="modal-box">
+
+<h2>New Loan</h2>
+
+<select id="loanCustomer"></select>
+
+<input id="loanAmount" type="number" placeholder="Loan Amount">
+
+<input id="loanInterest" type="number" value="24" placeholder="Interest %">
+
+<input id="loanWeeks" type="number" value="50" placeholder="Total Weeks">
+
+<input id="processingFee" type="number" value="0" placeholder="Processing Fee">
+
+<input id="insuranceFee" type="number" value="0" placeholder="Insurance">
+
+<input id="loanDate" type="date">
+
+<select id="loanType">
+
+<option>Group Loan</option>
+
+<option>Business Loan</option>
+
+<option>Personal Loan</option>
+
+</select>
+
+<div class="modal-buttons">
+
+<button onclick="saveLoan()">Save</button>
+
+<button onclick="closeLoanModal()">Cancel</button>
+
+</div>
+
+</div>
+
+</div>
+</body>
+</html>
