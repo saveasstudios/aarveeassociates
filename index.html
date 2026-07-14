@@ -514,6 +514,76 @@ AARVEE Associates
 
 </div>
 
+<div id="customerModal" class="modal">
+
+    <div class="modal-box">
+
+        <h2>Add Customer</h2>
+
+        <input id="cName" placeholder="Customer Name">
+
+        <input id="cFather" placeholder="Father Name">
+
+        <input id="cMobile" placeholder="Mobile Number">
+
+        <input id="cAltMobile" placeholder="Alternate Mobile">
+
+        <input id="cAadhaar" placeholder="Aadhaar Number">
+
+        <input id="cPan" placeholder="PAN Number">
+
+        <textarea id="cAddress" placeholder="Address"></textarea>
+
+        <select id="cGroup"></select>
+
+        <label>Customer Photo</label>
+
+        <input
+            type="file"
+            id="cPhoto"
+            accept="image/*"
+            onchange="previewPhoto(event)">
+
+        <img
+            id="photoPreview"
+            style="display:none;width:120px;height:120px;border-radius:50%;margin-bottom:15px;object-fit:cover;">
+
+        <label>Aadhaar Front</label>
+
+        <input
+            type="file"
+            id="aadhaarFront"
+            accept="image/*"
+            onchange="previewAadhaarFront(event)">
+
+        <label>Aadhaar Back</label>
+
+        <input
+            type="file"
+            id="aadhaarBack"
+            accept="image/*"
+            onchange="previewAadhaarBack(event)">
+
+        <div class="modal-buttons">
+
+            <button onclick="saveCustomer()">
+
+                Save Customer
+
+            </button>
+
+            <button onclick="closeCustomerModal()">
+
+                Cancel
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 <script>
 
 const users = {
@@ -720,7 +790,6 @@ function showPage(page){
     }
 
     if(page=="customers"){
-    alert("Customer button clicked");
     showCustomers();
 }
     if(page=="guarantor"){
@@ -1495,23 +1564,40 @@ document.getElementById("groupModal").style.display = "flex";
 }
 function openCustomerModal(){
 
+    console.log("Step 1");
+
     editingCustomerIndex = -1;
 
-    customerPhoto="";
-    aadhaarFrontData="";
-    aadhaarBackData="";
+    customerPhoto = "";
+    aadhaarFrontData = "";
+    aadhaarBackData = "";
 
-    document.getElementById("customerModal").style.display="flex";
+    console.log("Step 2");
 
-    let groups=JSON.parse(localStorage.getItem("groups"))||[];
+    const modal = document.getElementById("customerModal");
 
-    let html="";
+    console.log(modal);
+
+    if(!modal){
+        alert("Customer Modal Not Found");
+        return;
+    }
+
+    modal.style.display = "flex";
+
+    console.log("Step 3");
+
+    let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+    let html = "";
 
     groups.forEach(g=>{
-        html+=`<option value="${g.name}">${g.name}</option>`;
+        html += `<option value="${g.name}">${g.name}</option>`;
     });
 
-    document.getElementById("cGroup").innerHTML=html;
+    document.getElementById("cGroup").innerHTML = html;
+
+    console.log("Step 4");
 
     document.getElementById("cName").value="";
     document.getElementById("cFather").value="";
@@ -1524,13 +1610,10 @@ function openCustomerModal(){
     document.getElementById("aadhaarFront").value="";
     document.getElementById("aadhaarBack").value="";
 
+    console.log("Step 5");
+
     document.getElementById("photoPreview").src="";
     document.getElementById("photoPreview").style.display="none";
-
-    let box=document.querySelector("#customerModal .modal-box");
-
-    if(box) box.scrollTop=0;
-
 }
 
 function closeCustomerModal(){
@@ -1898,37 +1981,34 @@ style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-b
 
 onkeyup="loadCustomers()">
 
-<table width="100%" border="1" cellspacing="0" cellpadding="10">
+<div style="overflow-x:auto;">
 
-<thead style="background:#0b7a3e;color:white;">
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
 
 <thead style="background:#0b7a3e;color:white;">
 
 <tr>
 
 <th>Photo</th>
-
 <th>ID</th>
-
 <th>Name</th>
-
 <th>Father</th>
-
 <th>Mobile</th>
-
 <th>Aadhaar</th>
-
 <th>Group</th>
-
 <th>Action</th>
 
 </tr>
 
 </thead>
 
-<tbody id="customerTable"></tbody>
+<tbody id="customerTable">
+
+</tbody>
 
 </table>
+
+</div>
 
 `;
 
