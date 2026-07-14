@@ -17,7 +17,8 @@ font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
 
 body{
 background:#f5f7fb;
-overflow:hidden;
+overflow-x:hidden;
+overflow-y:auto;
 }
 
 /* LOGIN */
@@ -104,11 +105,14 @@ height:100vh;
 
 .sidebar{
 
+position:fixed;
+left:0;
+top:0;
 width:240px;
+height:100vh;
 background:#0b7a3e;
 color:white;
-height:100vh;
-float:left;
+overflow-y:auto;
 
 }
 
@@ -147,6 +151,8 @@ background:#13a65c;
 
 margin-left:240px;
 height:100vh;
+overflow-y:auto;
+overflow-x:hidden;
 background:#f5f7fb;
 
 }
@@ -165,6 +171,8 @@ box-shadow:0 2px 8px rgba(0,0,0,.08);
 .content{
 
 padding:25px;
+padding-bottom:100px;
+min-height:calc(100vh - 60px);
 
 }
 
@@ -322,7 +330,7 @@ cursor:pointer;
 
 <div class="logo">
 
-AARVEE
+AARVEE Associates
 
 </div>
 
@@ -2965,8 +2973,75 @@ ${loan.status}
 <td>
 
 <button
-style="background:red;color:white;border:none;padding:5px 12px;border-radius:5px;"
-onclick="deleteLoan(${index})">
+onclick="viewLoan(${index})"
+style="
+background:#2196f3;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+margin:2px;">
+
+View
+
+</button>
+
+<button
+onclick="editLoan(${index})"
+style="
+background:#ff9800;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+margin:2px;">
+
+Edit
+
+</button>
+
+<button
+onclick="printPromissoryLoan(${index})"
+style="
+background:#4caf50;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+margin:2px;">
+
+Promissory
+
+</button>
+
+<button
+onclick="printCollectionCard(${index})"
+style="
+background:#673ab7;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+margin:2px;">
+
+Collection Card
+
+</button>
+
+<button
+onclick="deleteLoan(${index})"
+style="
+background:red;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+margin:2px;">
 
 Delete
 
@@ -3000,6 +3075,91 @@ loadLoans();
 showDashboard();
 
 }
+
+}
+function viewLoan(index){
+
+let loans =
+JSON.parse(localStorage.getItem("loans"))||[];
+
+let loan = loans[index];
+
+alert(
+
+"Loan ID : "+loan.id+
+
+"\nCustomer : "+loan.customerName+
+
+"\nAmount : ₹"+loan.amount+
+
+"\nBalance : ₹"+loan.balance+
+
+"\nStatus : "+loan.status
+
+);
+
+}
+function editLoan(index){
+
+alert("Loan Edit Module will be added in Version 2.");
+
+}
+function printPromissoryLoan(index){
+
+let loans =
+JSON.parse(localStorage.getItem("loans"))||[];
+
+document.getElementById("searchLoan").value=
+
+loans[index].id;
+
+showPromissory();
+
+setTimeout(function(){
+
+document.getElementById("searchLoan").value=
+
+loans[index].id;
+
+loadPromissory();
+
+},300);
+
+}
+function printCollectionCard(index){
+
+let loans =
+JSON.parse(localStorage.getItem("loans"))||[];
+
+let customers =
+JSON.parse(localStorage.getItem("customers"))||[];
+
+let loan = loans[index];
+
+let customer =
+customers.find(c=>c.id==loan.customerId);
+
+if(!customer){
+
+alert("Customer not found.");
+
+return;
+
+}
+
+alert(
+
+"Collection Card\n\n"+
+
+"Customer : "+customer.name+
+
+"\nLoan : "+loan.id+
+
+"\nAmount : ₹"+loan.amount+
+
+"\n\nVersion 2 will open the printable Collection Card."
+
+);
 
 }
 function loadCollections(){
