@@ -720,8 +720,9 @@ function showPage(page){
     }
 
     if(page=="customers"){
-        showCustomers();
-    }
+    alert("Customer button clicked");
+    showCustomers();
+}
     if(page=="guarantor"){
     showGuarantors();
 }
@@ -1496,31 +1497,39 @@ function openCustomerModal(){
 
     editingCustomerIndex = -1;
 
-    const modal = document.getElementById("customerModal");
+    customerPhoto="";
+    aadhaarFrontData="";
+    aadhaarBackData="";
 
-    modal.style.display = "flex";
+    document.getElementById("customerModal").style.display="flex";
 
-    // Scroll to top every time
-    modal.scrollTop = 0;
+    let groups=JSON.parse(localStorage.getItem("groups"))||[];
 
-    const box = modal.querySelector(".modal-box");
-
-    if(box){
-        box.scrollTop = 0;
-    }
-
-    let groups = JSON.parse(localStorage.getItem("groups")) || [];
-
-    let html = "";
+    let html="";
 
     groups.forEach(g=>{
-        html += `<option>${g.name}</option>`;
+        html+=`<option value="${g.name}">${g.name}</option>`;
     });
 
-    document.getElementById("cGroup").innerHTML = html;
+    document.getElementById("cGroup").innerHTML=html;
 
-    document.getElementById("cName").value = "";
-    document.getElementById("cMobile").value = "";
+    document.getElementById("cName").value="";
+    document.getElementById("cFather").value="";
+    document.getElementById("cMobile").value="";
+    document.getElementById("cAltMobile").value="";
+    document.getElementById("cAadhaar").value="";
+    document.getElementById("cPan").value="";
+    document.getElementById("cAddress").value="";
+    document.getElementById("cPhoto").value="";
+    document.getElementById("aadhaarFront").value="";
+    document.getElementById("aadhaarBack").value="";
+
+    document.getElementById("photoPreview").src="";
+    document.getElementById("photoPreview").style.display="none";
+
+    let box=document.querySelector("#customerModal .modal-box");
+
+    if(box) box.scrollTop=0;
 
 }
 
@@ -1893,6 +1902,8 @@ onkeyup="loadCustomers()">
 
 <thead style="background:#0b7a3e;color:white;">
 
+<thead style="background:#0b7a3e;color:white;">
+
 <tr>
 
 <th>Photo</th>
@@ -1901,7 +1912,11 @@ onkeyup="loadCustomers()">
 
 <th>Name</th>
 
+<th>Father</th>
+
 <th>Mobile</th>
+
+<th>Aadhaar</th>
 
 <th>Group</th>
 
@@ -1998,7 +2013,7 @@ document.getElementById("pageTitle").innerHTML="Customer Profile";
 
 document.getElementById("content").innerHTML=`
 
-<div style="display:grid;grid-template-columns:300px 1fr;gap:25px;">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:25px;">
 
 <div style="background:white;padding:20px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,.1);text-align:center;">
 
@@ -3774,6 +3789,104 @@ td,th{
 border:1px solid #000;
 
 padding:8px;
+
+}
+
+@media(max-width:768px){
+
+.sidebar{
+
+position:relative;
+width:100%;
+height:auto;
+
+}
+
+.main{
+
+margin-left:0;
+
+height:auto;
+
+}
+
+.header{
+
+font-size:18px;
+padding:15px;
+
+}
+
+.content{
+
+padding:10px;
+
+}
+
+.cards{
+
+grid-template-columns:1fr;
+
+}
+
+.card{
+
+margin-bottom:10px;
+
+}
+
+table{
+
+display:block;
+overflow-x:auto;
+white-space:nowrap;
+
+}
+
+.modal{
+
+padding:5px;
+
+}
+
+.modal-box{
+
+width:98%;
+height:95vh;
+max-height:95vh;
+padding:15px;
+
+}
+
+.modal-buttons{
+
+display:flex;
+flex-direction:column;
+
+}
+
+.modal-buttons button{
+
+width:100%;
+margin-top:8px;
+
+}
+
+input,
+select,
+textarea,
+button{
+
+font-size:16px;
+
+}
+
+img{
+
+max-width:100%;
+height:auto;
+
+}
 
 }
 
