@@ -439,6 +439,7 @@ AARVEE Associates
 <li onclick="showPage('emi')">📅 EMI Schedule</li>
 
 <li onclick="showPage('promissory')">📄 Promissory Note</li>
+<li onclick="showPage('loancard')">📒 Loan Card</li>
 
 <li onclick="showPage('dailyCollection')">📅 Daily Collection</li>
 
@@ -535,6 +536,9 @@ AARVEE Associates
         <textarea id="cAddress" placeholder="Address"></textarea>
 
         <select id="cGroup"></select>
+        <label>Guarantor</label>
+
+<select id="cGuarantor"></select>
 
         <label>Customer Photo</label>
 
@@ -811,7 +815,9 @@ if(page=="documents"){
 if(page=="promissory"){
     showPromissory();
 }
-
+if(page=="loancard"){
+    showLoanCard();
+}
     if(page=="collection"){
         showCollections();
     }
@@ -866,6 +872,8 @@ function showCollections(){
 <th>Aadhaar</th>
 
 <th>Group</th>
+
+<th>Guarantor</th>
 
 <th>Action</th>
 
@@ -1596,6 +1604,15 @@ function openCustomerModal(){
     });
 
     document.getElementById("cGroup").innerHTML = html;
+    let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
+
+let ghtml = "";
+
+guarantors.forEach(g=>{
+    ghtml += `<option value="${g.name}">${g.name}</option>`;
+});
+
+document.getElementById("cGuarantor").innerHTML = ghtml;
 
     console.log("Step 4");
 
@@ -1723,7 +1740,9 @@ pan: document.getElementById("cPan").value,
 
             address: document.getElementById("cAddress").value,
 
-            group: document.getElementById("cGroup").value
+            group: document.getElementById("cGroup").value,
+
+guarantor: document.getElementById("cGuarantor").value
 
         });
 
@@ -1836,6 +1855,8 @@ background:#ddd;"></div>`
 
 <td>${c.group}</td>
 
+<td>${c.guarantor || ""}</td>
+
 <td>
 
 <button
@@ -1918,6 +1939,19 @@ function editCustomer(index){
     });
 
     document.getElementById("cGroup").innerHTML = html;
+    let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
+
+let ghtml = "";
+
+guarantors.forEach(g=>{
+
+    ghtml += `<option value="${g.name}" ${
+        g.name == customer.guarantor ? "selected" : ""
+    }>${g.name}</option>`;
+
+});
+
+document.getElementById("cGuarantor").innerHTML = ghtml;
 
     document.getElementById("cName").value = customer.name || "";
 
@@ -2510,25 +2544,19 @@ Thumb Impression
 
 <div class="images">
 
-<div>
-
-<div style="margin-bottom:10px;"><b>PHOTOGRAPH</b></div>
+<div class="photo-box">
 
 <img src="${customer.photo || ''}">
 
 </div>
 
-<div>
-
-<div style="margin-bottom:10px;"><b>AADHAAR FRONT</b></div>
+<div class="aadhaar-box">
 
 <img src="${customer.aadhaarFront || ''}">
 
 </div>
 
-<div>
-
-<div style="margin-bottom:10px;"><b>AADHAAR BACK</b></div>
+<div class="aadhaar-box">
 
 <img src="${customer.aadhaarBack || ''}">
 
@@ -2671,27 +2699,47 @@ td{
 
     justify-content:space-between;
 
-    margin-top:40px;
+    align-items:flex-start;
+
+    gap:12px;
+
+    margin-top:35px;
 
 }
 
-.images div{
+.photo-box{
 
-    width:31%;
-
-    text-align:center;
+    width:22%;
 
 }
 
-.images img{
+.aadhaar-box{
+
+    width:38%;
+
+}
+
+.photo-box img{
 
     width:100%;
 
-    height:220px;
+    height:160px;
 
     border:1px solid #000;
 
     object-fit:cover;
+
+}
+
+.aadhaar-box img{
+
+    width:100%;
+
+    height:160px;
+
+    border:1px solid #000;
+
+    object-fit:contain;
 
 }
 
@@ -4903,11 +4951,514 @@ showStep(currentStep);
 }
 
 }
+function showLoanCard(){
+
+    document.getElementById("pageTitle").innerHTML = "Loan Card";
+
+    document.getElementById("content").innerHTML = `
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+        <h2>Loan Card Management</h2>
+
+    </div>
+
+    <input
+        id="loanCardSearch"
+        placeholder="Search Customer"
+        style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:20px;"
+        onkeyup="loadLoanCards()">
+
+    <table width="100%" border="1" cellspacing="0" cellpadding="10">
+
+        <thead style="background:#0b7a3e;color:white;">
+
+            <tr>
+
+                <th>ID</th>
+
+                <th>Name</th>
+
+                <th>Group</th>
+
+                <th>Mobile</th>
+
+                <th>Loan Amount</th>
+
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="loanCardTable"></tbody>
+
+    </table>
+
+    `;
+
+    loadLoanCards();
+
+}
+function loadLoanCards(){
+
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+    let search = document.getElementById("loanCardSearch").value.toLowerCase();
+
+    let html = "";
+
+    customers.forEach(c=>{
+
+        let loan = loans.find(l=>l.customerId==c.id);
+
+        if(!loan) return;
+
+        if(
+            c.name.toLowerCase().includes(search)==false &&
+            c.mobile.includes(search)==false
+        ) return;
+
+        html += `
+
+        <tr>
+
+            <td>${c.id}</td>
+
+            <td>${c.name}</td>
+
+            <td>${c.group}</td>
+
+            <td>${c.mobile}</td>
+
+            <td>₹ ${loan.amount}</td>
+
+            <td>
+
+                <button onclick="printLoanCardFront('${c.id}')">
+
+                    Front
+
+                </button>
+
+                <button onclick="printLoanCardBack('${c.id}')">
+
+                    Back
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById("loanCardTable").innerHTML = html;
+
+}
+function printLoanCardFront(customerId){
+
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+    let c = customers.find(x=>x.id==customerId);
+
+    let loan = loans.find(x=>x.customerId==customerId);
+
+    if(!c || !loan){
+        alert("Loan Details Not Found");
+        return;
+    }
+
+    let companyName="AARVEE ASSOCIATES";
+    let address="Near Bus Stand, Kottur";
+    let mobile="8248510416, 8838224040";
+
+    let win=window.open("","","width=1200,height=800");
+
+    win.document.write(`
+    <!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Loan Card Front</title>
+
+<style>
+
+@page{
+
+size:A4 landscape;
+
+margin:10mm;
+
+}
+
+body{
+
+font-family:Arial;
+
+margin:0;
+
+padding:0;
+
+}
+
+.container{
+
+display:flex;
+
+justify-content:space-between;
+
+gap:20px;
+
+}
+
+.card{
+
+width:48%;
+
+border:2px solid black;
+
+padding:15px;
+
+box-sizing:border-box;
+
+}
+
+.header{
+
+display:flex;
+
+align-items:center;
+
+margin-bottom:10px;
+
+}
+
+.logo{
+
+width:70px;
+
+height:70px;
+
+border:1px solid #000;
+
+margin-right:15px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:12px;
+
+}
+
+.company{
+
+font-size:32px;
+
+font-weight:bold;
+
+}
+
+.address{
+
+text-align:center;
+
+font-size:18px;
+
+margin-top:5px;
+
+}
+
+.contact{
+
+text-align:center;
+
+font-size:18px;
+
+margin-bottom:20px;
+
+}
+
+table{
+
+width:100%;
+
+font-size:20px;
+
+border-collapse:collapse;
+
+}
+
+td{
+
+padding:8px;
+
+}
+
+.rules{
+
+border:2px solid #000;
+
+margin-top:20px;
+
+padding:15px;
+
+font-size:18px;
+
+line-height:32px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+    <div class="card">
+
+<div class="header">
+
+<div class="logo">
+
+LOGO
+
+</div>
+
+<div>
+
+<div class="company">
+
+${companyName}
 
 </div>
 
 </div>
 
 </div>
+
+<div class="address">
+
+${address}
+
+</div>
+
+<div class="contact">
+
+Contact : ${mobile}
+
+</div>
+
+<table>
+
+<tr>
+
+<td width="35%"><b>NAME</b></td>
+
+<td>${c.name}</td>
+
+</tr>
+
+<tr>
+
+<td><b>GROUP</b></td>
+
+<td>${c.group}</td>
+
+</tr>
+
+<tr>
+
+<td><b>MOBILE</b></td>
+
+<td>${c.mobile}</td>
+
+</tr>
+
+<tr>
+
+<td><b>DATE</b></td>
+
+<td>${loan.date}</td>
+
+</tr>
+
+<tr>
+
+<td><b>AMOUNT</b></td>
+
+<td>₹ ${loan.amount}</td>
+
+</tr>
+
+</table>
+
+<div class="rules">
+
+➤ வீடு கட்ட, வாங்க கடன்<br>
+
+➤ வீடு அடமான கடன்<br>
+
+➤ காவி இடம் அடமான கடன்<br>
+
+➤ தனிநபர் கடன்<br>
+
+➤ வியாபார கடன்<br>
+
+➤ இருக்கிற வாகன கடன்<br>
+
+➤ வணிக வாகன கடன்<br>
+
+➤ நகை கடன்<br><br>
+
+<b>
+
+அதிக வட்டியுள்ள கடன் தொகைகளை மீட்டு,
+
+குறைந்த வட்டியில் மாற்றித்தரப்படும்
+
+</b>
+
+</div>
+
+</div>
+<div class="card">
+
+<div class="header">
+
+<div class="logo">
+
+LOGO
+
+</div>
+
+<div>
+
+<div class="company">
+
+${companyName}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="address">
+
+${address}
+
+</div>
+
+<div class="contact">
+
+Contact : ${mobile}
+
+</div>
+
+<table>
+
+<tr>
+
+<td width="35%"><b>NAME</b></td>
+
+<td>${c.name}</td>
+
+</tr>
+
+<tr>
+
+<td><b>GROUP</b></td>
+
+<td>${c.group}</td>
+
+</tr>
+
+<tr>
+
+<td><b>MOBILE</b></td>
+
+<td>${c.mobile}</td>
+
+</tr>
+
+<tr>
+
+<td><b>DATE</b></td>
+
+<td>${loan.date}</td>
+
+</tr>
+
+<tr>
+
+<td><b>AMOUNT</b></td>
+
+<td>₹ ${loan.amount}</td>
+
+</tr>
+
+</table>
+
+<div class="rules">
+
+➤ வீடு கட்ட, வாங்க கடன்<br>
+
+➤ வீடு அடமான கடன்<br>
+
+➤ காவி இடம் அடமான கடன்<br>
+
+➤ தனிநபர் கடன்<br>
+
+➤ வியாபார கடன்<br>
+
+➤ இருக்கிற வாகன கடன்<br>
+
+➤ வணிக வாகன கடன்<br>
+
+➤ நகை கடன்<br><br>
+
+<b>
+
+அதிக வட்டியுள்ள கடன் தொகைகளை மீட்டு,
+
+குறைந்த வட்டியில் மாற்றித்தரப்படும்
+
+</b>
+
+</div>
+
+</div>
+</div>
+
+</body>
+
+</html>
+
+`);
+
+    win.document.close();
+
+    win.print();
+
+}
+
+</div>
+
+</div>
+
+</div>
+
 </body>
 </html>
