@@ -816,8 +816,7 @@ if(page=="promissory"){
     showPromissory();
 }
 if(page=="loancard"){
-    alert("Loan Card Clicked");
-    showLoanCard();
+        showLoanCard();
 }
     if(page=="collection"){
         showCollections();
@@ -2406,6 +2405,41 @@ Load
 <div id="promissoryContent"></div>
 
 `;
+
+}
+function showLoanCard(){
+
+    document.getElementById("pageTitle").innerHTML="Loan Card";
+
+    document.getElementById("content").innerHTML=`
+
+    <h2>Loan Card</h2>
+
+    <br>
+
+    <input
+        id="loanCardSearch"
+        placeholder="Enter Loan ID"
+        style="padding:10px;width:300px;border:1px solid #ccc;border-radius:6px;">
+
+    <button
+        onclick="loadLoanCard()"
+        style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;margin-left:10px;">
+
+        Load
+
+    </button>
+
+    <div id="loanCardContent" style="margin-top:20px;"></div>
+
+    `;
+}
+function loadLoanCard(){
+
+    let loanId=document.getElementById("loanCardSearch").value;
+
+    document.getElementById("loanCardContent").innerHTML=
+    "<h3>Loan Card for : "+loanId+"</h3>";
 
 }
 function loadPromissory(){
