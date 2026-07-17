@@ -816,6 +816,7 @@ if(page=="promissory"){
     showPromissory();
 }
 if(page=="loancard"){
+    alert("Loan Card Clicked");
     showLoanCard();
 }
     if(page=="collection"){
@@ -2463,7 +2464,7 @@ document.getElementById("promissoryContent").innerHTML=`
 
 <td colspan="4">
 
-${customer.address}
+${customer.address || "-"}
 
 </td>
 
