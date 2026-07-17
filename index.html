@@ -529,23 +529,49 @@ AARVEE Associates
 
         <h2>Add Customer</h2>
 
-        <input id="cName" placeholder="Customer Name">
+<label>Customer Name</label>
+<input id="cName" placeholder="Customer Name">
 
-        <input id="cFather" placeholder="Father Name">
+<label>Father / Husband Name</label>
+<input id="cFather" placeholder="Father / Husband Name">
 
-        <input id="cMobile" placeholder="Mobile Number">
+<label>Mobile Number</label>
+<input id="cMobile" placeholder="Mobile Number">
 
-        <input id="cAltMobile" placeholder="Alternate Mobile">
+<label>Alternate Mobile</label>
+<input id="cAltMobile" placeholder="Alternate Mobile">
 
-        <input id="cAadhaar" placeholder="Aadhaar Number">
+<label>Aadhaar Number</label>
+<input id="cAadhaar" placeholder="Aadhaar Number">
 
-        <input id="cPan" placeholder="PAN Number">
+<label>PAN Number</label>
+<input id="cPan" placeholder="PAN Number">
 
-        <textarea id="cAddress" placeholder="Address"></textarea>
+<label>Door No / House No</label>
+<input id="cDoorNo" placeholder="Door No / House No">
 
-        <select id="cGroup"></select>
-        <label>Guarantor</label>
+<label>Street</label>
+<input id="cStreet" placeholder="Street">
 
+<label>Area / Village</label>
+<input id="cArea" placeholder="Area / Village">
+
+<label>City / Taluk</label>
+<input id="cCity" placeholder="City / Taluk">
+
+<label>District</label>
+<input id="cDistrict" placeholder="District">
+
+<label>State</label>
+<input id="cState" value="Tamil Nadu">
+
+<label>Pincode</label>
+<input id="cPincode" placeholder="Pincode">
+
+<label>Group</label>
+<select id="cGroup"></select>
+
+<label>Guarantor</label>
 <select id="cGuarantor"></select>
 
         <label>Customer Photo</label>
@@ -1630,7 +1656,13 @@ document.getElementById("cGuarantor").innerHTML = ghtml;
     document.getElementById("cAltMobile").value="";
     document.getElementById("cAadhaar").value="";
     document.getElementById("cPan").value="";
-    document.getElementById("cAddress").value="";
+        document.getElementById("cDoorNo").value="";
+document.getElementById("cStreet").value="";
+document.getElementById("cArea").value="";
+document.getElementById("cCity").value="";
+document.getElementById("cDistrict").value="";
+document.getElementById("cState").value="Tamil Nadu";
+document.getElementById("cPincode").value="";
     document.getElementById("cPhoto").value="";
     document.getElementById("aadhaarFront").value="";
     document.getElementById("aadhaarBack").value="";
@@ -1746,7 +1778,22 @@ pan: document.getElementById("cPan").value,
 
             pan: document.getElementById("cPan").value,
 
-            address: document.getElementById("cAddress").value,
+            doorNo: document.getElementById("cDoorNo").value,
+street: document.getElementById("cStreet").value,
+area: document.getElementById("cArea").value,
+city: document.getElementById("cCity").value,
+district: document.getElementById("cDistrict").value,
+state: document.getElementById("cState").value,
+pincode: document.getElementById("cPincode").value,
+
+address:
+    document.getElementById("cDoorNo").value + ", " +
+    document.getElementById("cStreet").value + ", " +
+    document.getElementById("cArea").value + ", " +
+    document.getElementById("cCity").value + ", " +
+    document.getElementById("cDistrict").value + ", " +
+    document.getElementById("cState").value + " - " +
+    document.getElementById("cPincode").value,
 
             group: document.getElementById("cGroup").value,
 
@@ -1756,38 +1803,22 @@ guarantor: document.getElementById("cGuarantor").value
 
     }else{
 
-        customers[editingCustomerIndex].name = document.getElementById("cName").value;
+        customers[editingCustomerIndex].doorNo = document.getElementById("cDoorNo").value;
+customers[editingCustomerIndex].street = document.getElementById("cStreet").value;
+customers[editingCustomerIndex].area = document.getElementById("cArea").value;
+customers[editingCustomerIndex].city = document.getElementById("cCity").value;
+customers[editingCustomerIndex].district = document.getElementById("cDistrict").value;
+customers[editingCustomerIndex].state = document.getElementById("cState").value;
+customers[editingCustomerIndex].pincode = document.getElementById("cPincode").value;
 
-        customers[editingCustomerIndex].father = document.getElementById("cFather").value;
-
-        customers[editingCustomerIndex].mobile = document.getElementById("cMobile").value;
-
-        customers[editingCustomerIndex].altMobile = document.getElementById("cAltMobile").value;
-
-        customers[editingCustomerIndex].aadhaar = document.getElementById("cAadhaar").value;
-
-        customers[editingCustomerIndex].pan = document.getElementById("cPan").value;
-
-        customers[editingCustomerIndex].address = document.getElementById("cAddress").value;
-
-        customers[editingCustomerIndex].photo = customerPhoto;
-
-        customers[editingCustomerIndex].group = document.getElementById("cGroup").value;
-
-        editingCustomerIndex = -1;
-
-    }
-
-    localStorage.setItem("customers", JSON.stringify(customers));
-
-    // Clear form
-    document.getElementById("cName").value = "";
-    document.getElementById("cFather").value = "";
-    document.getElementById("cMobile").value = "";
-    document.getElementById("cAltMobile").value = "";
-    document.getElementById("cAadhaar").value = "";
-    document.getElementById("cPan").value = "";
-    document.getElementById("cAddress").value = "";
+customers[editingCustomerIndex].address =
+    document.getElementById("cDoorNo").value + ", " +
+    document.getElementById("cStreet").value + ", " +
+    document.getElementById("cArea").value + ", " +
+    document.getElementById("cCity").value + ", " +
+    document.getElementById("cDistrict").value + ", " +
+    document.getElementById("cState").value + " - " +
+    document.getElementById("cPincode").value;
     customerPhoto="";
 
 document.getElementById("cPhoto").value="";
@@ -1973,7 +2004,13 @@ document.getElementById("cGuarantor").innerHTML = ghtml;
 
     document.getElementById("cPan").value = customer.pan || "";
 
-    document.getElementById("cAddress").value = customer.address || "";
+        document.getElementById("cDoorNo").value = customer.doorNo || "";
+document.getElementById("cStreet").value = customer.street || "";
+document.getElementById("cArea").value = customer.area || "";
+document.getElementById("cCity").value = customer.city || "";
+document.getElementById("cDistrict").value = customer.district || "";
+document.getElementById("cState").value = customer.state || "Tamil Nadu";
+document.getElementById("cPincode").value = customer.pincode || "";
     customerPhoto = customer.photo || "";
     aadhaarFrontData = customer.aadhaarFront || "";
 
