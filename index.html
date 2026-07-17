@@ -2392,6 +2392,71 @@ onkeyup="loadEMI()">
 loadEMI();
 
 }
+function showDocuments(){
+
+document.getElementById("pageTitle").innerHTML="Documents";
+
+let file=localStorage.getItem("promissoryDocument");
+let fileName=localStorage.getItem("promissoryDocumentName") || "";
+
+document.getElementById("content").innerHTML=`
+
+<h2>Promissory Note Document</h2>
+
+<input type="file"
+accept=".pdf,.jpg,.jpeg,.png"
+onchange="uploadPromissoryDocument(event)">
+
+<br><br>
+
+${file ?
+`<button onclick="downloadPromissoryDocument()">Download Promissory Note</button>`
+:
+`<p>No Promissory Note Uploaded</p>`
+}
+
+`;
+
+}
+function uploadPromissoryDocument(event){
+
+let file=event.target.files[0];
+if(!file) return;
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+localStorage.setItem("promissoryDocument",e.target.result);
+localStorage.setItem("promissoryDocumentName",file.name);
+
+alert("Promissory Note Uploaded Successfully");
+
+showDocuments();
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+function downloadPromissoryDocument(){
+
+let data=localStorage.getItem("promissoryDocument");
+
+if(!data){
+alert("No Promissory Note Uploaded");
+return;
+}
+
+let a=document.createElement("a");
+
+a.href=data;
+a.download=localStorage.getItem("promissoryDocumentName") || "PromissoryNote";
+
+a.click();
+
+}
 function showPromissory(){
 
 document.getElementById("pageTitle").innerHTML="Promissory Note";
