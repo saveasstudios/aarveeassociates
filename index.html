@@ -640,30 +640,25 @@ let customerPhoto="";
 let aadhaarFrontData = "";
 let aadhaarBackData = "";
 
-function login(){
+function login() {
 
-let username = document.getElementById("user").value.trim().toLowerCase();
+    let username = document.getElementById("user").value.trim().toLowerCase();
+    let password = document.getElementById("pin").value.trim();
 
-let password = document.getElementById("pin").value.trim();
+    if (users[username] && users[username] === password) {
 
-if(users[username] && users[username] === password){
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("app").style.display = "block";
 
-document.getElementById("loginPage").style.display="none";
+        document.getElementById("currentUser").innerHTML =
+            username.charAt(0).toUpperCase() + username.slice(1);
 
-document.getElementById("app").style.display="block";
+        loadDashboard();
+        showDashboard();
 
-document.getElementById("currentUser").innerHTML =
-username.charAt(0).toUpperCase() + username.slice(1);
-
-loadDashboard();
-showDashboard();
-
-}else{
-
-alert("Invalid Username or Password");
-
-}
-
+    } else {
+        alert("Invalid Username or Password");
+    }
 }
 
 function logout(){
