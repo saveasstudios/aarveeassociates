@@ -760,7 +760,7 @@ document.getElementById("content").innerHTML=`
 
 <h2>Group Entry</h2>
 
-<button onclick="openGroupModal()" style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
+style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border<button onclick="openGroupModal()" -radius:6px;cursor:pointer;">
 + Add Group
 </button>
 
@@ -2403,40 +2403,34 @@ document.getElementById("content").innerHTML=`
 
 <h2>Promissory Note Document</h2>
 
-<input type="file"
-accept=".pdf,.jpg,.jpeg,.png"
-onchange="uploadPromissoryDocument(event)">
+<input
+type="file"
+id="promissoryUpload"
+accept=".pdf,.jpg,.jpeg,.png">
 
 <br><br>
 
-${file ?
-`<button onclick="downloadPromissoryDocument()">Download Promissory Note</button>`
-:
-`<p>No Promissory Note Uploaded</p>`
-}
+<button
+onclick="savePromissoryDocument()"
+style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;">
+💾 Save Promissory Note
+</button>
+
+${file ? `
+
+<button
+onclick="downloadPromissoryDocument()"
+style="padding:10px 20px;background:#007bff;color:white;border:none;border-radius:6px;margin-left:10px;">
+⬇ Download Promissory Note
+</button>
+
+<br><br>
+
+<b>Saved File:</b> ${fileName}
+
+` : ""}
 
 `;
-
-}
-function uploadPromissoryDocument(event){
-
-let file=event.target.files[0];
-if(!file) return;
-
-let reader=new FileReader();
-
-reader.onload=function(e){
-
-localStorage.setItem("promissoryDocument",e.target.result);
-localStorage.setItem("promissoryDocumentName",file.name);
-
-alert("Promissory Note Uploaded Successfully");
-
-showDocuments();
-
-};
-
-reader.readAsDataURL(file);
 
 }
 
@@ -2455,6 +2449,31 @@ a.href=data;
 a.download=localStorage.getItem("promissoryDocumentName") || "PromissoryNote";
 
 a.click();
+
+}
+function savePromissoryDocument(){
+
+let file=document.getElementById("promissoryUpload").files[0];
+
+if(!file){
+    alert("Please select a Promissory Note.");
+    return;
+}
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+    localStorage.setItem("promissoryDocument",e.target.result);
+    localStorage.setItem("promissoryDocumentName",file.name);
+
+    alert("Promissory Note Saved Successfully.");
+
+    showDocuments();
+
+};
+
+reader.readAsDataURL(file);
 
 }
 function showPromissory(){
@@ -4427,28 +4446,6 @@ showDocuments();
 };
 
 reader.readAsDataURL(file);
-
-}
-function downloadPromissoryDocument(){
-
-let data=localStorage.getItem("promissoryDocument");
-
-let fileName=
-localStorage.getItem("promissoryDocumentName") ||
-"PromissoryNote";
-
-if(!data){
-alert("No document uploaded.");
-return;
-}
-
-let a=document.createElement("a");
-
-a.href=data;
-
-a.download=fileName;
-
-a.click();
 
 }
 function openDocumentModal(){
