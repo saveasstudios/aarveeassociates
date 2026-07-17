@@ -4338,72 +4338,52 @@ loadGuarantors();
 }
 
 }
-function showDocuments(){
+let promissoryFileName="";
 
-document.getElementById("pageTitle").innerHTML="Document Management";
+function uploadPromissoryDocument(event){
 
-document.getElementById("content").innerHTML=`
+const file=event.target.files[0];
 
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+if(!file) return;
 
-<h2>Signed Promissory Documents</h2>
+promissoryFileName=file.name;
 
-<button
-onclick="openDocumentModal()"
-style="
-padding:10px 20px;
-background:#0b7a3e;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;">
+const reader=new FileReader();
 
-+ Upload Promissory
+reader.onload=function(e){
 
-</button>
+localStorage.setItem("promissoryDocument",e.target.result);
+localStorage.setItem("promissoryDocumentName",file.name);
 
-</div>
+alert("Promissory Note Uploaded Successfully.");
 
-<input
-id="searchDocument"
-placeholder="Search Customer"
-style="
-width:300px;
-padding:10px;
-border:1px solid #ccc;
-border-radius:6px;
-margin-bottom:20px;"
-onkeyup="loadDocuments()">
+showDocuments();
 
-<table width="100%" border="1" cellspacing="0" cellpadding="10">
+};
 
-<thead style="background:#0b7a3e;color:white;">
+reader.readAsDataURL(file);
 
-<tr>
+}
+function downloadPromissoryDocument(){
 
-<th>Customer ID</th>
+let data=localStorage.getItem("promissoryDocument");
 
-<th>Customer Name</th>
+let fileName=
+localStorage.getItem("promissoryDocumentName") ||
+"PromissoryNote";
 
-<th>Group</th>
+if(!data){
+alert("No document uploaded.");
+return;
+}
 
-<th>Promissory Note</th>
+let a=document.createElement("a");
 
-<th>Action</th>
+a.href=data;
 
-</tr>
+a.download=fileName;
 
-</thead>
-
-<tbody id="documentTable">
-
-</tbody>
-
-</table>
-
-`;
-
-loadDocuments();
+a.click();
 
 }
 function openDocumentModal(){
