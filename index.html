@@ -174,9 +174,17 @@ box-shadow:0 2px 8px rgba(0,0,0,.08);
 
 .content{
 
-padding:25px;
-padding-bottom:100px;
-min-height:calc(100vh - 60px);
+    padding:25px;
+
+    min-height:calc(100vh - 60px);
+
+    overflow-y:auto;
+
+    height:calc(100vh - 60px);
+
+    padding-bottom:180px;
+
+    box-sizing:border-box;
 
 }
 
@@ -2566,11 +2574,12 @@ I understand that any delay in repayment may attract additional charges and that
 
 <div class="thumb">
 
-Signature /
+<div style="flex:1;"></div>
 
-<br>
-
+<div>
+Signature /<br>
 Thumb Impression
+</div>
 
 </div>
 
@@ -2709,23 +2718,33 @@ td{
 
 .thumb{
 
-    width:140px;
+    width:100px;
 
-    height:140px;
+    height:100px;
 
     border:1px solid #000;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    text-align:center;
 
     float:right;
 
     margin-top:10px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:flex-end;
+
+    align-items:center;
+
+    padding-bottom:6px;
+
+    box-sizing:border-box;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+    text-align:center;
 
 }
 
