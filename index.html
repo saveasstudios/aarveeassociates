@@ -1730,103 +1730,87 @@ function previewAadhaarBack(event){
 
 }
 function saveCustomer(){
+
     if(document.getElementById("cName").value.trim()==""){
+        alert("Customer Name is required.");
+        return;
+    }
 
-    alert("Customer Name is required.");
-
-    return;
-
-}
-
-if(document.getElementById("cMobile").value.trim()==""){
-
-    alert("Mobile Number is required.");
-
-    return;
-
-}
+    if(document.getElementById("cMobile").value.trim()==""){
+        alert("Mobile Number is required.");
+        return;
+    }
 
     let customers = JSON.parse(localStorage.getItem("customers")) || [];
 
-    if(editingCustomerIndex == -1){
+    let address =
+        document.getElementById("cDoorNo").value + ", " +
+        document.getElementById("cStreet").value + ", " +
+        document.getElementById("cArea").value + ", " +
+        document.getElementById("cCity").value + ", " +
+        document.getElementById("cDistrict").value + ", " +
+        document.getElementById("cState").value + " - " +
+        document.getElementById("cPincode").value;
 
-        let id = "CUS" + String(customers.length + 1).padStart(4,"0");
+    if(editingCustomerIndex==-1){
+
+        let id="CUS"+String(customers.length+1).padStart(4,"0");
 
         customers.push({
-            aadhaarFront: aadhaarFrontData,
-aadhaarBack: aadhaarBackData,
-pan: document.getElementById("cPan").value,
-
-            id: id,
-
+            id:id,
             photo:customerPhoto,
-
-            name: document.getElementById("cName").value,
-
-            father: document.getElementById("cFather").value,
-
-            mobile: document.getElementById("cMobile").value,
-
-            altMobile: document.getElementById("cAltMobile").value,
-
-            aadhaar: document.getElementById("cAadhaar").value,
-
-            pan: document.getElementById("cPan").value,
-
-            doorNo: document.getElementById("cDoorNo").value,
-street: document.getElementById("cStreet").value,
-area: document.getElementById("cArea").value,
-city: document.getElementById("cCity").value,
-district: document.getElementById("cDistrict").value,
-state: document.getElementById("cState").value,
-pincode: document.getElementById("cPincode").value,
-
-address:
-    document.getElementById("cDoorNo").value + ", " +
-    document.getElementById("cStreet").value + ", " +
-    document.getElementById("cArea").value + ", " +
-    document.getElementById("cCity").value + ", " +
-    document.getElementById("cDistrict").value + ", " +
-    document.getElementById("cState").value + " - " +
-    document.getElementById("cPincode").value,
-
-            group: document.getElementById("cGroup").value,
-
-guarantor: document.getElementById("cGuarantor").value
-
+            aadhaarFront:aadhaarFrontData,
+            aadhaarBack:aadhaarBackData,
+            name:document.getElementById("cName").value,
+            father:document.getElementById("cFather").value,
+            mobile:document.getElementById("cMobile").value,
+            altMobile:document.getElementById("cAltMobile").value,
+            aadhaar:document.getElementById("cAadhaar").value,
+            pan:document.getElementById("cPan").value,
+            doorNo:document.getElementById("cDoorNo").value,
+            street:document.getElementById("cStreet").value,
+            area:document.getElementById("cArea").value,
+            city:document.getElementById("cCity").value,
+            district:document.getElementById("cDistrict").value,
+            state:document.getElementById("cState").value,
+            pincode:document.getElementById("cPincode").value,
+            address:address,
+            group:document.getElementById("cGroup").value,
+            guarantor:document.getElementById("cGuarantor").value
         });
 
     }else{
 
-        customers[editingCustomerIndex].doorNo = document.getElementById("cDoorNo").value;
-customers[editingCustomerIndex].street = document.getElementById("cStreet").value;
-customers[editingCustomerIndex].area = document.getElementById("cArea").value;
-customers[editingCustomerIndex].city = document.getElementById("cCity").value;
-customers[editingCustomerIndex].district = document.getElementById("cDistrict").value;
-customers[editingCustomerIndex].state = document.getElementById("cState").value;
-customers[editingCustomerIndex].pincode = document.getElementById("cPincode").value;
+        let c = customers[editingCustomerIndex];
 
-customers[editingCustomerIndex].address =
-    document.getElementById("cDoorNo").value + ", " +
-    document.getElementById("cStreet").value + ", " +
-    document.getElementById("cArea").value + ", " +
-    document.getElementById("cCity").value + ", " +
-    document.getElementById("cDistrict").value + ", " +
-    document.getElementById("cState").value + " - " +
-    document.getElementById("cPincode").value;
-    customerPhoto="";
+        c.photo = customerPhoto;
+        c.aadhaarFront = aadhaarFrontData;
+        c.aadhaarBack = aadhaarBackData;
+        c.name = document.getElementById("cName").value;
+        c.father = document.getElementById("cFather").value;
+        c.mobile = document.getElementById("cMobile").value;
+        c.altMobile = document.getElementById("cAltMobile").value;
+        c.aadhaar = document.getElementById("cAadhaar").value;
+        c.pan = document.getElementById("cPan").value;
+        c.doorNo = document.getElementById("cDoorNo").value;
+        c.street = document.getElementById("cStreet").value;
+        c.area = document.getElementById("cArea").value;
+        c.city = document.getElementById("cCity").value;
+        c.district = document.getElementById("cDistrict").value;
+        c.state = document.getElementById("cState").value;
+        c.pincode = document.getElementById("cPincode").value;
+        c.address = address;
+        c.group = document.getElementById("cGroup").value;
+        c.guarantor = document.getElementById("cGuarantor").value;
 
-document.getElementById("cPhoto").value="";
+        editingCustomerIndex = -1;
+    }
 
-document.getElementById("photoPreview").style.display="none";
-    document.getElementById("cGroup").selectedIndex = 0;
+    localStorage.setItem("customers", JSON.stringify(customers));
 
     closeCustomerModal();
-
     loadCustomers();
-
     showDashboard();
-
 }
 function loadCustomers(){
 
