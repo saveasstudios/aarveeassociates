@@ -928,41 +928,52 @@ function showCollections(){
 }
 function showDailyCollection(){
 
-document.getElementById("pageTitle").innerHTML="Daily Collection Sheet";
+document.getElementById("pageTitle").innerHTML="Daily Collection";
 
 document.getElementById("content").innerHTML=`
 
-<h2>Today's Collection Sheet</h2>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+
+<h2>Daily Collection Register</h2>
+
+<h2 id="todayTotal" style="color:#0b7a3e;">Today's Total : ₹0.00</h2>
+
+</div>
 
 <br>
 
-<table width="100%" border="1" cellpadding="10" cellspacing="0">
+<input
+id="dailySearch"
+placeholder="Search Customer / Group / Loan ID"
+style="
+width:350px;
+padding:10px;
+border:1px solid #ccc;
+border-radius:6px;"
+onkeyup="loadDailyCollection()">
+
+<br><br>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
 
 <thead style="background:#0b7a3e;color:white;">
 
 <tr>
 
 <th>Loan ID</th>
-
 <th>Customer</th>
-
 <th>Group</th>
-
 <th>Weekly EMI</th>
-
+<th>Total Paid</th>
 <th>Balance</th>
-
-<th>Status</th>
-
-<th>Receive</th>
+<th>Last Collection</th>
+<th>Collect</th>
 
 </tr>
 
 </thead>
 
-<tbody id="dailyCollectionTable">
-
-</tbody>
+<tbody id="dailyCollectionTable"></tbody>
 
 </table>
 
@@ -975,13 +986,55 @@ function loadDailyCollection(){
 
 let loans = JSON.parse(localStorage.getItem("loans")) || [];
 
+let keyword =
+document.getElementById("dailySearch")?.value.toLowerCase() || "";
+
+let history =
+JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+let today =
+new Date().toLocaleDateString();
+
+let todayTotal = 0;
+
+history.forEach(h=>{
+
+if(h.date==today){
+
+todayTotal += Number(h.amount);
+
+}
+
+});
+
 let html="";
 
-loans.forEach((loan,index)=>{
+loans
+.filter(l=>l.status=="Active")
+.sort((a,b)=>{
 
-if(loan.status=="Active"){
+if(a.group==b.group){
 
-html+=`
+return a.customerName.localeCompare(b.customerName);
+
+}
+
+return a.group.localeCompare(b.group);
+
+})
+.forEach((loan,index)=>{
+
+if(
+
+loan.customerName.toLowerCase().includes(keyword) ||
+
+loan.group.toLowerCase().includes(keyword) ||
+
+loan.id.toLowerCase().includes(keyword)
+
+){
+
+html += `
 
 <tr>
 
@@ -991,35 +1044,23 @@ html+=`
 
 <td>${loan.group}</td>
 
-<td>₹${loan.weekly}</td>
+<td>₹${Number(loan.weekly).toFixed(2)}</td>
 
-<td>₹${loan.balance.toFixed(2)}</td>
+<td>₹${Number(loan.paid||0).toFixed(2)}</td>
 
-<td>
+<td>₹${Number(loan.balance||0).toFixed(2)}</td>
 
-<span style="
-background:#28a745;
-padding:5px 10px;
-border-radius:20px;
-color:white;">
-
-${loan.status}
-
-</span>
-
-</td>
+<td>${loan.lastCollectionDate || "-"}</td>
 
 <td>
 
 <button
-
 style="
 background:#0b7a3e;
 color:white;
 padding:6px 12px;
 border:none;
 border-radius:5px;"
-
 onclick="collectEMI(${index})">
 
 Collect
@@ -1036,7 +1077,10 @@ Collect
 
 });
 
-document.getElementById("dailyCollectionTable").innerHTML=html;
+document.getElementById("dailyCollectionTable").innerHTML = html;
+
+document.getElementById("todayTotal").innerHTML =
+"Today's Total : ₹"+todayTotal.toFixed(2);
 
 }
 function showHistory(){
@@ -2315,26 +2359,22 @@ loadLoans();
 }
 function showEMI(){
 
-document.getElementById("pageTitle").innerHTML="EMI Schedule";
+document.getElementById("pageTitle").innerHTML="Customer EMI Register";
 
 document.getElementById("content").innerHTML=`
 
-<h2>EMI Schedule</h2>
+<h2>Customer EMI Register</h2>
 
 <br>
 
 <input
-
 id="searchEMI"
-
-placeholder="Loan ID"
-
+placeholder="Search Customer / Loan ID / Group"
 style="
+width:350px;
 padding:10px;
-width:300px;
 border:1px solid #ccc;
 border-radius:6px;"
-
 onkeyup="loadEMI()">
 
 <br><br>
@@ -2346,22 +2386,20 @@ onkeyup="loadEMI()">
 <tr>
 
 <th>Loan ID</th>
-
-<th>EMI No</th>
-
-<th>Due Date</th>
-
-<th>Amount</th>
-
+<th>Customer</th>
+<th>Group</th>
+<th>Weekly EMI</th>
+<th>Total Paid</th>
+<th>Balance</th>
+<th>Last Collection</th>
 <th>Status</th>
+<th>Collect</th>
 
 </tr>
 
 </thead>
 
-<tbody id="emiTable">
-
-</tbody>
+<tbody id="emiTable"></tbody>
 
 </table>
 
@@ -2717,45 +2755,202 @@ w.print();
 }
 function printLoanBack(){
 
-let weeks = parseInt(loan.weeks || loan.installments || 24);
-let weekly = parseFloat(loan.weekly || loan.emi || 0);
+let id = document.getElementById("loanCardSearch").value.trim();
 
-// Load collection history
-let collections = JSON.parse(localStorage.getItem("collections")) || [];
-let history = collections.filter(c => c.loanId == loan.id);
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
 
-let rows = "";
+let loan = loans.find(l => l.id == id);
 
-for (let i = 1; i <= weeks; i++) {
+if(!loan){
 
-    let payment = history.find(h => h.installmentNo == i);
+    alert("Loan not found.");
+
+    return;
+
+}
+
+let weeks = parseInt(loan.weeks || 24);
+
+let weekly = Number(loan.weekly);
+
+let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+history = history.filter(h => h.loanId == loan.id);
+
+let totalPaid = history.reduce((t,h)=>t+Number(h.amount),0);
+
+let balance = Number(loan.balance);
+
+let rows="";
+
+for(let i=1;i<=weeks;i++){
+
+    let payment = history[i-1];
 
     rows += `
+    <tr>
+
+        <td>${i}</td>
+
+        <td>${payment ? payment.date : ""}</td>
+
+        <td style="text-align:right;">
+            ${payment ? "₹"+payment.amount : "₹"+weekly.toFixed(2)}
+        </td>
+
+        <td></td>
+
+        <td style="
+            text-align:center;
+            color:${payment ? "green" : "red"};
+            font-weight:bold;">
+            ${payment ? "PAID" : "PENDING"}
+        </td>
+
+    </tr>
+    `;
+
+}
+
+let card = `
+
+<div class="card">
+
+<h2 style="text-align:center;">AARVEE ASSOCIATES</h2>
+
+<h3 style="text-align:center;">Loan Collection Register</h3>
+
+<p><b>Loan ID :</b> ${loan.id}</p>
+
+<p><b>Total Paid :</b> ₹${totalPaid.toFixed(2)}</p>
+
+<p><b>Balance :</b> ₹${balance.toFixed(2)}</p>
+
+<table>
 
 <tr>
 
-<td>${i}</td>
+<th>No</th>
 
-<td>${payment ? payment.date : ""}</td>
+<th>Date</th>
 
-<td style="text-align:right;">
-${payment ? "₹" + payment.amount : "₹" + weekly}
-</td>
+<th>Amount</th>
 
-<td></td>
+<th>Sign</th>
 
-<td style="
-text-align:center;
-font-weight:bold;
-color:${payment ? "green" : "red"};">
-${payment ? "PAID" : "PENDING"}
-</td>
+<th>Status</th>
 
 </tr>
 
+${rows}
+
+</table>
+
+</div>
+
 `;
 
+let html = `
+
+<html>
+
+<head>
+
+<title>Loan Card Back</title>
+
+<style>
+
+@page{
+
+size:A4 landscape;
+
+margin:8mm;
+
 }
+
+body{
+
+font-family:Arial;
+
+margin:0;
+
+padding:0;
+
+}
+
+.sheet{
+
+display:flex;
+
+gap:10px;
+
+}
+
+.card{
+
+width:48%;
+
+border:2px solid #000;
+
+padding:15px;
+
+box-sizing:border-box;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+font-size:12px;
+
+}
+
+th,td{
+
+border:1px solid #000;
+
+padding:4px;
+
+}
+
+th{
+
+background:#ddd;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sheet">
+
+${card}
+
+${card}
+
+</div>
+
+</body>
+
+</html>
+
+`;
+
+let w = window.open("","","width=1200,height=900");
+
+w.document.write(html);
+
+w.document.close();
+
+w.focus();
+
+w.print();
 
 }
 function printLoanBoth(){
@@ -3533,42 +3728,82 @@ alert("Loan Rejected Successfully.");
 }
 function loadEMI(){
 
-let list =
-JSON.parse(localStorage.getItem("emiSchedule")) || [];
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
 
 let keyword =
-document.getElementById("searchEMI")?.value
-.toLowerCase() || "";
+document.getElementById("searchEMI")?.value.toLowerCase() || "";
 
-let html="";
+let html = "";
 
-list.forEach(e=>{
+loans.forEach((loan,index)=>{
 
-if(e.loanId.toLowerCase().includes(keyword)){
+if(
 
-html+=`
+loan.customerName.toLowerCase().includes(keyword) ||
+
+loan.id.toLowerCase().includes(keyword) ||
+
+(loan.group||"").toLowerCase().includes(keyword)
+
+){
+
+html += `
 
 <tr>
 
-<td>${e.loanId}</td>
+<td>${loan.id}</td>
 
-<td>${e.emiNo}</td>
+<td>${loan.customerName}</td>
 
-<td>${e.dueDate}</td>
+<td>${loan.group}</td>
 
-<td>₹${e.amount.toFixed(2)}</td>
+<td>₹${Number(loan.weekly).toFixed(2)}</td>
+
+<td>₹${Number(loan.paid||0).toFixed(2)}</td>
+
+<td>₹${Number(loan.balance||0).toFixed(2)}</td>
+
+<td>${loan.lastCollectionDate || "-"}</td>
 
 <td>
 
 <span style="
-padding:5px 12px;
-border-radius:20px;
-background:${e.paid?"green":"red"};
-color:white;">
+background:${loan.status=="Closed"?"red":"green"};
+color:white;
+padding:5px 10px;
+border-radius:20px;">
 
-${e.paid?"Paid":"Pending"}
+${loan.status}
 
 </span>
+
+</td>
+
+<td>
+
+${
+loan.status=="Closed"
+
+?
+
+`Closed`
+
+:
+
+`<button
+style="
+background:#0b7a3e;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:5px;"
+onclick="collectEMI(${index})">
+
+Collect
+
+</button>`
+
+}
 
 </td>
 
@@ -3580,7 +3815,7 @@ ${e.paid?"Paid":"Pending"}
 
 });
 
-document.getElementById("emiTable").innerHTML=html;
+document.getElementById("emiTable").innerHTML = html;
 
 }
 function saveLoan(){
@@ -3668,7 +3903,26 @@ approvedDate:"",
 
 };
 
-loans.push(loan);
+if(editingLoanIndex==-1){
+
+    loans.push(loan);
+
+}else{
+
+    loan.id = loans[editingLoanIndex].id;
+    loan.status = loans[editingLoanIndex].status;
+    loan.paid = loans[editingLoanIndex].paid;
+    loan.balance = loans[editingLoanIndex].balance;
+    loan.approvedBy = loans[editingLoanIndex].approvedBy;
+    loan.approvedDate = loans[editingLoanIndex].approvedDate;
+
+    loans[editingLoanIndex] = loan;
+
+    editingLoanIndex = -1;
+
+}
+if(editingLoanIndex==-1){
+
 let schedules =
 JSON.parse(localStorage.getItem("emiSchedule")) || [];
 
@@ -3684,17 +3938,21 @@ for(let i=1;i<=weeks;i++){
 
         dueDate:dueDate.toLocaleDateString(),
 
-        amount:parseFloat(weekly),
+        amount:Number(weekly),
 
         paid:false,
 
         paidDate:"",
 
-        balance:parseFloat(weekly)
+        balance:Number(weekly)
 
     });
 
     dueDate.setDate(dueDate.getDate()+7);
+
+}
+
+localStorage.setItem("emiSchedule",JSON.stringify(schedules));
 
 }
 
@@ -3890,7 +4148,26 @@ alert(
 }
 function editLoan(index){
 
-alert("Loan Edit Module will be added in Version 2.");
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let loan = loans[index];
+
+editingLoanIndex = index;
+
+openLoanModal();
+
+setTimeout(function(){
+
+document.getElementById("loanCustomer").value = loan.customerId;
+document.getElementById("loanAmount").value = loan.amount;
+document.getElementById("processingFee").value = loan.processing || 0;
+document.getElementById("insuranceFee").value = loan.insurance || 0;
+document.getElementById("loanDate").value = loan.loanDate;
+document.getElementById("loanType").value = loan.loanType;
+document.getElementById("loanInterest").value = loan.interest;
+document.getElementById("loanWeeks").value = loan.weeks;
+
+},100);
 
 }
 function printPromissoryLoan(index){
@@ -4007,77 +4284,85 @@ document.getElementById("collectionTable").innerHTML=html;
 
 }
 function collectEMI(index){
-let schedule=JSON.parse(localStorage.getItem("emiSchedule"))||[];
-let loans=JSON.parse(localStorage.getItem("loans"))||[];
-let loan=loans[index];
-let emi=schedule.find(e=>e.loanId==loan.id && e.paid==false);
 
-if(loan.balance<=0){
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+let schedule = JSON.parse(localStorage.getItem("emiSchedule")) || [];
+let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
 
-alert("Loan already closed.");
+let loan = loans[index];
 
-return;
-
+if(!loan){
+    alert("Loan not found.");
+    return;
 }
 
-loan.balance-=parseFloat(loan.weekly);
+if(loan.status=="Closed"){
+    alert("Loan already closed.");
+    return;
+}
 
-loan.paid=(loan.paid||0)+parseFloat(loan.weekly);
+let emi = schedule.find(e =>
+    e.loanId==loan.id && !e.paid
+);
+
+if(!emi){
+    alert("No pending EMI.");
+    return;
+}
+
+let amount = Number(loan.weekly);
+
+loan.balance = Math.max(0, Number(loan.balance)-amount);
+loan.paid = Number(loan.paid||0)+amount;
 loan.lastCollectionDate = new Date().toLocaleDateString();
 
-let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+emi.paid = true;
+emi.paidDate = new Date().toLocaleDateString();
+emi.balance = 0;
 
 history.push({
 
 receiptNo:"RCPT"+String(history.length+1).padStart(4,"0"),
 
-    loanId: loan.id,
+loanId:loan.id,
 
-    customer: loan.customerName,
+customer:loan.customerName,
 
-    amount: parseFloat(loan.weekly),
+group:loan.group,
 
-    date: new Date().toLocaleDateString(),
+amount:amount,
 
-    balance: loan.balance,
+date:new Date().toLocaleDateString(),
 
-    collectedBy: document.getElementById("currentUser").innerText
+balance:loan.balance,
+
+collectedBy:document.getElementById("currentUser").innerText
 
 });
 
-localStorage.setItem("collectionHistory", JSON.stringify(history));
-
-localStorage.setItem("loans", JSON.stringify(loans));
-
-loadCollections();
-
-loadLoans();
-
-showDashboard();
-
-if(loan.balance<0){
+if(loan.balance<=0){
 
 loan.balance=0;
-
-}
-
-if(loan.balance==0){
 
 loan.status="Closed";
 
 }
 
 localStorage.setItem("loans",JSON.stringify(loans));
+localStorage.setItem("emiSchedule",JSON.stringify(schedule));
+localStorage.setItem("collectionHistory",JSON.stringify(history));
 
-loadCollections();
+if(document.getElementById("loanTable")) loadLoans();
 
-loadDailyCollection();
+if(document.getElementById("dailyCollectionTable")) loadDailyCollection();
 
-loadLoans();
+if(document.getElementById("emiTable")) loadEMI();
+
+if(document.getElementById("historyTable")) loadHistory();
 
 showDashboard();
 
-alert("Weekly EMI Collected Successfully.");
+alert("EMI Collected Successfully.");
 
 }
 
