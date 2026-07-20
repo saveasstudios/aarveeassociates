@@ -438,8 +438,6 @@ AARVEE Associates
 
 <li onclick="showPage('guarantor')">🛡️ Guarantors</li>
 
-<li onclick="showPage('documents')">📁 Documents</li>
-
 <li onclick="showPage('loan')">💰 Loan Entry</li>
 
 <li onclick="showPage('approval')">✅ Loan Approval</li>
@@ -828,10 +826,6 @@ function showPage(page){
     if(page=="guarantor"){
     showGuarantors();
 }
-if(page=="documents"){
-    showDocuments();
-}
-
     if(page=="loan"){
         showLoans();
     }
@@ -2392,90 +2386,6 @@ onkeyup="loadEMI()">
 loadEMI();
 
 }
-function showDocuments(){
-
-document.getElementById("pageTitle").innerHTML="Documents";
-
-let file=localStorage.getItem("promissoryDocument");
-let fileName=localStorage.getItem("promissoryDocumentName") || "";
-
-document.getElementById("content").innerHTML=`
-
-<h2>Promissory Note Document</h2>
-
-<input
-type="file"
-id="promissoryUpload"
-accept=".pdf,.jpg,.jpeg,.png">
-
-<br><br>
-
-<button
-onclick="savePromissoryDocument()"
-style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;">
-💾 Save Promissory Note
-</button>
-
-${file ? `
-
-<button
-onclick="downloadPromissoryDocument()"
-style="padding:10px 20px;background:#007bff;color:white;border:none;border-radius:6px;margin-left:10px;">
-⬇ Download Promissory Note
-</button>
-
-<br><br>
-
-<b>Saved File:</b> ${fileName}
-
-` : ""}
-
-`;
-
-}
-
-function downloadPromissoryDocument(){
-
-let data=localStorage.getItem("promissoryDocument");
-
-if(!data){
-alert("No Promissory Note Uploaded");
-return;
-}
-
-let a=document.createElement("a");
-
-a.href=data;
-a.download=localStorage.getItem("promissoryDocumentName") || "PromissoryNote";
-
-a.click();
-
-}
-function savePromissoryDocument(){
-
-let file=document.getElementById("promissoryUpload").files[0];
-
-if(!file){
-    alert("Please select a Promissory Note.");
-    return;
-}
-
-let reader=new FileReader();
-
-reader.onload=function(e){
-
-    localStorage.setItem("promissoryDocument",e.target.result);
-    localStorage.setItem("promissoryDocumentName",file.name);
-
-    alert("Promissory Note Saved Successfully.");
-
-    showDocuments();
-
-};
-
-reader.readAsDataURL(file);
-
-}
 function showPromissory(){
 
 document.getElementById("pageTitle").innerHTML="Promissory Note";
@@ -2487,7 +2397,7 @@ document.getElementById("content").innerHTML=`
 <br>
 
 <input
-id="searchLoan"
+id="promissoryLoanSearch"
 placeholder="Enter Loan ID"
 style="
 padding:10px;
@@ -2510,6 +2420,31 @@ Load
 </button>
 
 <div id="promissoryContent"></div>
+
+<hr style="margin:30px 0;">
+
+<h3>Signed Promissory Note</h3>
+
+<input
+type="file"
+id="signedPromissoryFile"
+accept=".pdf,.jpg,.jpeg,.png">
+
+<br><br>
+
+<button onclick="uploadSignedPromissory()">
+Upload
+</button>
+
+<button onclick="downloadSignedPromissory()">
+Download
+</button>
+
+<button onclick="deleteSignedPromissory()">
+Delete
+</button>
+
+<p id="signedFileName"></p>
 
 `;
 
@@ -2555,7 +2490,7 @@ let loans = JSON.parse(localStorage.getItem("loans")) || [];
 
 let customers = JSON.parse(localStorage.getItem("customers")) || [];
 
-let loanId = document.getElementById("searchLoan").value;
+let loanId = document.getElementById("promissoryLoanSearch").value;
 
 let loan = loans.find(l=>l.id==loanId);
 
@@ -2739,6 +2674,20 @@ Print
 </div>
 
 `;
+let signed =
+JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+if(signed[loan.id]){
+
+document.getElementById("signedFileName").innerHTML =
+"Current File : " + signed[loan.id].name;
+
+}else{
+
+document.getElementById("signedFileName").innerHTML =
+"No signed file uploaded.";
+
+}
 
 }
 function printPromissory(){
@@ -3498,7 +3447,7 @@ function printPromissoryLoan(index){
 let loans =
 JSON.parse(localStorage.getItem("loans"))||[];
 
-document.getElementById("searchLoan").value=
+document.getElementById("promissoryLoanSearch").value=
 
 loans[index].id;
 
@@ -3506,7 +3455,7 @@ showPromissory();
 
 setTimeout(function(){
 
-document.getElementById("searchLoan").value=
+document.getElementById("promissoryLoanSearch").value=
 
 loans[index].id;
 
@@ -3607,29 +3556,10 @@ document.getElementById("collectionTable").innerHTML=html;
 
 }
 function collectEMI(index){
-    let schedule =
-
-JSON.parse(localStorage.getItem("emiSchedule")) || [];
-
-
-
-let emi =
-
-schedule.find(e=>
-
-
-
-e.loanId==loan.id &&
-
-e.paid==false
-
-
-
-);
-
+let schedule=JSON.parse(localStorage.getItem("emiSchedule"))||[];
 let loans=JSON.parse(localStorage.getItem("loans"))||[];
-
 let loan=loans[index];
+let emi=schedule.find(e=>e.loanId==loan.id && e.paid==false);
 
 if(loan.balance<=0){
 
@@ -3708,6 +3638,7 @@ emi.paidDate=
 new Date().toLocaleDateString();
 
 emi.balance=0;
+localStorage.setItem("emiSchedule",JSON.stringify(schedule));
 
 }
 function showExpenses(){
@@ -4576,6 +4507,109 @@ localStorage.setItem(
 "emiSchedule",
 JSON.stringify(schedule)
 );
+
+function uploadSignedPromissory(){
+
+let loanId =
+document.getElementById("promissoryLoanSearch").value;
+
+let file =
+document.getElementById("signedPromissoryFile").files[0];
+
+if(!file){
+
+alert("Select a file.");
+
+return;
+
+}
+
+let reader = new FileReader();
+
+reader.onload=function(e){
+
+let docs =
+JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+docs[loanId]={
+
+name:file.name,
+
+file:e.target.result,
+
+date:new Date().toLocaleString()
+
+};
+
+localStorage.setItem(
+"signedPromissory",
+JSON.stringify(docs)
+);
+
+alert("Signed Promissory Uploaded.");
+
+loadPromissory();
+
+};
+
+reader.readAsDataURL(file);
+
+}
+function downloadSignedPromissory(){
+
+let loanId =
+document.getElementById("promissoryLoanSearch").value;
+
+let docs =
+JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+if(!docs[loanId]){
+
+alert("No file uploaded.");
+
+return;
+
+}
+
+let a=document.createElement("a");
+
+a.href=docs[loanId].file;
+
+a.download=docs[loanId].name;
+
+a.click();
+
+}
+function deleteSignedPromissory(){
+
+let loanId =
+document.getElementById("promissoryLoanSearch").value;
+
+let docs =
+JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+if(!docs[loanId]){
+
+alert("No file found.");
+
+return;
+
+}
+
+if(confirm("Delete this signed file?")){
+
+delete docs[loanId];
+
+localStorage.setItem(
+"signedPromissory",
+JSON.stringify(docs)
+);
+
+loadPromissory();
+
+}
+
+}
 
 </script>
 
