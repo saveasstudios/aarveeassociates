@@ -752,43 +752,38 @@ document.getElementById("content").innerHTML=`
 
 function showGroups(){
 
+document.getElementById("pageTitle").innerHTML="Group Entry";
+
 document.getElementById("content").innerHTML=`
 
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-width:100%;
-margin-bottom:20px;
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+<h2>Group Entry</h2>
+
+<button
+onclick="openGroupModal()"
+style="
+background:#0b7a3e;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:6px;
+cursor:pointer;
 ">
 
-<div>
-    <h2 style="margin:0;">Group Entry</h2>
-</div>
++ Add Group
 
-<div>
-    <button
-        onclick="openGroupModal()"
-        style="
-        padding:10px 20px;
-        background:#0b7a3e;
-        color:white;
-        border:none;
-        border-radius:6px;
-        cursor:pointer;">
-        + Add Group
-    </button>
-</div>
+</button>
 
 </div>
 
-<input id="searchGroup"
-
+<input
+id="searchGroup"
 placeholder="Search Group"
+style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:15px;"
+onkeyup="loadGroups()">
 
-onkeyup="loadGroups()"
-
-style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:15px;">
+<div style="overflow-x:auto;">
 
 <table width="100%" border="1" cellpadding="10" cellspacing="0">
 
@@ -797,15 +792,10 @@ style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-b
 <tr>
 
 <th>ID</th>
-
 <th>Group Name</th>
-
 <th>Area</th>
-
 <th>Meeting Day</th>
-
 <th>Collection Day</th>
-
 <th>Action</th>
 
 </tr>
@@ -818,12 +808,13 @@ style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-b
 
 </table>
 
+</div>
+
 `;
 
 loadGroups();
 
 }
-
 function showPage(page){
 
     document.getElementById("pageTitle").innerHTML =
