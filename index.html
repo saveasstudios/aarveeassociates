@@ -756,11 +756,24 @@ document.getElementById("content").innerHTML=`
 
 <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
 
-<h2>Group Entry</h2>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
 
-style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border<button onclick="openGroupModal()" -radius:6px;cursor:pointer;">
-+ Add Group
-</button>
+    <h2>Group Entry</h2>
+
+    <button
+        onclick="openGroupModal()"
+        style="
+            padding:10px 20px;
+            background:#0b7a3e;
+            color:white;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        ">
+        + Add Group
+    </button>
+
+</div>
 
 </div>
 
@@ -1241,35 +1254,23 @@ document.getElementById("content").innerHTML=`
 <div class="cards">
 
 <div class="card">
-
 <h3>Total Groups</h3>
-
 <h1 id="rGroups">0</h1>
-
 </div>
 
 <div class="card">
-
 <h3>Total Customers</h3>
-
 <h1 id="rCustomers">0</h1>
-
 </div>
 
 <div class="card">
-
 <h3>Total Loans</h3>
-
 <h1 id="rLoans">0</h1>
-
 </div>
 
 <div class="card">
-
 <h3>Total Outstanding</h3>
-
 <h1 id="rOutstanding">₹0</h1>
-
 </div>
 
 </div>
@@ -1277,42 +1278,25 @@ document.getElementById("content").innerHTML=`
 <br>
 
 <button
-onclick="exportBackup()"
-style="
-padding:10px 20px;
-background:#0b7a3e;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;">
-
-Download Backup
-
+    onclick="exportBackup()"
+    style="
+        padding:10px 20px;
+        background:#0b7a3e;
+        color:white;
+        border:none;
+        border-radius:6px;
+        cursor:pointer;
+    ">
+    Download Backup
 </button>
 
 <br><br>
 
 <input
-type="file"
-id="restoreFile"
-accept=".json"
-onchange="restoreBackup(event)">
-
-<input
-
-type="file"
-
-id="restoreFile"
-
-accept=".json"
-
-onchange="restoreBackup(event)">
-
-style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
-
-Download Backup
-
-</button>
+    type="file"
+    id="restoreFile"
+    accept=".json"
+    onchange="restoreBackup(event)">
 
 `;
 
@@ -2476,13 +2460,121 @@ function showLoanCard(){
 
     `;
 }
+function printLoanCard(){
+
+    let data = document.getElementById("loanCardContent").innerHTML;
+
+    let w = window.open("", "_blank");
+
+    w.document.write(`
+    <html>
+    <head>
+    <title>Loan Card</title>
+    <style>
+        body{
+            font-family:Arial;
+            padding:20px;
+        }
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+        table,th,td{
+            border:1px solid #000;
+        }
+        th,td{
+            padding:8px;
+        }
+        button{
+            display:none;
+        }
+    </style>
+    </head>
+    <body>
+    ${data}
+    </body>
+    </html>
+    `);
+
+    w.document.close();
+    w.print();
+}
 function loadLoanCard(){
 
-    let loanId=document.getElementById("loanCardSearch").value;
+    let loanId = document.getElementById("loanCardSearch").value.trim();
 
-    document.getElementById("loanCardContent").innerHTML=
-    "<h3>Loan Card for : "+loanId+"</h3>";
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+    let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
 
+    let loan = loans.find(l => l.id === loanId);
+
+    if(!loan){
+        alert("Loan not found.");
+        return;
+    }
+
+    let customer = customers.find(c => c.id === loan.customerId);
+
+    let collections = history.filter(h => h.loanId === loan.id);
+
+    let rows = "";
+
+    collections.forEach((c,i)=>{
+        rows += `
+        <tr>
+            <td>${i+1}</td>
+            <td>${c.date}</td>
+            <td>₹${Number(c.amount).toFixed(2)}</td>
+            <td>₹${Number(c.balance).toFixed(2)}</td>
+        </tr>`;
+    });
+
+    if(rows===""){
+        rows = `<tr><td colspan="4" style="text-align:center;">No Collections Yet</td></tr>`;
+    }
+
+    document.getElementById("loanCardContent").innerHTML = `
+
+    <div style="background:#fff;padding:20px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,.1);">
+
+        <h2>AARVEE ASSOCIATES</h2>
+        <hr><br>
+
+        <p><b>Loan ID :</b> ${loan.id}</p>
+        <p><b>Customer :</b> ${loan.customerName}</p>
+        <p><b>Group :</b> ${loan.group}</p>
+        <p><b>Loan Date :</b> ${loan.loanDate}</p>
+        <p><b>Loan Amount :</b> ₹${loan.amount}</p>
+        <p><b>Weekly EMI :</b> ₹${loan.weekly}</p>
+        <p><b>Outstanding :</b> ₹${loan.balance.toFixed(2)}</p>
+        <p><b>Status :</b> ${loan.status}</p>
+
+        <br>
+
+        <table width="100%" border="1" cellspacing="0" cellpadding="8">
+            <thead style="background:#0b7a3e;color:white;">
+                <tr>
+                    <th>No</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows}
+            </tbody>
+        </table>
+
+        <br>
+
+        <button onclick="printLoanCard()"
+            style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;">
+            Print Loan Card
+        </button>
+
+    </div>
+    `;
 }
 function loadPromissory(){
 
