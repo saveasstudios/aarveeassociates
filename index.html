@@ -754,25 +754,30 @@ function showGroups(){
 
 document.getElementById("content").innerHTML=`
 
-<div style="display:flex;justify-content:space-between;margin-bottom:20px;">
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+width:100%;
+margin-bottom:20px;
+">
 
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+<div>
+    <h2 style="margin:0;">Group Entry</h2>
+</div>
 
-    <h2>Group Entry</h2>
-
+<div>
     <button
         onclick="openGroupModal()"
         style="
-            padding:10px 20px;
-            background:#0b7a3e;
-            color:white;
-            border:none;
-            border-radius:6px;
-            cursor:pointer;
-        ">
+        padding:10px 20px;
+        background:#0b7a3e;
+        color:white;
+        border:none;
+        border-radius:6px;
+        cursor:pointer;">
         + Add Group
     </button>
-
 </div>
 
 </div>
