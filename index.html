@@ -211,8 +211,7 @@ transform:translateX(6px);
 /* MAIN */
 
 .main{
-
-margin-left:240px;
+    margin-left:260px;
 height:100vh;
 overflow-y:auto;
 overflow-x:hidden;
@@ -359,12 +358,142 @@ font-size:13px;
 color:#9CA3AF;
 
 }
+
+/* ===== PREMIUM BUTTONS ===== */
+
+.btn{
+
+display:inline-flex;
+
+align-items:center;
+
+justify-content:center;
+
+padding:10px 18px;
+
+border:none;
+
+border-radius:10px;
+
+font-size:14px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.25s;
+
+text-decoration:none;
+
+}
+
+/* ===== SEARCH BOX ===== */
+
+.search-box{
+
+width:320px;
+
+padding:12px 18px;
+
+border:1px solid #D1D5DB;
+
+border-radius:12px;
+
+background:white;
+
+font-size:14px;
+
+outline:none;
+
+transition:.3s;
+
+}
+
+.search-box:focus{
+
+border-color:#14B8A6;
+
+box-shadow:0 0 0 4px rgba(20,184,166,.15);
+
+}
+
 .modal-box input,
 .modal-box select,
 .modal-box textarea{
 
-    width:100%;
-    margin-bottom:15px;
+width:100%;
+margin-bottom:15px;
+
+}
+
+.btn:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 8px 18px rgba(0,0,0,.15);
+
+}
+
+.btn-primary{
+
+background:#0F766E;
+
+color:#fff;
+
+}
+
+.btn-primary:hover{
+
+background:#0B5E57;
+
+}
+
+.btn-success{
+
+background:#16A34A;
+
+color:#fff;
+
+}
+
+.btn-warning{
+
+background:#F59E0B;
+
+color:#fff;
+
+}
+
+.btn-info{
+
+background:#2563EB;
+
+color:#fff;
+
+}
+
+.btn-danger{
+
+background:#DC2626;
+
+color:#fff;
+
+}
+
+.btn-purple{
+
+background:#7C3AED;
+
+color:#fff;
+
+}
+
+.modal-box input,
+.modal-box select,
+.modal-box textarea{
+
+width:100%;
+margin-bottom:15px;
 
 }
 
@@ -523,6 +652,58 @@ border-radius:6px;
 
 cursor:pointer;
 
+}
+/* ===== PREMIUM TABLE ===== */
+
+.table-container{
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(15,23,42,.08);
+    overflow:hidden;
+    border:1px solid #E5E7EB;
+    margin-top:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+}
+
+thead{
+    background:#0F766E;
+    color:#fff;
+}
+
+thead th{
+    padding:16px;
+    font-size:14px;
+    font-weight:600;
+    text-align:left;
+}
+
+tbody td{
+    padding:15px;
+    border-bottom:1px solid #ECEFF3;
+    font-size:14px;
+}
+
+tbody tr:nth-child(even){
+    background:#FAFBFC;
+}
+
+tbody tr:hover{
+    background:#EEF9F8;
+    transition:.2s;
+}
+
+table button{
+    padding:8px 14px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:600;
 }
 
 /* <-- PASTE HERE */
@@ -833,7 +1014,7 @@ document.getElementById("content").innerHTML=`
 
 <h3>👥 Total Groups</h3>
 
-<h1>${groups.length}</h1>
+<h1 id="groupCount">${groups.length}</h1>
 
 <small>Registered Groups</small>
 
@@ -855,7 +1036,7 @@ document.getElementById("content").innerHTML=`
 
 <h1>${activeLoans}</h1>
 
-<small>Running Loans</small>
+<small>Currently Running</small>
 
 </div>
 
@@ -885,17 +1066,7 @@ document.getElementById("content").innerHTML=`
 
 <h1 id="weeklyCollection">₹0</h1>
 
-<small>This Week</small>
-
-</div>
-
-<div class="card">
-
-<h3>📊 Monthly Collection</h3>
-
-<h1 id="monthlyCollection">₹0</h1>
-
-<small>This Month</small>
+<small>Current Week</small>
 
 </div>
 
@@ -926,31 +1097,26 @@ document.getElementById("content").innerHTML=`
 <h2>Group Entry</h2>
 
 <button
-onclick="openGroupModal()"
-style="
-background:#0b7a3e;
-color:white;
-border:none;
-padding:10px 20px;
-border-radius:6px;
-cursor:pointer;
-">
+class="btn btn-primary"
+onclick="openGroupModal()">
 
-+ Add Group
+➕ Add Group
 
 </button>
 
 </div>
 
 <input
+class="search-box"
 id="searchGroup"
-placeholder="Search Group"
-style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:15px;"
+placeholder="🔍 Search Group"
 onkeyup="loadGroups()">
+
+<div class="table-container">
 
 <div style="overflow-x:auto;">
 
-<table width="100%" border="1" cellpadding="10" cellspacing="0">
+<table>
 
 <thead style="background:#0b7a3e;color:white;">
 
@@ -1711,18 +1877,18 @@ html+=`
 <td>
 
 <button
-style="background:#007bff;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;"
+class="btn btn-info"
 onclick="editGroup(${index})">
 
-Edit
+✏ Edit
 
 </button>
 
 <button
-style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;"
+class="btn btn-danger"
 onclick="deleteGroup(${index})">
 
-Delete
+🗑 Delete
 
 </button>
 
@@ -2202,28 +2368,27 @@ document.getElementById("content").innerHTML=`
 
 <h2>Customer Management</h2>
 
-<button onclick="openCustomerModal()"
-style="background:#0b7a3e;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;">
+<button
+class="btn btn-primary"
+onclick="openCustomerModal()">
 
-+ Add Customer
+➕ Add Customer
 
 </button>
 
 </div>
 
 <input
-
+class="search-box"
 id="searchCustomer"
-
-placeholder="Search Customer"
-
-style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:15px;"
-
+placeholder="🔍 Search Customer"
 onkeyup="loadCustomers()">
+
+<div class="table-container">
 
 <div style="overflow-x:auto;">
 
-<table width="100%" border="1" cellspacing="0" cellpadding="10">
+<table>
 
 <thead style="background:#0b7a3e;color:white;">
 
@@ -3006,6 +3171,8 @@ let card = `
 ${rows}
 
 </table>
+
+</div>
 
 </div>
 
