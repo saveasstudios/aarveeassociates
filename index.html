@@ -2435,30 +2435,47 @@ Delete
 }
 function showLoanCard(){
 
-    document.getElementById("pageTitle").innerHTML="Loan Card";
+document.getElementById("pageTitle").innerHTML="Loan Card";
 
-    document.getElementById("content").innerHTML=`
+document.getElementById("content").innerHTML=`
 
-    <h2>Loan Card</h2>
+<div style="display:flex;justify-content:space-between;align-items:center;">
 
-    <br>
+<h2>Loan Collection Card</h2>
 
-    <input
-        id="loanCardSearch"
-        placeholder="Enter Loan ID"
-        style="padding:10px;width:300px;border:1px solid #ccc;border-radius:6px;">
+</div>
 
-    <button
-        onclick="loadLoanCard()"
-        style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;margin-left:10px;">
+<br>
 
-        Load
+<input
+id="loanCardSearch"
+placeholder="Enter Loan ID"
+style="
+width:300px;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;">
 
-    </button>
+<button
+onclick="loadLoanCard()"
+style="
+padding:12px 25px;
+background:#0b7a3e;
+color:white;
+border:none;
+border-radius:8px;
+margin-left:10px;">
 
-    <div id="loanCardContent" style="margin-top:20px;"></div>
+Load Loan
 
-    `;
+</button>
+
+<hr style="margin:25px 0;">
+
+<div id="loanCardContent"></div>
+
+`;
+
 }
 function printLoanCard(){
 
@@ -2499,82 +2516,424 @@ function printLoanCard(){
     w.document.close();
     w.print();
 }
+function printLoanFront(){
+
+let id=document.getElementById("loanCardSearch").value.trim();
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+let loan=loans.find(x=>x.id==id);
+
+if(!loan){
+    alert("Loan not found");
+    return;
+}
+
+let customer=customers.find(c=>c.id==loan.customerId);
+
+let card=`
+
+<div class="loan-card">
+
+<div class="header">
+
+<h2>AARVEE ASSOCIATES</h2>
+
+<p>Door No. XX, Pollachi</p>
+
+<p>Mobile : 90436 66166</p>
+
+</div>
+
+<hr>
+
+<table>
+
+<tr>
+
+<td><b>Name</b></td>
+
+<td>${customer.name}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Group</b></td>
+
+<td>${customer.group}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Mobile</b></td>
+
+<td>${customer.mobile}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Loan Date</b></td>
+
+<td>${loan.date}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Loan Amount</b></td>
+
+<td>₹${loan.amount}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Loan ID</b></td>
+
+<td>${loan.id}</td>
+
+</tr>
+
+</table>
+
+<br>
+
+<p style="font-size:12px">
+
+Borrower agrees to repay the loan as per the agreed weekly schedule.
+
+</p>
+
+</div>
+
+`;
+
+let html=`
+
+<html>
+
+<head>
+
+<title>Loan Card</title>
+
+<style>
+
+@page{
+
+size:A4 landscape;
+
+margin:10mm;
+
+}
+
+body{
+
+font-family:Arial;
+
+margin:0;
+
+padding:0;
+
+}
+
+.sheet{
+
+display:flex;
+
+justify-content:space-between;
+
+}
+
+.loan-card{
+
+width:48%;
+
+border:2px solid #000;
+
+padding:20px;
+
+box-sizing:border-box;
+
+height:180mm;
+
+}
+
+.header{
+
+text-align:center;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+td{
+
+padding:6px;
+
+font-size:14px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sheet">
+
+${card}
+
+${card}
+
+</div>
+
+</body>
+
+</html>
+
+`;
+
+let w=window.open("","","width=1200,height=900");
+
+w.document.write(html);
+
+w.document.close();
+
+w.focus();
+
+w.print();
+
+}
+function printLoanBack(){
+
+let weeks = parseInt(loan.weeks || loan.installments || 24);
+let weekly = parseFloat(loan.weekly || loan.emi || 0);
+
+// Load collection history
+let collections = JSON.parse(localStorage.getItem("collections")) || [];
+let history = collections.filter(c => c.loanId == loan.id);
+
+let rows = "";
+
+for (let i = 1; i <= weeks; i++) {
+
+    let payment = history.find(h => h.installmentNo == i);
+
+    rows += `
+
+<tr>
+
+<td>${i}</td>
+
+<td>${payment ? payment.date : ""}</td>
+
+<td style="text-align:right;">
+${payment ? "₹" + payment.amount : "₹" + weekly}
+</td>
+
+<td></td>
+
+<td style="
+text-align:center;
+font-weight:bold;
+color:${payment ? "green" : "red"};">
+${payment ? "PAID" : "PENDING"}
+</td>
+
+</tr>
+
+`;
+
+}
+
+}
+function printLoanBoth(){
+
+printLoanFront();
+
+setTimeout(function(){
+
+printLoanBack();
+
+},1000);
+
+}
 function loadLoanCard(){
 
-    let loanId = document.getElementById("loanCardSearch").value.trim();
+let id=document.getElementById("loanCardSearch").value.trim();
 
-    let loans = JSON.parse(localStorage.getItem("loans")) || [];
-    let customers = JSON.parse(localStorage.getItem("customers")) || [];
-    let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
 
-    let loan = loans.find(l => l.id === loanId);
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
 
-    if(!loan){
-        alert("Loan not found.");
-        return;
-    }
+let loan=loans.find(x=>x.id==id);
 
-    let customer = customers.find(c => c.id === loan.customerId);
+if(!loan){
 
-    let collections = history.filter(h => h.loanId === loan.id);
+alert("Loan not found");
 
-    let rows = "";
+return;
 
-    collections.forEach((c,i)=>{
-        rows += `
-        <tr>
-            <td>${i+1}</td>
-            <td>${c.date}</td>
-            <td>₹${Number(c.amount).toFixed(2)}</td>
-            <td>₹${Number(c.balance).toFixed(2)}</td>
-        </tr>`;
-    });
+}
 
-    if(rows===""){
-        rows = `<tr><td colspan="4" style="text-align:center;">No Collections Yet</td></tr>`;
-    }
+let customer=customers.find(c=>c.id==loan.customerId);
 
-    document.getElementById("loanCardContent").innerHTML = `
+document.getElementById("loanCardContent").innerHTML=`
 
-    <div style="background:#fff;padding:20px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,.1);">
+<div style="
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 5px 20px rgba(0,0,0,.1);
+">
 
-        <h2>AARVEE ASSOCIATES</h2>
-        <hr><br>
+<h2>AARVEE ASSOCIATES</h2>
 
-        <p><b>Loan ID :</b> ${loan.id}</p>
-        <p><b>Customer :</b> ${loan.customerName}</p>
-        <p><b>Group :</b> ${loan.group}</p>
-        <p><b>Loan Date :</b> ${loan.loanDate}</p>
-        <p><b>Loan Amount :</b> ₹${loan.amount}</p>
-        <p><b>Weekly EMI :</b> ₹${loan.weekly}</p>
-        <p><b>Outstanding :</b> ₹${loan.balance.toFixed(2)}</p>
-        <p><b>Status :</b> ${loan.status}</p>
+<hr>
 
-        <br>
+<br>
 
-        <table width="100%" border="1" cellspacing="0" cellpadding="8">
-            <thead style="background:#0b7a3e;color:white;">
-                <tr>
-                    <th>No</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Balance</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${rows}
-            </tbody>
-        </table>
+<table width="100%">
 
-        <br>
+<tr>
 
-        <button onclick="printLoanCard()"
-            style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;">
-            Print Loan Card
-        </button>
+<td width="70%">
 
-    </div>
-    `;
+<b>Loan ID</b><br>
+
+${loan.id}
+
+</td>
+
+<td rowspan="5" align="center">
+
+<img
+
+src="${customer.photo}"
+
+style="
+width:120px;
+height:120px;
+border-radius:8px;
+object-fit:cover;
+border:2px solid #ddd;">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+<b>Name</b><br>
+
+${customer.name}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+<b>Group</b><br>
+
+${customer.group}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+<b>Loan Amount</b><br>
+
+₹${loan.amount}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+<b>Weekly EMI</b><br>
+
+₹${loan.weekly}
+
+</td>
+
+</tr>
+
+</table>
+
+<br>
+
+<button
+
+onclick="printLoanFront()"
+
+style="
+padding:12px 20px;
+background:#0b7a3e;
+color:white;
+border:none;
+border-radius:6px;">
+
+Print Front
+
+</button>
+
+<button
+
+onclick="printLoanBack()"
+
+style="
+padding:12px 20px;
+background:#0077cc;
+color:white;
+border:none;
+border-radius:6px;">
+
+Print Back
+
+</button>
+
+<button
+
+onclick="printLoanBoth()"
+
+style="
+padding:12px 20px;
+background:#ff9800;
+color:white;
+border:none;
+border-radius:6px;">
+
+Print Both
+
+</button>
+
+</div>
+
+`;
+
 }
 function loadPromissory(){
 
