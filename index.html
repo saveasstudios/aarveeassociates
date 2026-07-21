@@ -2602,19 +2602,37 @@ style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radiu
 }
 function openLoanModal(){
 
-document.getElementById("loanModal").style.display="flex";
+    document.getElementById("loanModal").style.display = "flex";
 
-let customers=JSON.parse(localStorage.getItem("customers"))||[];
+    // Load Customers
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
 
-let html="";
+    let customerHTML = '<option value="">Select Customer</option>';
 
-customers.forEach(c=>{
+    customers.forEach(c=>{
+        customerHTML += `
+        <option value="${c.id}">
+            ${c.name} (${c.group})
+        </option>`;
+    });
 
-html+=`<option value="${c.id}">${c.name} (${c.group})</option>`;
+    document.getElementById("loanCustomer").innerHTML = customerHTML;
 
-});
+    // Load Guarantors
+    let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
 
-document.getElementById("loanCustomer").innerHTML=html;
+    let guarantorHTML = '<option value="">Select Guarantor</option>';
+
+    guarantors.forEach(g=>{
+
+        guarantorHTML += `
+        <option value="${g.id}">
+            ${g.name}
+        </option>`;
+
+    });
+
+    document.getElementById("loanGuarantor").innerHTML = guarantorHTML;
 
 }
 
@@ -4633,6 +4651,7 @@ let loan = loans[index];
 
 let customer =
 customers.find(c=>c.id==loan.customerId);
+let guarantor = document.getElementById("loanGuarantor").value;
 
 if(!customer){
 
