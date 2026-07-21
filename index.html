@@ -1141,6 +1141,8 @@ onkeyup="loadGroups()">
 
 </div>
 
+</div>
+
 `;
 
 loadGroups();
@@ -2416,6 +2418,8 @@ onkeyup="loadCustomers()">
 
 </div>
 
+</div>
+
 `;
 
 loadCustomers();
@@ -2629,22 +2633,27 @@ document.getElementById("content").innerHTML=`
 
 <h2>Loan Management</h2>
 
-<button onclick="openLoanModal()"
-style="background:#0b7a3e;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;">
+<button
+class="btn btn-primary"
+onclick="openLoanModal()">
 
-+ New Loan
+➕ New Loan
 
 </button>
 
 </div>
 
 <input
+class="search-box"
 id="searchLoan"
-placeholder="Search Customer / Loan ID"
-style="width:320px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:15px;"
+placeholder="🔍 Search Customer / Loan ID"
 onkeyup="loadLoans()">
 
-<table width="100%" cellspacing="0" cellpadding="10" border="1">
+<div class="table-container">
+
+<div style="overflow-x:auto;">
+
+<table>
 
 <thead style="background:#0b7a3e;color:white;">
 
@@ -2677,6 +2686,10 @@ onkeyup="loadLoans()">
 <tbody id="loanTable"></tbody>
 
 </table>
+
+</div>
+
+</div>
 
 `;
 
