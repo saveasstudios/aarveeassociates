@@ -2604,7 +2604,7 @@ function openLoanModal(){
 
     document.getElementById("loanModal").style.display = "flex";
 
-    // Load Customers
+    // Customers
     let customers = JSON.parse(localStorage.getItem("customers")) || [];
 
     let customerHTML = '<option value="">Select Customer</option>';
@@ -2618,7 +2618,7 @@ function openLoanModal(){
 
     document.getElementById("loanCustomer").innerHTML = customerHTML;
 
-    // Load Guarantors
+    // Guarantors
     let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
 
     let guarantorHTML = '<option value="">Select Guarantor</option>';
@@ -2626,7 +2626,7 @@ function openLoanModal(){
     guarantors.forEach(g=>{
 
         guarantorHTML += `
-        <option value="${g.id}">
+        <option value="${g.name}">
             ${g.name}
         </option>`;
 
@@ -2634,6 +2634,28 @@ function openLoanModal(){
 
     document.getElementById("loanGuarantor").innerHTML = guarantorHTML;
 
+}
+if(customers.length>0){
+
+    document.getElementById("loanCustomer").selectedIndex = 1;
+
+    loadCustomerGuarantor();
+
+}
+function loadCustomerGuarantor(){
+
+    let customerId = document.getElementById("loanCustomer").value;
+
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+    let customer = customers.find(c => c.id == customerId);
+
+    if(!customer) return;
+
+    document.getElementById("loanGuarantor").innerHTML =
+        `<option value="${customer.guarantor}">
+            ${customer.guarantor}
+        </option>`;
 }
 
 function closeLoanModal(){
@@ -6082,10 +6104,11 @@ accept="image/*">
 
 <h2>New Loan</h2>
 
-<select id="loanCustomer"></select>
+<select id="loanCustomer" onchange="loadCustomerGuarantor()"></select>
+
 <label>Guarantor</label>
 
-<select id="loanGuarantor"></select>
+<select id="loanGuarantor" disabled></select>
 
 <input id="loanAmount" type="number" placeholder="Loan Amount">
 
