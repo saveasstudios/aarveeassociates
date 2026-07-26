@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6,13 +7,17 @@
 
 <title>AARVEE ASSOCIATES - Loan Management System</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
 
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
+font-family:'Montserrat',sans-serif;
 }
 
 :root{
@@ -42,7 +47,7 @@ background:var(--background);
 
 color:var(--text);
 
-font-family:"Segoe UI",sans-serif;
+font-family:'Montserrat',sans-serif;
 
 overflow:hidden;
 
@@ -841,100 +846,85 @@ AARVEE Associates
 
 <div id="customerModal" class="modal">
 
-    <div class="modal-box">
+<div class="modal-box">
 
-        <h2>Add Customer</h2>
+    <h2>Add Customer</h2>
 
-<label>Customer Name</label>
-<input id="cName" placeholder="Customer Name">
+<label>Customer Name</label><input id="cName" placeholder="Customer Name">
 
-<label>Father / Husband Name</label>
-<input id="cFather" placeholder="Father / Husband Name">
+<label>Father / Husband Name</label><input id="cFather" placeholder="Father / Husband Name">
 
-<label>Mobile Number</label>
-<input id="cMobile" placeholder="Mobile Number">
+<label>Mobile Number</label><input id="cMobile" placeholder="Mobile Number">
 
-<label>Alternate Mobile</label>
-<input id="cAltMobile" placeholder="Alternate Mobile">
+<label>Alternate Mobile</label><input id="cAltMobile" placeholder="Alternate Mobile">
 
-<label>Aadhaar Number</label>
-<input id="cAadhaar" placeholder="Aadhaar Number">
+<label>Aadhaar Number</label><input id="cAadhaar" placeholder="Aadhaar Number">
 
-<label>PAN Number</label>
-<input id="cPan" placeholder="PAN Number">
+<label>PAN Number</label><input id="cPan" placeholder="PAN Number">
 
-<label>Door No / House No</label>
-<input id="cDoorNo" placeholder="Door No / House No">
+<label>Door No / House No</label><input id="cDoorNo" placeholder="Door No / House No">
 
-<label>Street</label>
-<input id="cStreet" placeholder="Street">
+<label>Street</label><input id="cStreet" placeholder="Street">
 
-<label>Area / Village</label>
-<input id="cArea" placeholder="Area / Village">
+<label>Area / Village</label><input id="cArea" placeholder="Area / Village">
 
-<label>City / Taluk</label>
-<input id="cCity" placeholder="City / Taluk">
+<label>City / Taluk</label><input id="cCity" placeholder="City / Taluk">
 
-<label>District</label>
-<input id="cDistrict" placeholder="District">
+<label>District</label><input id="cDistrict" placeholder="District">
 
-<label>State</label>
-<input id="cState" value="Tamil Nadu">
+<label>State</label><input id="cState" value="Tamil Nadu">
 
-<label>Pincode</label>
-<input id="cPincode" placeholder="Pincode">
+<label>Pincode</label><input id="cPincode" placeholder="Pincode">
 
-<label>Group</label>
-<select id="cGroup"></select>
+<label>Group</label><select id="cGroup"></select>
 
-<label>Guarantor</label>
-<select id="cGuarantor"></select>
+<label>Guarantor</label><select id="cGuarantor"></select>
 
-        <label>Customer Photo</label>
+    <label>Customer Photo</label>
 
-        <input
-            type="file"
-            id="cPhoto"
-            accept="image/*"
-            onchange="previewPhoto(event)">
+    <input
+        type="file"
+        id="cPhoto"
+        accept="image/*"
+        onchange="previewPhoto(event)">
 
-        <img
-            id="photoPreview"
-            style="display:none;width:120px;height:120px;border-radius:50%;margin-bottom:15px;object-fit:cover;">
+    <img
+        id="photoPreview"
+        style="display:none;width:120px;height:120px;border-radius:50%;margin-bottom:15px;object-fit:cover;">
 
-        <label>Aadhaar Front</label>
+    <label>Aadhaar Front</label>
 
-        <input
-            type="file"
-            id="aadhaarFront"
-            accept="image/*"
-            onchange="previewAadhaarFront(event)">
+    <input
+        type="file"
+        id="aadhaarFront"
+        accept="image/*"
+        onchange="previewAadhaarFront(event)">
 
-        <label>Aadhaar Back</label>
+    <label>Aadhaar Back</label>
 
-        <input
-            type="file"
-            id="aadhaarBack"
-            accept="image/*"
-            onchange="previewAadhaarBack(event)">
+    <input
+        type="file"
+        id="aadhaarBack"
+        accept="image/*"
+        onchange="previewAadhaarBack(event)">
 
-        <div class="modal-buttons">
+    <div class="modal-buttons">
 
-            <button onclick="saveCustomer()">
+        <button onclick="saveCustomer()">
 
-                Save Customer
+            Save Customer
 
-            </button>
+        </button>
 
-            <button onclick="closeCustomerModal()">
+        <button onclick="closeCustomerModal()">
 
-                Cancel
+            Cancel
 
-            </button>
-
-        </div>
+        </button>
 
     </div>
+
+</div>
 
 </div>
 
@@ -1257,58 +1247,177 @@ function showCollections(){
 }
 function showDailyCollection(){
 
-document.getElementById("pageTitle").innerHTML="Daily Collection";
+    document.getElementById("pageTitle").innerHTML = "Daily Collection";
 
-document.getElementById("content").innerHTML=`
+    document.getElementById("content").innerHTML = `
 
-<div style="display:flex;justify-content:space-between;align-items:center;">
+    <div class="table-container" style="padding:20px;margin-bottom:20px;">
 
-<h2>Daily Collection Register</h2>
+        <table style="width:100%;border:none;">
 
-<h2 id="todayTotal" style="color:#0b7a3e;">Today's Total : ₹0.00</h2>
+            <tr>
 
-</div>
+                <td style="width:180px;"><b>Collection Day :</b></td>
 
-<br>
+                <td>
 
-<input
-id="dailySearch"
-placeholder="Search Customer / Group / Loan ID"
-style="
-width:350px;
-padding:10px;
-border:1px solid #ccc;
-border-radius:6px;"
-onkeyup="loadDailyCollection()">
+                    <select id="collectionDay" class="search-box" onchange="loadDailyCollection()">
 
-<br><br>
+                        <option>Monday</option>
+                        <option>Tuesday</option>
+                        <option>Wednesday</option>
+                        <option>Thursday</option>
+                        <option>Friday</option>
+                        <option>Saturday</option>
+                        <option>Sunday</option>
 
-<table width="100%" border="1" cellspacing="0" cellpadding="10">
+                    </select>
 
-<thead style="background:#0b7a3e;color:white;">
+                </td>
 
-<tr>
+            </tr>
 
-<th>Loan ID</th>
-<th>Customer</th>
-<th>Group</th>
-<th>Weekly EMI</th>
-<th>Total Paid</th>
-<th>Balance</th>
-<th>Last Collection</th>
-<th>Collect</th>
+            <tr>
 
-</tr>
+                <td><b>Centre Name :</b></td>
 
-</thead>
+                <td>
 
-<tbody id="dailyCollectionTable"></tbody>
+                    <select id="collectionCentre" class="search-box" onchange="loadDailyCollection()">
 
-</table>
+                    </select>
 
-`;
+                </td>
 
-loadDailyCollection();
+            </tr>
+
+            <tr>
+
+                <td><b>Date :</b></td>
+
+                <td>
+
+                    <input
+                    type="date"
+                    id="entryDate"
+                    class="search-box">
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td><b>Collection Date :</b></td>
+
+                <td>
+
+                    <input
+                    type="date"
+                    id="collectionDate"
+                    class="search-box">
+
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+
+        <h2>Daily Collection Register</h2>
+
+        <h2 id="todayTotal" style="color:#0b7a3e;">
+            Today's Total : ₹0.00
+        </h2>
+
+    </div>
+
+    <br>
+
+    <input
+    id="dailySearch"
+    class="search-box"
+    placeholder="🔍 Search Customer / Group / Loan ID"
+    onkeyup="loadDailyCollection()">
+
+    <br><br>
+
+    <div class="table-container">
+
+    <div style="overflow-x:auto;">
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Loan ID</th>
+                <th>Customer</th>
+                <th>Group</th>
+                <th>Weekly EMI</th>
+                <th>Total Paid</th>
+                <th>Balance</th>
+                <th>Last Collection</th>
+                <th>Collect</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="dailyCollectionTable">
+
+        </tbody>
+
+    </table>
+
+    </div>
+
+    </div>
+
+    `;
+
+    loadCollectionCentres();
+
+    document.getElementById("entryDate").value =
+    new Date().toISOString().split("T")[0];
+
+    document.getElementById("collectionDate").value =
+    new Date().toISOString().split("T")[0];
+
+    loadDailyCollection();
+
+}
+function loadCollectionCentres(){
+
+    let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+    let html = '<option value="">All Centres</option>';
+
+    groups.forEach(g=>{
+
+        html += `
+        <option value="${g.name}" data-day="${g.collection}">
+            ${g.name}
+        </option>`;
+
+    });
+
+    document.getElementById("collectionCentre").innerHTML = html;
+
+    document.getElementById("collectionCentre").onchange = function(){
+
+        let opt = this.options[this.selectedIndex];
+
+        document.getElementById("collectionDay").value =
+            opt.getAttribute("data-day") || "";
+
+        loadDailyCollection();
+
+    };
 
 }
 function loadDailyCollection(){
@@ -1317,6 +1426,12 @@ let loans = JSON.parse(localStorage.getItem("loans")) || [];
 
 let keyword =
 document.getElementById("dailySearch")?.value.toLowerCase() || "";
+
+let centre =
+document.getElementById("collectionCentre")?.value || "";
+
+let collectionDay =
+document.getElementById("collectionDay")?.value || "";
 
 let history =
 JSON.parse(localStorage.getItem("collectionHistory")) || [];
@@ -1355,11 +1470,17 @@ return a.group.localeCompare(b.group);
 
 if(
 
+(centre=="" || loan.group==centre) &&
+
+(
+
 loan.customerName.toLowerCase().includes(keyword) ||
 
 loan.group.toLowerCase().includes(keyword) ||
 
 loan.id.toLowerCase().includes(keyword)
+
+)
 
 ){
 
@@ -1542,7 +1663,7 @@ w.document.write(`
 
 body{
 
-font-family:Arial;
+font-family:'Montserrat',sans-serif;
 
 padding:20px;
 
@@ -1608,15 +1729,13 @@ Thank you.
 
 </body>
 
-
 `);
 
 w.document.close();
 
 w.print();
 
-}
-function showReports(){
+}function showReports(){
 
 document.getElementById("pageTitle").innerHTML="Reports";
 
@@ -1651,32 +1770,29 @@ document.getElementById("content").innerHTML=`
 <br>
 
 <button
-    onclick="exportBackup()"
-    style="
-        padding:10px 20px;
-        background:#0b7a3e;
-        color:white;
-        border:none;
-        border-radius:6px;
-        cursor:pointer;
-    ">
-    Download Backup
-</button>
+ onclick="exportBackup()"
+ style="
+     padding:10px 20px;
+     background:#0b7a3e;
+     color:white;
+     border:none;
+     border-radius:6px;
+     cursor:pointer;
+ ">Download Backup</button>
 
 <br><br>
 
 <input
-    type="file"
-    id="restoreFile"
-    accept=".json"
-    onchange="restoreBackup(event)">
+ type="file"
+ id="restoreFile"
+ accept=".json"
+ onchange="restoreBackup(event)">
 
 `;
 
 loadReport();
 
-}
-function loadReport(){
+}function loadReport(){
 
 let groups=JSON.parse(localStorage.getItem("groups"))||[];
 
@@ -1700,18 +1816,14 @@ document.getElementById("rLoans").innerHTML=loans.length;
 
 document.getElementById("rOutstanding").innerHTML="₹"+outstanding.toFixed(2);
 
-}
-function exportBackup(){
+}function exportBackup(){
 
 let backup={
 
-groups:JSON.parse(localStorage.getItem("groups"))||[],
-
-customers:JSON.parse(localStorage.getItem("customers"))||[],
-
-loans:JSON.parse(localStorage.getItem("loans"))||[],
-
-history:JSON.parse(localStorage.getItem("collectionHistory"))||[]
+groups: JSON.parse(localStorage.getItem("groups")) || [],
+customers: JSON.parse(localStorage.getItem("customers")) || [],
+loans: JSON.parse(localStorage.getItem("loans")) || [],
+history: JSON.parse(localStorage.getItem("collectionHistory")) || []
 
 };
 
@@ -1735,8 +1847,7 @@ a.click();
 
 URL.revokeObjectURL(url);
 
-}
-function restoreBackup(event){
+}function restoreBackup(event){
 
 let file=event.target.files[0];
 
@@ -1780,13 +1891,11 @@ document.getElementById("gCollection").selectedIndex=0;
 
 document.getElementById("groupModal").style.display="flex";
 
-}
-function closeGroupModal(){
+}function closeGroupModal(){
 
 document.getElementById("groupModal").style.display="none";
 
-}
-function saveGroup(){
+}function saveGroup(){
 
 let groups = JSON.parse(localStorage.getItem("groups")) || [];
 
@@ -1912,8 +2021,7 @@ table.innerHTML=html;
 
 }
 
-}
-function deleteGroup(index){
+}function deleteGroup(index){
 
 if(confirm("Delete this Group?")){
 
@@ -1929,8 +2037,7 @@ showDashboard();
 
 }
 
-}
-function editGroup(index){
+}function editGroup(index){
 
 let groups = JSON.parse(localStorage.getItem("groups")) || [];
 
@@ -1948,82 +2055,76 @@ document.getElementById("gCollection").value = g.collection;
 
 document.getElementById("groupModal").style.display = "flex";
 
+}function openCustomerModal(){
+
+console.log("Step 1");
+
+editingCustomerIndex = -1;
+
+customerPhoto = "";
+aadhaarFrontData = "";
+aadhaarBackData = "";
+
+console.log("Step 2");
+
+const modal = document.getElementById("customerModal");
+
+console.log(modal);
+
+if(!modal){
+    alert("Customer Modal Not Found");
+    return;
 }
-function openCustomerModal(){
 
-    console.log("Step 1");
+modal.style.display = "flex";
 
-    editingCustomerIndex = -1;
+console.log("Step 3");
 
-    customerPhoto = "";
-    aadhaarFrontData = "";
-    aadhaarBackData = "";
+let groups = JSON.parse(localStorage.getItem("groups")) || [];
 
-    console.log("Step 2");
+let html = "";
 
-    const modal = document.getElementById("customerModal");
+groups.forEach(g=>{
+    html += `<option value="${g.name}">${g.name}</option>`;
+});
 
-    console.log(modal);
-
-    if(!modal){
-        alert("Customer Modal Not Found");
-        return;
-    }
-
-    modal.style.display = "flex";
-
-    console.log("Step 3");
-
-    let groups = JSON.parse(localStorage.getItem("groups")) || [];
-
-    let html = "";
-
-    groups.forEach(g=>{
-        html += `<option value="${g.name}">${g.name}</option>`;
-    });
-
-    document.getElementById("cGroup").innerHTML = html;
-    let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
+document.getElementById("cGroup").innerHTML = html;
+let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
 
 let ghtml = "";
 
 guarantors.forEach(g=>{
-    ghtml += `<option value="${g.name}">${g.name}</option>`;
+
+ghtml += `<option value="${g.name}">${g.name}</option>`;
+
 });
 
 document.getElementById("cGuarantor").innerHTML = ghtml;
 
-    console.log("Step 4");
+console.log("Step 4");
 
-    document.getElementById("cName").value="";
-    document.getElementById("cFather").value="";
-    document.getElementById("cMobile").value="";
-    document.getElementById("cAltMobile").value="";
-    document.getElementById("cAadhaar").value="";
-    document.getElementById("cPan").value="";
-        document.getElementById("cDoorNo").value="";
-document.getElementById("cStreet").value="";
-document.getElementById("cArea").value="";
-document.getElementById("cCity").value="";
-document.getElementById("cDistrict").value="";
-document.getElementById("cState").value="Tamil Nadu";
-document.getElementById("cPincode").value="";
-    document.getElementById("cPhoto").value="";
-    document.getElementById("aadhaarFront").value="";
-    document.getElementById("aadhaarBack").value="";
+document.getElementById("cName").value="";
+document.getElementById("cFather").value="";
+document.getElementById("cMobile").value="";
+document.getElementById("cAltMobile").value="";
+document.getElementById("cAadhaar").value="";
+document.getElementById("cPan").value="";
+    document.getElementById("cDoorNo").value="";
 
-    console.log("Step 5");
+document.getElementById("cStreet").value="";document.getElementById("cArea").value="";document.getElementById("cCity").value="";document.getElementById("cDistrict").value="";document.getElementById("cState").value="Tamil Nadu";document.getElementById("cPincode").value="";document.getElementById("cPhoto").value="";document.getElementById("aadhaarFront").value="";document.getElementById("aadhaarBack").value="";
 
-    document.getElementById("photoPreview").src="";
-    document.getElementById("photoPreview").style.display="none";
+console.log("Step 5");
+
+document.getElementById("photoPreview").src="";
+document.getElementById("photoPreview").style.display="none";
+
 }
 
 function closeCustomerModal(){
 
 document.getElementById("customerModal").style.display="none";
 
-}
-function previewPhoto(event){
+}function previewPhoto(event){
 
 let file=event.target.files[0];
 
@@ -2043,126 +2144,124 @@ document.getElementById("photoPreview").style.display="block";
 
 reader.readAsDataURL(file);
 
-}
-function previewAadhaarFront(event){
+}function previewAadhaarFront(event){
 
-    let file = event.target.files[0];
+let file = event.target.files[0];
 
-    if(!file) return;
+if(!file) return;
 
-    let reader = new FileReader();
+let reader = new FileReader();
 
-    reader.onload = function(e){
+reader.onload = function(e){
 
-        aadhaarFrontData = e.target.result;
+    aadhaarFrontData = e.target.result;
 
-    };
+};
 
-    reader.readAsDataURL(file);
+reader.readAsDataURL(file);
 
 }
 
 function previewAadhaarBack(event){
 
-    let file = event.target.files[0];
+let file = event.target.files[0];
 
-    if(!file) return;
+if(!file) return;
 
-    let reader = new FileReader();
+let reader = new FileReader();
 
-    reader.onload = function(e){
+reader.onload = function(e){
 
-        aadhaarBackData = e.target.result;
+    aadhaarBackData = e.target.result;
 
-    };
+};
 
-    reader.readAsDataURL(file);
+reader.readAsDataURL(file);
 
+}function saveCustomer(){
+
+if(document.getElementById("cName").value.trim()==""){
+    alert("Customer Name is required.");
+    return;
 }
-function saveCustomer(){
 
-    if(document.getElementById("cName").value.trim()==""){
-        alert("Customer Name is required.");
-        return;
-    }
-
-    if(document.getElementById("cMobile").value.trim()==""){
-        alert("Mobile Number is required.");
-        return;
-    }
-
-    let customers = JSON.parse(localStorage.getItem("customers")) || [];
-
-    let address =
-        document.getElementById("cDoorNo").value + ", " +
-        document.getElementById("cStreet").value + ", " +
-        document.getElementById("cArea").value + ", " +
-        document.getElementById("cCity").value + ", " +
-        document.getElementById("cDistrict").value + ", " +
-        document.getElementById("cState").value + " - " +
-        document.getElementById("cPincode").value;
-
-    if(editingCustomerIndex==-1){
-
-        let id="CUS"+String(customers.length+1).padStart(4,"0");
-
-        customers.push({
-            id:id,
-            photo:customerPhoto,
-            aadhaarFront:aadhaarFrontData,
-            aadhaarBack:aadhaarBackData,
-            name:document.getElementById("cName").value,
-            father:document.getElementById("cFather").value,
-            mobile:document.getElementById("cMobile").value,
-            altMobile:document.getElementById("cAltMobile").value,
-            aadhaar:document.getElementById("cAadhaar").value,
-            pan:document.getElementById("cPan").value,
-            doorNo:document.getElementById("cDoorNo").value,
-            street:document.getElementById("cStreet").value,
-            area:document.getElementById("cArea").value,
-            city:document.getElementById("cCity").value,
-            district:document.getElementById("cDistrict").value,
-            state:document.getElementById("cState").value,
-            pincode:document.getElementById("cPincode").value,
-            address:address,
-            group:document.getElementById("cGroup").value,
-            guarantor:document.getElementById("cGuarantor").value
-        });
-
-    }else{
-
-        let c = customers[editingCustomerIndex];
-
-        c.photo = customerPhoto;
-        c.aadhaarFront = aadhaarFrontData;
-        c.aadhaarBack = aadhaarBackData;
-        c.name = document.getElementById("cName").value;
-        c.father = document.getElementById("cFather").value;
-        c.mobile = document.getElementById("cMobile").value;
-        c.altMobile = document.getElementById("cAltMobile").value;
-        c.aadhaar = document.getElementById("cAadhaar").value;
-        c.pan = document.getElementById("cPan").value;
-        c.doorNo = document.getElementById("cDoorNo").value;
-        c.street = document.getElementById("cStreet").value;
-        c.area = document.getElementById("cArea").value;
-        c.city = document.getElementById("cCity").value;
-        c.district = document.getElementById("cDistrict").value;
-        c.state = document.getElementById("cState").value;
-        c.pincode = document.getElementById("cPincode").value;
-        c.address = address;
-        c.group = document.getElementById("cGroup").value;
-        c.guarantor = document.getElementById("cGuarantor").value;
-
-        editingCustomerIndex = -1;
-    }
-
-    localStorage.setItem("customers", JSON.stringify(customers));
-
-    closeCustomerModal();
-    loadCustomers();
-    showDashboard();
+if(document.getElementById("cMobile").value.trim()==""){
+    alert("Mobile Number is required.");
+    return;
 }
-function loadCustomers(){
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+let address =
+    document.getElementById("cDoorNo").value + ", " +
+    document.getElementById("cStreet").value + ", " +
+    document.getElementById("cArea").value + ", " +
+    document.getElementById("cCity").value + ", " +
+    document.getElementById("cDistrict").value + ", " +
+    document.getElementById("cState").value + " - " +
+    document.getElementById("cPincode").value;
+
+if(editingCustomerIndex==-1){
+
+    let id="CUS"+String(customers.length+1).padStart(4,"0");
+
+    customers.push({
+        id:id,
+        photo:customerPhoto,
+        aadhaarFront:aadhaarFrontData,
+        aadhaarBack:aadhaarBackData,
+        name:document.getElementById("cName").value,
+        father:document.getElementById("cFather").value,
+        mobile:document.getElementById("cMobile").value,
+        altMobile:document.getElementById("cAltMobile").value,
+        aadhaar:document.getElementById("cAadhaar").value,
+        pan:document.getElementById("cPan").value,
+        doorNo:document.getElementById("cDoorNo").value,
+        street:document.getElementById("cStreet").value,
+        area:document.getElementById("cArea").value,
+        city:document.getElementById("cCity").value,
+        district:document.getElementById("cDistrict").value,
+        state:document.getElementById("cState").value,
+        pincode:document.getElementById("cPincode").value,
+        address:address,
+        group:document.getElementById("cGroup").value,
+        guarantor:document.getElementById("cGuarantor").value
+    });
+
+}else{
+
+    let c = customers[editingCustomerIndex];
+
+    c.photo = customerPhoto;
+    c.aadhaarFront = aadhaarFrontData;
+    c.aadhaarBack = aadhaarBackData;
+    c.name = document.getElementById("cName").value;
+    c.father = document.getElementById("cFather").value;
+    c.mobile = document.getElementById("cMobile").value;
+    c.altMobile = document.getElementById("cAltMobile").value;
+    c.aadhaar = document.getElementById("cAadhaar").value;
+    c.pan = document.getElementById("cPan").value;
+    c.doorNo = document.getElementById("cDoorNo").value;
+    c.street = document.getElementById("cStreet").value;
+    c.area = document.getElementById("cArea").value;
+    c.city = document.getElementById("cCity").value;
+    c.district = document.getElementById("cDistrict").value;
+    c.state = document.getElementById("cState").value;
+    c.pincode = document.getElementById("cPincode").value;
+    c.address = address;
+    c.group = document.getElementById("cGroup").value;
+    c.guarantor = document.getElementById("cGuarantor").value;
+
+    editingCustomerIndex = -1;
+}
+
+localStorage.setItem("customers", JSON.stringify(customers));
+
+closeCustomerModal();
+loadCustomers();
+showDashboard();
+
+}function loadCustomers(){
 
 let customers=JSON.parse(localStorage.getItem("customers"))||[];
 
@@ -2194,18 +2293,15 @@ html += `
 
 <td>
 
-${c.photo ?
+${c.photo
 
-`<img src="${c.photo}"
-style="width:45px;height:45px;border-radius:50%;object-fit:cover;">`
+?
+
+`<img src="${c.photo}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;">`
 
 :
 
-`<div style="
-width:45px;
-height:45px;
-border-radius:50%;
-background:#ddd;"></div>`
+`<div style="width:45px;height:45px;border-radius:50%;background:#ddd;"></div>`
 
 }
 
@@ -2269,8 +2365,7 @@ table.innerHTML=html;
 
 }
 
-}
-function deleteCustomer(index){
+}function deleteCustomer(index){
 
 if(confirm("Delete Customer?")){
 
@@ -2286,62 +2381,55 @@ showDashboard();
 
 }
 
-}
-function editCustomer(index){
+}function editCustomer(index){
 
-    let customers = JSON.parse(localStorage.getItem("customers")) || [];
-    let groups = JSON.parse(localStorage.getItem("groups")) || [];
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+let groups = JSON.parse(localStorage.getItem("groups")) || [];
 
-    editingCustomerIndex = index;
+editingCustomerIndex = index;
 
-    let customer = customers[index];
+let customer = customers[index];
 
-    let html = "";
+let html = "";
 
-    groups.forEach(g=>{
+groups.forEach(g=>{
 
-        html += `<option value="${g.name}" ${
-            g.name===customer.group ? "selected" : ""
-        }>${g.name}</option>`;
+    html += `<option value="${g.name}" ${
+        g.name===customer.group ? "selected" : ""
+    }>${g.name}</option>`;
 
-    });
+});
 
-    document.getElementById("cGroup").innerHTML = html;
-    let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
+document.getElementById("cGroup").innerHTML = html;
+let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
 
 let ghtml = "";
 
 guarantors.forEach(g=>{
 
-    ghtml += `<option value="${g.name}" ${
-        g.name == customer.guarantor ? "selected" : ""
-    }>${g.name}</option>`;
+ghtml += `<option value="${g.name}" ${
+    g.name == customer.guarantor ? "selected" : ""
+}>${g.name}</option>`;
 
 });
 
 document.getElementById("cGuarantor").innerHTML = ghtml;
 
-    document.getElementById("cName").value = customer.name || "";
+document.getElementById("cName").value = customer.name || "";
 
-    document.getElementById("cFather").value = customer.father || "";
+document.getElementById("cFather").value = customer.father || "";
 
-    document.getElementById("cMobile").value = customer.mobile || "";
+document.getElementById("cMobile").value = customer.mobile || "";
 
-    document.getElementById("cAltMobile").value = customer.altMobile || "";
+document.getElementById("cAltMobile").value = customer.altMobile || "";
 
-    document.getElementById("cAadhaar").value = customer.aadhaar || "";
+document.getElementById("cAadhaar").value = customer.aadhaar || "";
 
-    document.getElementById("cPan").value = customer.pan || "";
+document.getElementById("cPan").value = customer.pan || "";
 
-        document.getElementById("cDoorNo").value = customer.doorNo || "";
-document.getElementById("cStreet").value = customer.street || "";
-document.getElementById("cArea").value = customer.area || "";
-document.getElementById("cCity").value = customer.city || "";
-document.getElementById("cDistrict").value = customer.district || "";
-document.getElementById("cState").value = customer.state || "Tamil Nadu";
-document.getElementById("cPincode").value = customer.pincode || "";
-    customerPhoto = customer.photo || "";
-    aadhaarFrontData = customer.aadhaarFront || "";
+    document.getElementById("cDoorNo").value = customer.doorNo || "";
+
+document.getElementById("cStreet").value = customer.street || "";document.getElementById("cArea").value = customer.area || "";document.getElementById("cCity").value = customer.city || "";document.getElementById("cDistrict").value = customer.district || "";document.getElementById("cState").value = customer.state || "Tamil Nadu";document.getElementById("cPincode").value = customer.pincode || "";customerPhoto = customer.photo || "";aadhaarFrontData = customer.aadhaarFront || "";
 
 aadhaarBackData = customer.aadhaarBack || "";
 
@@ -2357,10 +2445,9 @@ document.getElementById("photoPreview").style.display="none";
 
 }
 
-    document.getElementById("customerModal").style.display="flex";
+document.getElementById("customerModal").style.display="flex";
 
-}
-function showCustomers(){
+}function showCustomers(){
 
 document.getElementById("pageTitle").innerHTML="Customer Management";
 
@@ -2403,8 +2490,8 @@ onkeyup="loadCustomers()">
 <th>Mobile</th>
 <th>Aadhaar</th>
 <th>Group</th>
-<th>Action</th>
 <th>Guarantor</th>
+<th>Action</th>
 
 </tr>
 
@@ -2424,8 +2511,7 @@ onkeyup="loadCustomers()">
 
 loadCustomers();
 
-}
-function viewCustomer(index){
+}function viewCustomer(index){
 
 let customers = JSON.parse(localStorage.getItem("customers")) || [];
 
@@ -2511,13 +2597,7 @@ document.getElementById("content").innerHTML=`
 
 src="${c.photo || ''}"
 
-style="
-width:180px;
-height:180px;
-border-radius:50%;
-object-fit:cover;
-background:#ddd;
-border:3px solid #0b7a3e;">
+style="width:180px;height:180px;border-radius:50%;object-fit;background:#ddd;border:3px solid #0b7a3e;">
 
 <h2>${c.name}</h2>
 
@@ -2599,71 +2679,62 @@ style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radiu
 
 `;
 
-}
-function openLoanModal(){
+}function openLoanModal(){
 
-    document.getElementById("loanModal").style.display = "flex";
+document.getElementById("loanModal").style.display = "flex";
 
-    // Customers
-    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+// Customers
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
 
-    let customerHTML = '<option value="">Select Customer</option>';
+let customerHTML = '<option value="">Select Customer</option>';
 
-    customers.forEach(c=>{
-        customerHTML += `
-        <option value="${c.id}">
-            ${c.name} (${c.group})
-        </option>`;
-    });
+customers.forEach(c=>{
+    customerHTML += `
+    <option value="${c.id}">
+        ${c.name} (${c.group})
+    </option>`;
+});
 
-    document.getElementById("loanCustomer").innerHTML = customerHTML;
+document.getElementById("loanCustomer").innerHTML = customerHTML;
 
-    // Guarantors
-    let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
+// Guarantors
+let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
 
-    let guarantorHTML = '<option value="">Select Guarantor</option>';
+let guarantorHTML = '<option value="">Select Guarantor</option>';
 
-    guarantors.forEach(g=>{
+guarantors.forEach(g=>{
 
-        guarantorHTML += `
-        <option value="${g.name}">
-            ${g.name}
-        </option>`;
+    guarantorHTML += `
+    <option value="${g.name}">
+        ${g.name}
+    </option>`;
 
-    });
+});
 
-    document.getElementById("loanGuarantor").innerHTML = guarantorHTML;
+document.getElementById("loanGuarantor").innerHTML = guarantorHTML;
 
-}
-if(customers.length>0){
+}function loadCustomerGuarantor(){
 
-    document.getElementById("loanCustomer").selectedIndex = 1;
+let customerId = document.getElementById("loanCustomer").value;
 
-    loadCustomerGuarantor();
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
 
-}
-function loadCustomerGuarantor(){
+let customer = customers.find(c => c.id == customerId);
 
-    let customerId = document.getElementById("loanCustomer").value;
+if(!customer) return;
 
-    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+document.getElementById("loanGuarantor").innerHTML =
+    `<option value="${customer.guarantor}">
+        ${customer.guarantor}
+    </option>`;
 
-    let customer = customers.find(c => c.id == customerId);
-
-    if(!customer) return;
-
-    document.getElementById("loanGuarantor").innerHTML =
-        `<option value="${customer.guarantor}">
-            ${customer.guarantor}
-        </option>`;
 }
 
 function closeLoanModal(){
 
 document.getElementById("loanModal").style.display="none";
 
-}
-function showLoans(){
+}function showLoans(){
 
 document.getElementById("pageTitle").innerHTML="Loan Management";
 
@@ -2719,8 +2790,6 @@ onkeyup="loadLoans()">
 
 </tr>
 
-</tr>
-
 </thead>
 
 <tbody id="loanTable"></tbody>
@@ -2735,8 +2804,7 @@ onkeyup="loadLoans()">
 
 loadLoans();
 
-}
-function showEMI(){
+}function showEMI(){
 
 document.getElementById("pageTitle").innerHTML="Customer EMI Register";
 
@@ -2786,8 +2854,7 @@ onkeyup="loadEMI()">
 
 loadEMI();
 
-}
-function showPromissory(){
+}function showPromissory(){
 
 document.getElementById("pageTitle").innerHTML="Promissory Note";
 
@@ -2849,8 +2916,7 @@ Delete
 
 `;
 
-}
-function showLoanCard(){
+}function showLoanCard(){
 
 document.getElementById("pageTitle").innerHTML="Loan Card";
 
@@ -2893,161 +2959,59 @@ Load Loan
 
 `;
 
-}
-function printLoanCard(){
+}function printLoanCard(){
 
-    let data = document.getElementById("loanCardContent").innerHTML;
+let data = document.getElementById("loanCardContent").innerHTML;
 
-    let w = window.open("", "_blank");
+let w = window.open("", "_blank");
 
-    w.document.write(`
-    <html>
-    <head>
-    <title>Loan Card</title>
-    <style>
-        body{
-            font-family:Arial;
-            padding:20px;
-        }
-        table{
-            width:100%;
-            border-collapse:collapse;
-        }
-        table,th,td{
-            border:1px solid #000;
-        }
-        th,td{
-            padding:8px;
-        }
-        button{
-            display:none;
-        }
-    </style>
-    </head>
-    <body>
-    ${data}
-    </body>
-    </html>
-    `);
+w.document.write(`
+<html>
+<head>
+<title>Loan Card</title>
+<style>
+    body{
+        font-family:'Montserrat',sans-serif;
+        padding:20px;
+    }
+    table{
+        width:100%;
+        border-collapse:collapse;
+    }
+    table,th,td{
+        border:1px solid #000;
+    }
+    th,td{
+        padding:8px;
+    }
+    button{
+        display:none;
+    }
+</style>
+</head>
+<body>
+${data}
+</body>
+</html>
+`);
 
-    w.document.close();
-    w.print();
+w.document.close();
+w.print();
+
 }
 function printLoanFront(){
 
-let id=document.getElementById("loanCardSearch").value.trim();
+let id = document.getElementById("loanCardSearch").value.trim();
 
-let loans=JSON.parse(localStorage.getItem("loans"))||[];
-let customers=JSON.parse(localStorage.getItem("customers"))||[];
+let loans = JSON.parse(localStorage.getItem("loans")) || [];let customers = JSON.parse(localStorage.getItem("customers")) || [];
 
-let loan=loans.find(x=>x.id==id);
+let loan = loans.find(l => l.id == id);
 
-if(!loan){
-    alert("Loan not found");
-    return;
-}
+if(!loan){alert("Loan not found.");return;}
 
-let customer=customers.find(c=>c.id==loan.customerId);
+let customer = customers.find(c => c.id == loan.customerId);
 
-let card = `
-
-<div class="loan-card">
-
-<div class="company-header">
-
-<img src="logo.png" class="logo">
-
-<h1>AARVEE</h1>
-
-<h2>ASSOCIATES</h2>
-
-<p>Near Bus Stand, Kottur</p>
-
-<p>Contact : 8248510416, 8838224040</p>
-
-</div>
-
-<table class="details">
-
-<tr>
-
-<td><b>NAME</b></td>
-
-<td>....................................</td>
-
-</tr>
-
-<tr>
-
-<td><b>GROUP</b></td>
-
-<td>....................................</td>
-
-</tr>
-
-<tr>
-
-<td><b>MOBILE</b></td>
-
-<td>....................................</td>
-
-</tr>
-
-<tr>
-
-<td><b>DATE</b></td>
-
-<td>....................................</td>
-
-</tr>
-
-<tr>
-
-<td><b>AMOUNT Rs.</b></td>
-
-<td>....................................</td>
-
-</tr>
-
-</table>
-
-<div class="loan-services">
-
-<ul>
-
-<li>➤ வீடு கட்ட, வாங்க கடன்</li>
-
-<li>➤ வீடு அடமானக் கடன்</li>
-
-<li>➤ காலி இடம் அடமானக் கடன்</li>
-
-<li>➤ தனி நபர் கடன்</li>
-
-<li>➤ வியாபாரக் கடன்</li>
-
-<li>➤ இருக்கிற வாகனக் கடன்</li>
-
-<li>➤ வணிக வாகனக் கடன்</li>
-
-<li>➤ நகை கடன்</li>
-
-</ul>
-
-<p class="note">
-
-அதிக வட்டியுள்ள அடகு நகைகளை மீட்டு,<br>
-
-குறைந்த வட்டியில் மாற்றித்தரப்படும்
-
-</p>
-
-</div>
-
-</div>
-
-`;
-
-let html=`
+let html = `
 
 <html>
 
@@ -3058,336 +3022,142 @@ let html=`
 <style>
 
 @page{
-
-size:A4 landscape;
-
-margin:10mm;
-
+    size:A5 portrait;
+    margin:8mm;
 }
 
 body{
 
-font-family:Arial;
-
-margin:0;
-
-padding:0;
-
-}
-
-.sheet{
-
-display:flex;
-
-justify-content:space-between;
-
-}
-
-.loan-card{
-
-width:48%;
-
-border:2px solid #000;
-
-padding:18px;
-
-box-sizing:border-box;
-
-font-family:"Times New Roman",serif;
-
-}
-
-.company-header{
-
-text-align:center;
-
-margin-bottom:15px;
-
-}
-
-.company-header h1{
-
-margin:0;
-
-font-size:34px;
-
-font-weight:bold;
-
-}
-
-.company-header h2{
-
-margin:0;
-
-font-size:18px;
-
-}
-
-.company-header p{
-
-margin:3px 0;
-
-font-size:15px;
-
-}
-
-.details{
-
-width:100%;
-
-margin:18px 0;
-
-border-collapse:collapse;
-
-}
-
-.details td{
-
-padding:8px;
-
-font-size:18px;
-
-border:none;
-
-}
-
-.loan-services{
-
-border:2px solid #000;
-
-padding:12px;
-
-margin-top:15px;
-
-}
-
-.loan-services ul{
-
-margin:0;
-
-padding-left:20px;
-
-}
-
-.loan-services li{
-
-margin:6px 0;
-
-font-size:17px;
-
-}
-
-.note{
-
-margin-top:12px;
-
-font-size:18px;
-
-font-weight:bold;
-
-text-align:center;
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="sheet">
-
-${card}
-
-${card}
-
-</div>
-
-</body>
-
-</html>
-
-`;
-
-let w=window.open("","","width=1200,height=900");
-
-w.document.write(html);
-
-w.document.close();
-
-w.focus();
-
-w.print();
-
-}
-function printLoanBack(){
-
-let id = document.getElementById("loanCardSearch").value.trim();
-
-let loans = JSON.parse(localStorage.getItem("loans")) || [];
-
-let loan = loans.find(l => l.id == id);
-
-if(!loan){
-
-    alert("Loan not found.");
-
-    return;
-
-}
-
-let weeks = parseInt(loan.weeks || 24);
-
-let weekly = Number(loan.weekly);
-
-let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
-
-history = history.filter(h => h.loanId == loan.id);
-
-let totalPaid = history.reduce((t,h)=>t+Number(h.amount),0);
-
-let balance = Number(loan.balance);
-
-let rows="";
-
-for(let i=1;i<=weeks;i++){
-
-    let payment = history[i-1];
-
-    rows += `
-    <tr>
-
-        <td>${i}</td>
-
-        <td>${payment ? payment.date : ""}</td>
-
-        <td style="text-align:right;">
-            ${payment ? "₹"+payment.amount : "₹"+weekly.toFixed(2)}
-        </td>
-
-        <td></td>
-
-        <td style="
-            text-align:center;
-            color:${payment ? "green" : "red"};
-            font-weight:bold;">
-            ${payment ? "PAID" : "PENDING"}
-        </td>
-
-    </tr>
-    `;
-
-}
-
-let card = `
-
-<div class="card">
-
-<h2 style="text-align:center;">AARVEE ASSOCIATES</h2>
-
-<h3 style="text-align:center;">Loan Collection Register</h3>
-
-<p><b>Loan ID :</b> ${loan.id}</p>
-
-<p><b>Total Paid :</b> ₹${totalPaid.toFixed(2)}</p>
-
-<p><b>Balance :</b> ₹${balance.toFixed(2)}</p>
-
-<table>
-
-<tr>
-
-<th>No</th>
-
-<th>Date</th>
-
-<th>Amount</th>
-
-<th>Sign</th>
-
-<th>Status</th>
-
-</tr>
-
-${rows}
-
-</table>
-
-</div>
-
-</div>
-
-`;
-
-let html = `
-
-<html>
-
-<head>
-
-<title>Loan Card Back</title>
-
-<style>
-
-@page{
-
-size:A4 landscape;
-
-margin:8mm;
-
-}
-
-body{
-
-font-family:Arial;
-
-margin:0;
-
-padding:0;
-
-}
-
-.sheet{
-
-display:flex;
-
-gap:10px;
+    margin:0;
+    padding:0;
+    font-family:'Montserrat',sans-serif;
+    background:#fff;
 
 }
 
 .card{
 
-width:48%;
+width:100%;
 
-border:2px solid #000;
-
-padding:15px;
+height:100%;
 
 box-sizing:border-box;
 
-}
+border:3px solid #b30000;
 
-table{
+padding:15px;
 
-width:100%;
-
-border-collapse:collapse;
-
-font-size:12px;
+border-radius:8px;
 
 }
 
-th,td{
+.header{
 
-border:1px solid #000;
-
-padding:4px;
+    text-align:center;
 
 }
 
-th{
+.header img{
 
-background:#ddd;
+    width:90%;
+    max-height:80px;
+    object-fit:contain;
+
+}
+
+.company{
+
+    font-size:16px;
+    font-weight:bold;
+    margin-top:5px;
+
+}
+
+.contact{
+
+    font-size:15px;
+    font-weight:bold;
+    margin-bottom:20px;
+
+}
+
+.details{
+
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+
+}
+
+.details td{
+
+padding:12px 4px;
+
+font-size:18px;
+
+vertical-align:middle;
+
+}
+
+.label{
+
+width:140px;
+
+font-size:18px;
+
+font-weight:bold;
+
+letter-spacing:0.5px;
+
+}
+
+.value{
+
+border-bottom:2px solid #000;
+
+padding-left:12px;
+
+font-size:18px;
+
+font-weight:bold;
+
+}
+
+.services{
+
+    margin-top:20px;
+
+    border:2px solid #000;
+
+    padding:15px;
+
+}
+
+.services ul{
+
+    margin:0;
+
+    padding-left:25px;
+
+}
+
+.services li{
+
+    font-size:17px;
+
+    margin-bottom:8px;
+
+}
+
+.footer{
+
+    margin-top:15px;
+
+    text-align:center;
+
+    font-size:20px;
+
+    font-weight:bold;
 
 }
 
@@ -3397,11 +3167,115 @@ background:#ddd;
 
 <body>
 
-<div class="sheet">
+<div class="card">
 
-${card}
+<div class="header">
 
-${card}
+<img src="logo.png">
+
+<div class="company">
+
+Near Bus Stand, Kottur.
+
+</div>
+
+<div class="contact">
+
+Contact : 8248510416, 8838224040
+
+</div>
+
+</div>
+
+<table class="details">
+
+<tr>
+
+<td class="label">NAME</td>
+
+<td class="value">${customer.name}</td>
+
+</tr>
+
+<tr>
+
+<td class="label">GROUP</td>
+
+<td class="value">${customer.group}</td>
+
+</tr>
+
+<tr>
+
+<td class="label">MOBILE</td>
+
+<td class="value">${customer.mobile}</td>
+
+</tr>
+
+<tr>
+
+<td class="label">DATE</td>
+
+<td class="value">${loan.loanDate}</td>
+
+</tr>
+
+<tr>
+
+<td class="label">Amount Rs.</td>
+
+<td class="value">₹${Number(loan.amount).toFixed(2)}</td>
+
+</tr>
+
+</table>
+
+<div class="services">
+
+<table style="width:100%;border-collapse:collapse;">
+
+<tr>
+<td style="padding:6px;font-size:17px;">✓ வீடு கட்ட கடன்</td>
+<td style="padding:6px;font-size:17px;">✓ வீடு வாங்க கடன்</td>
+</tr>
+
+<tr>
+<td style="padding:6px;font-size:17px;">✓ வீடு அடமானக் கடன்</td>
+<td style="padding:6px;font-size:17px;">✓ காலி இடம் அடமானக் கடன்</td>
+</tr>
+
+<tr>
+<td style="padding:6px;font-size:17px;">✓ தனிநபர் கடன்</td>
+<td style="padding:6px;font-size:17px;">✓ வியாபாரக் கடன்</td>
+</tr>
+
+<tr>
+<td style="padding:6px;font-size:17px;">✓ இருசக்கர வாகன கடன்</td>
+<td style="padding:6px;font-size:17px;">✓ வணிக வாகன கடன்</td>
+</tr>
+
+<tr>
+<td colspan="2"
+style="
+padding-top:15px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+line-height:30px;">
+
+அதிக வட்டியுள்ள அடகு நகைகளை<br>
+
+மீட்டு குறைந்த வட்டியில்<br>
+
+மாற்றித் தரப்படும்
+
+</td>
+</tr>
+
+</table>
+
+</div>
 
 </div>
 
@@ -3411,7 +3285,7 @@ ${card}
 
 `;
 
-let w = window.open("","","width=1200,height=900");
+let w = window.open("", "", "width=700,height=900");
 
 w.document.write(html);
 
@@ -3419,186 +3293,452 @@ w.document.close();
 
 w.focus();
 
-w.print();
+setTimeout(function(){
+
+    w.print();
+
+},500);
+
+}
+function printLoanBack(){
+
+    let id = document.getElementById("loanCardSearch").value.trim();
+
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+    let loan = loans.find(l => l.id == id);
+
+    if(!loan){
+        alert("Loan not found.");
+        return;
+    }
+
+    let customer = customers.find(c => c.id == loan.customerId);
+
+    let rows = "";
+
+    for(let i=1;i<=25;i++){
+
+        rows += `
+        <tr>
+            <td style="text-align:center;">${i}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>`;
+    }
+
+    let html = `
+    <html>
+
+    <head>
+
+    <title>Loan Card Back</title>
+
+    <style>
+
+    @page{
+        size:A5 portrait;
+        margin:8mm;
+    }
+
+    body{
+        margin:0;
+        font-family:Arial,sans-serif;
+        background:white;
+    }
+
+    .card{
+
+        border:3px solid #b30000;
+        border-radius:8px;
+        padding:15px;
+
+    }
+
+    h2{
+
+        text-align:center;
+        margin:0;
+
+    }
+
+    .info{
+
+        margin-top:15px;
+        margin-bottom:15px;
+        font-size:15px;
+
+    }
+
+    table{
+
+        width:100%;
+        border-collapse:collapse;
+
+    }
+
+    table,
+    th,
+    td{
+
+        border:1px solid #000;
+
+    }
+
+    th{
+
+        background:#f2f2f2;
+        font-size:13px;
+        padding:6px;
+
+    }
+
+    td{
+
+        height:28px;
+        padding:4px;
+        font-size:12px;
+
+    }
+
+    </style>
+
+    </head>
+
+    <body>
+
+    <div class="card">
+
+        <h2>AARVEE ASSOCIATES</h2>
+
+        <div class="info">
+
+            <b>Loan ID :</b> ${loan.id}
+            <br>
+
+            <b>Name :</b> ${customer.name}
+            <br>
+
+            <b>Group :</b> ${customer.group}
+            <br>
+
+            <b>Loan Amount :</b> ₹${Number(loan.amount).toFixed(2)}
+            <br>
+
+            <b>Weekly EMI :</b> ₹${Number(loan.weekly).toFixed(2)}
+
+        </div>
+
+        <table>
+
+            <tr>
+
+                <th>Week</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Signature</th>
+
+            </tr>
+
+            ${rows}
+
+        </table>
+
+    </div>
+
+    </body>
+
+    </html>
+    `;
+
+    let w = window.open("","_blank","width=700,height=900");
+
+    w.document.write(html);
+
+    w.document.close();
+
+    setTimeout(function(){
+
+        w.print();
+
+    },500);
 
 }
 function printLoanBoth(){
 
-printLoanFront();
+    let id = document.getElementById("loanCardSearch").value.trim();
 
-setTimeout(function(){
+    if(id==""){
+        alert("Enter Loan ID");
+        return;
+    }
 
-printLoanBack();
+    printLoanFront();
 
-},1000);
+    setTimeout(function(){
+
+        printLoanBack();
+
+    },1500);
 
 }
+
 function loadLoanCard(){
+
+
 
 let id=document.getElementById("loanCardSearch").value.trim();
 
+
+
 let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+
 
 let customers=JSON.parse(localStorage.getItem("customers"))||[];
 
+
+
 let loan=loans.find(x=>x.id==id);
+
+
 
 if(!loan){
 
+
+
 alert("Loan not found");
+
+
 
 return;
 
+
+
 }
+
+
 
 let customer=customers.find(c=>c.id==loan.customerId);
 
+
+
 document.getElementById("loanCardContent").innerHTML=`
 
+
+
 <div style="
+
 background:white;
+
 padding:30px;
+
 border-radius:10px;
+
 box-shadow:0 5px 20px rgba(0,0,0,.1);
+
 ">
+
+
 
 <h2>AARVEE ASSOCIATES</h2>
 
+
+
 <hr>
 
+
+
 <br>
+
+
 
 <table width="100%">
 
+
+
 <tr>
+
+
 
 <td width="70%">
 
+
+
 <b>Loan ID</b><br>
+
+
 
 ${loan.id}
 
+
+
 </td>
+
+
 
 <td rowspan="5" align="center">
 
+
+
 <img
+
+
 
 src="${customer.photo}"
 
-style="
-width:120px;
-height:120px;
-border-radius:8px;
-object-fit:cover;
-border:2px solid #ddd;">
+
+
+style="width:120px;height:120px;border-radius:8px;object-fit;border:2px solid #ddd;">
+
+
 
 </td>
 
+
+
 </tr>
+
+
 
 <tr>
 
+
+
 <td>
+
+
 
 <b>Name</b><br>
 
+
+
 ${customer.name}
+
+
 
 </td>
 
+
+
 </tr>
+
+
 
 <tr>
 
+
+
 <td>
+
+
 
 <b>Group</b><br>
 
+
+
 ${customer.group}
+
+
 
 </td>
 
+
+
 </tr>
+
+
 
 <tr>
 
+
+
 <td>
+
+
 
 <b>Loan Amount</b><br>
 
+
+
 ₹${loan.amount}
+
+
 
 </td>
 
+
+
 </tr>
+
+
 
 <tr>
 
+
+
 <td>
+
+
 
 <b>Weekly EMI</b><br>
 
+
+
 ₹${loan.weekly}
+
+
 
 </td>
 
+
+
 </tr>
+
+
 
 </table>
 
+
+
 <br>
 
-<button
 
-onclick="printLoanFront()"
 
-style="
-padding:12px 20px;
-background:#0b7a3e;
-color:white;
-border:none;
-border-radius:6px;">
+<button class="btn btn-success" onclick="printLoanFront()">
 
-Print Front
+🖨 Print Front
 
 </button>
 
-<button
 
-onclick="printLoanBack()"
 
-style="
-padding:12px 20px;
-background:#0077cc;
-color:white;
-border:none;
-border-radius:6px;">
+<button class="btn btn-info" onclick="printLoanBack()">
 
-Print Back
+🖨 Print Back
 
 </button>
 
-<button
 
-onclick="printLoanBoth()"
 
-style="
-padding:12px 20px;
-background:#ff9800;
-color:white;
-border:none;
-border-radius:6px;">
+<button class="btn btn-warning" onclick="printLoanBoth()">
 
-Print Both
+🖨 Print Front & Back
 
 </button>
 
 </div>
 
+
+
 `;
 
+
+
 }
+
 function loadPromissory(){
 
 let loans = JSON.parse(localStorage.getItem("loans")) || [];
@@ -3606,7 +3746,6 @@ let loans = JSON.parse(localStorage.getItem("loans")) || [];
 let customers = JSON.parse(localStorage.getItem("customers")) || [];
 
 let loanId = document.getElementById("promissoryLoanSearch").value;
-
 let loan = loans.find(l=>l.id==loanId);
 
 if(!loan){
@@ -3713,11 +3852,11 @@ I understand that any delay in repayment may attract additional charges and that
 
 <br><br>
 
-1) ______________________________________
+
 
 <br><br>
 
-2) ______________________________________
+
 
 </div>
 
@@ -3789,22 +3928,21 @@ Print
 </div>
 
 `;
-let signed =
-JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+let signed = JSON.parse(localStorage.getItem("signedPromissory")) || {};
 
 if(signed[loan.id]){
 
-document.getElementById("signedFileName").innerHTML =
-"Current File : " + signed[loan.id].name;
+document.getElementById("signedFileName").innerHTML ="Current File : " + signed[loan.id].name;
 
 }else{
 
-document.getElementById("signedFileName").innerHTML =
-"No signed file uploaded.";
+document.getElementById("signedFileName").innerHTML="No signed file uploaded.";
 
 }
 
 }
+
 function printPromissory(){
 
 let printContent = document.getElementById("promissoryPrint").innerHTML;
@@ -4017,8 +4155,7 @@ w.print();
 
 },500);
 
-}
-function showApproval(){
+}function showApproval(){
 
 document.getElementById("pageTitle").innerHTML="Loan Approval";
 
@@ -4058,8 +4195,7 @@ document.getElementById("content").innerHTML=`
 
 loadApproval();
 
-}
-function loadApproval(){
+}function loadApproval(){
 
 let loans=JSON.parse(localStorage.getItem("loans"))||[];
 
@@ -4099,12 +4235,7 @@ Pending
 
 onclick="approveLoan(${index})"
 
-style="
-background:#28a745;
-color:white;
-border:none;
-padding:8px 15px;
-border-radius:5px;">
+style="background:#28a745;color:white;border:none;padding:8px 15px;border-radius:5px;">
 
 Approve
 
@@ -4118,12 +4249,7 @@ Approve
 
 onclick="rejectLoan(${index})"
 
-style="
-background:red;
-color:white;
-border:none;
-padding:8px 15px;
-border-radius:5px;">
+style="background:red;color:white;border:none;padding:8px 15px;border-radius:5px;">
 
 Reject
 
@@ -4141,8 +4267,7 @@ Reject
 
 document.getElementById("approvalTable").innerHTML=html;
 
-}
-function approveLoan(index){
+}function approveLoan(index){
 
 let loans=JSON.parse(localStorage.getItem("loans"))||[];
 
@@ -4162,18 +4287,17 @@ showDashboard();
 
 alert("Loan Approved Successfully.");
 
-}
-function rejectLoan(index){
+loadLoans();
 
-let loans =
-JSON.parse(localStorage.getItem("loans")) || [];
+}function rejectLoan(index){
+
+let loans =JSON.parse(localStorage.getItem("loans")) || [];
 
 let reason = prompt("Reason for rejection?");
 
 if(reason==null) return;
 
-let currentUser =
-document.getElementById("currentUser").innerText;
+let currentUser =document.getElementById("currentUser").innerText;
 
 loans[index].status="Rejected";
 
@@ -4183,10 +4307,7 @@ loans[index].rejectedDate=new Date().toLocaleString();
 
 loans[index].rejectReason=reason;
 
-localStorage.setItem(
-"loans",
-JSON.stringify(loans)
-);
+localStorage.setItem("loans",JSON.stringify(loans));
 
 loadApproval();
 
@@ -4194,13 +4315,11 @@ showDashboard();
 
 alert("Loan Rejected Successfully.");
 
-}
-function loadEMI(){
+}function loadEMI(){
 
 let loans = JSON.parse(localStorage.getItem("loans")) || [];
 
-let keyword =
-document.getElementById("searchEMI")?.value.toLowerCase() || "";
+let keyword =document.getElementById("searchEMI")?.value.toLowerCase() || "";
 
 let html = "";
 
@@ -4236,11 +4355,7 @@ html += `
 
 <td>
 
-<span style="
-background:${loan.status=="Closed"?"red":"green"};
-color:white;
-padding:5px 10px;
-border-radius:20px;">
+<span style="background:${loan.status=="Closed"?"red":"green"};color:white;padding:5px 10px;border-radius:20px;">
 
 ${loan.status}
 
@@ -4250,8 +4365,7 @@ ${loan.status}
 
 <td>
 
-${
-loan.status=="Closed"
+${loan.status=="Closed"
 
 ?
 
@@ -4286,9 +4400,8 @@ Collect
 
 document.getElementById("emiTable").innerHTML = html;
 
-}
-function saveLoan(){
-    
+}function saveLoan(){
+
 let loans=JSON.parse(localStorage.getItem("loans"))||[];
 
 let customers=JSON.parse(localStorage.getItem("customers"))||[];
@@ -4332,103 +4445,108 @@ let interestAmount=(amount*interest)/100;
 let total=amount+interestAmount+processing+insurance;
 
 let weekly=(total/weeks).toFixed(2);
+let balance = Number(total);
 
-let loan={
-    processing,
+let guarantor = document.getElementById("loanGuarantor").value;
 
-insurance,
+let loan = {
 
-loanDate,
+    id: "LOAN" + String(loans.length + 1).padStart(4, "0"),
 
-loanType,
+    customerId: customer.id,
 
-paid:0,
+    customerName: customer.name,
 
-balance:total,
+    group: customer.group,
 
-id:"LOAN"+String(loans.length+1).padStart(4,"0"),
+    guarantor: guarantor,
 
-customerId:customer.id,
+    processing: processing,
 
-customerName:customer.name,
+    insurance: insurance,
 
-group:customer.group,
+    loanDate: loanDate,
 
-amount,
+    loanType: loanType,
 
-interest,
+    amount: amount,
 
-interestAmount,
+    interest: interest,
 
-total,
+    interestAmount: interestAmount,
 
-weeks,
+    total: total,
 
-weekly,
+    weeks: weeks,
 
-status:"Pending",
-approvedBy:"",
-approvedDate:"",
+    weekly: Number(weekly),
+
+    paid: 0,
+
+    balance: balance,
+
+    status: "Pending",
+
+    approvedBy: "",
+
+    approvedDate: ""
 
 };
 
 if(editingLoanIndex==-1){
 
-    loans.push(loan);
+loans.push(loan);
 
 }else{
 
-    loan.id = loans[editingLoanIndex].id;
-    loan.status = loans[editingLoanIndex].status;
-    loan.paid = loans[editingLoanIndex].paid;
-    loan.balance = loans[editingLoanIndex].balance;
-    loan.approvedBy = loans[editingLoanIndex].approvedBy;
-    loan.approvedDate = loans[editingLoanIndex].approvedDate;
+loan.id = loans[editingLoanIndex].id;
+loan.status = loans[editingLoanIndex].status;
+loan.paid = loans[editingLoanIndex].paid;
+loans[editingLoanIndex] = loan;
 
-    loans[editingLoanIndex] = loan;
+editingLoanIndex = -1;
+loan.approvedBy = loans[editingLoanIndex].approvedBy;
+loan.approvedDate = loans[editingLoanIndex].approvedDate;
 
-    editingLoanIndex = -1;
+loans[editingLoanIndex] = loan;
 
-}
-if(editingLoanIndex==-1){
+editingLoanIndex = -1;
 
-let schedules =
-JSON.parse(localStorage.getItem("emiSchedule")) || [];
+}if(editingLoanIndex==-1){
+
+let schedules =JSON.parse(localStorage.getItem("emiSchedule")) || [];
 
 let dueDate = new Date(loanDate);
 
 for(let i=1;i<=weeks;i++){
 
-    schedules.push({
+schedules.push({
 
-        loanId:loan.id,
+    loanId:loan.id,
 
-        emiNo:i,
+    emiNo:i,
 
-        dueDate:dueDate.toLocaleDateString(),
+    dueDate:dueDate.toLocaleDateString(),
 
-        amount:Number(weekly),
+    amount:Number(weekly),
 
-        paid:false,
+    paid:false,
 
-        paidDate:"",
+    paidDate:"",
 
-        balance:Number(weekly)
+    balance:Number(weekly)
 
-    });
+});
 
-    dueDate.setDate(dueDate.getDate()+7);
-
-}
-
-localStorage.setItem("emiSchedule",JSON.stringify(schedules));
+dueDate.setDate(dueDate.getDate()+7);
 
 }
 
-localStorage.setItem(
-"emiSchedule",
-JSON.stringify(schedules)
-);
+if(editingLoanIndex==-1){
+
+    localStorage.setItem("emiSchedule",JSON.stringify(schedules));
+
+}
 
 localStorage.setItem("loans",JSON.stringify(loans));
 
@@ -4575,8 +4693,7 @@ Delete
 
 document.getElementById("loanTable").innerHTML=html;
 
-}
-function deleteLoan(index){
+}function deleteLoan(index){
 
 if(confirm("Delete this loan?")){
 
@@ -4592,11 +4709,9 @@ showDashboard();
 
 }
 
-}
-function viewLoan(index){
+}function viewLoan(index){
 
-let loans =
-JSON.parse(localStorage.getItem("loans"))||[];
+let loans =JSON.parse(localStorage.getItem("loans"))||[];
 
 let loan = loans[index];
 
@@ -4614,8 +4729,7 @@ alert(
 
 );
 
-}
-function editLoan(index){
+}function editLoan(index){
 
 let loans = JSON.parse(localStorage.getItem("loans")) || [];
 
@@ -4627,22 +4741,19 @@ openLoanModal();
 
 setTimeout(function(){
 
-document.getElementById("loanCustomer").value = loan.customerId;
-document.getElementById("loanAmount").value = loan.amount;
-document.getElementById("processingFee").value = loan.processing || 0;
-document.getElementById("insuranceFee").value = loan.insurance || 0;
-document.getElementById("loanDate").value = loan.loanDate;
-document.getElementById("loanType").value = loan.loanType;
-document.getElementById("loanInterest").value = loan.interest;
-document.getElementById("loanWeeks").value = loan.weeks;
+document.getElementById("loanCustomer").value = loan.customerId;document.getElementById("loanAmount").value = loan.amount;document.getElementById("processingFee").value = loan.processing || 0;document.getElementById("insuranceFee").value = loan.insurance || 0;document.getElementById("loanDate").value = loan.loanDate;document.getElementById("loanType").value = loan.loanType;document.getElementById("loanInterest").value = loan.interest;document.getElementById("loanWeeks").value = loan.weeks;
 
 },100);
 
-}
-function printPromissoryLoan(index){
+if(customers.length>0){
 
-let loans =
-JSON.parse(localStorage.getItem("loans"))||[];
+document.getElementById("loanCustomer").selectedIndex = 1;
+
+loadCustomerGuarantor();
+
+}}function printPromissoryLoan(index){
+
+let loans =JSON.parse(localStorage.getItem("loans"))||[];
 
 document.getElementById("promissoryLoanSearch").value=
 
@@ -4660,20 +4771,15 @@ loadPromissory();
 
 },300);
 
-}
-function printCollectionCard(index){
+}function printCollectionCard(index){
 
-let loans =
-JSON.parse(localStorage.getItem("loans"))||[];
+let loans =JSON.parse(localStorage.getItem("loans"))||[];
 
-let customers =
-JSON.parse(localStorage.getItem("customers"))||[];
+let customers =JSON.parse(localStorage.getItem("customers"))||[];
 
 let loan = loans[index];
 
-let customer =
-customers.find(c=>c.id==loan.customerId);
-let guarantor = document.getElementById("loanGuarantor").value;
+let customer =customers.find(c=>c.id==loan.customerId);let guarantor = document.getElementById("loanGuarantor").value;
 
 if(!customer){
 
@@ -4697,8 +4803,7 @@ alert(
 
 );
 
-}
-function loadCollections(){
+}function loadCollections(){
 
 let loans=JSON.parse(localStorage.getItem("loans"))||[];
 
@@ -4752,75 +4857,51 @@ Collect
 
 document.getElementById("collectionTable").innerHTML=html;
 
-}
-function collectEMI(index){
+}function collectEMI(index){
 
-let loans = JSON.parse(localStorage.getItem("loans")) || [];
-let schedule = JSON.parse(localStorage.getItem("emiSchedule")) || [];
-let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+let loans = JSON.parse(localStorage.getItem("loans")) || [];let schedule = JSON.parse(localStorage.getItem("emiSchedule")) || [];let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
 
 let loan = loans[index];
 
-if(!loan){
-    alert("Loan not found.");
-    return;
-}
+if(!loan){alert("Loan not found.");return;}
 
-if(loan.status=="Closed"){
-    alert("Loan already closed.");
-    return;
-}
+if(loan.status=="Closed"){alert("Loan already closed.");return;}
 
-let emi = schedule.find(e =>
-    e.loanId==loan.id && !e.paid
-);
+let emi = schedule.find(e =>e.loanId==loan.id && !e.paid);
 
-if(!emi){
-    alert("No pending EMI.");
-    return;
-}
+if(!emi){alert("No pending EMI.");return;}
 
 let amount = Number(loan.weekly);
 
-loan.balance = Math.max(0, Number(loan.balance)-amount);
-loan.paid = Number(loan.paid||0)+amount;
-loan.lastCollectionDate = new Date().toLocaleDateString();
+loan.balance = Math.max(0, Number(loan.balance)-amount);loan.paid = Number(loan.paid||0)+amount;loan.lastCollectionDate = new Date().toLocaleDateString();
 
-emi.paid = true;
-emi.paidDate = new Date().toLocaleDateString();
-emi.balance = 0;
+emi.paid = true;emi.paidDate = new Date().toLocaleDateString();emi.balance = 0;
 
 history.push({
 
 receiptNo:"RCPT"+String(history.length+1).padStart(4,"0"),
 
-loanId:loan.id,
+loanId: loan.id,
 
-customer:loan.customerName,
+customer: loan.customerName,
 
-group:loan.group,
+group: loan.group,
 
-amount:amount,
+amount: amount,
 
-date:new Date().toLocaleDateString(),
+date: new Date().toLocaleDateString(),
 
-balance:loan.balance,
+balance: loan.balance,
 
-collectedBy:document.getElementById("currentUser").innerText
+collectedBy: document.getElementById("currentUser").innerText
 
 });
 
-if(loan.balance<=0){
+loan.balance = Math.max(0, Number(loan.balance));
 
-loan.balance=0;
-
-loan.status="Closed";
-
-}
-
-localStorage.setItem("loans",JSON.stringify(loans));
-localStorage.setItem("emiSchedule",JSON.stringify(schedule));
-localStorage.setItem("collectionHistory",JSON.stringify(history));
+localStorage.setItem("loans", JSON.stringify(loans));
+localStorage.setItem("emiSchedule", JSON.stringify(schedule));
+localStorage.setItem("collectionHistory", JSON.stringify(history));
 
 if(document.getElementById("loanTable")) loadLoans();
 
@@ -4836,17 +4917,6 @@ alert("EMI Collected Successfully.");
 
 }
 
-if(emi){
-
-emi.paid=true;
-
-emi.paidDate=
-new Date().toLocaleDateString();
-
-emi.balance=0;
-localStorage.setItem("emiSchedule",JSON.stringify(schedule));
-
-}
 function showExpenses(){
 
 document.getElementById("pageTitle").innerHTML="Expense Management";
@@ -4861,14 +4931,9 @@ document.getElementById("content").innerHTML=`
 
 onclick="openExpenseModal()"
 
-style="padding:10px 20px;
-background:#0b7a3e;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;">
+style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
 
-+ Add Expense
+Add Expense
 
 </button>
 
@@ -4880,11 +4945,7 @@ id="expenseSearch"
 
 placeholder="Search Expense"
 
-style="width:300px;
-padding:10px;
-border:1px solid #ccc;
-border-radius:6px;
-margin-bottom:15px;"
+style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:15px;"
 
 onkeyup="loadExpenses()">
 
@@ -4918,13 +4979,11 @@ onkeyup="loadExpenses()">
 
 loadExpenses();
 
-}
-function openExpenseModal(){
+}function openExpenseModal(){
 
 document.getElementById("expenseModal").style.display="flex";
 
-document.getElementById("expenseDate").value=
-new Date().toISOString().split("T")[0];
+document.getElementById("expenseDate").value=new Date().toISOString().split("T")[0];
 
 }
 
@@ -4932,21 +4991,19 @@ function closeExpenseModal(){
 
 document.getElementById("expenseModal").style.display="none";
 
-}
-function saveExpense(){
+}function saveExpense(){
 
-let expenses=
-JSON.parse(localStorage.getItem("expenses"))||[];
+let expenses=JSON.parse(localStorage.getItem("expenses"))||[];
 
 expenses.push({
 
-date:document.getElementById("expenseDate").value,
+date: document.getElementById("expenseDate").value,
 
-head:document.getElementById("expenseHead").value,
+head: document.getElementById("expenseHead").value,
 
-description:document.getElementById("expenseDesc").value,
+description: document.getElementById("expenseDesc").value,
 
-amount:Number(document.getElementById("expenseAmount").value)
+amount: Number(document.getElementById("expenseAmount").value)
 
 });
 
@@ -4956,14 +5013,11 @@ closeExpenseModal();
 
 loadExpenses();
 
-}
-function loadExpenses(){
+}function loadExpenses(){
 
-let expenses=
-JSON.parse(localStorage.getItem("expenses"))||[];
+let expenses=JSON.parse(localStorage.getItem("expenses"))||[];
 
-let keyword=
-document.getElementById("expenseSearch")?.value.toLowerCase()||"";
+let keyword=document.getElementById("expenseSearch")?.value.toLowerCase()||"";
 
 let html="";
 
@@ -4995,12 +5049,7 @@ html+=`
 
 onclick="deleteExpense(${index})"
 
-style="
-background:red;
-color:white;
-border:none;
-padding:6px 12px;
-border-radius:5px;">
+style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;cursor:pointer;">
 
 Delete
 
@@ -5018,13 +5067,11 @@ Delete
 
 document.getElementById("expenseTable").innerHTML=html;
 
-}
-function deleteExpense(index){
+}function deleteExpense(index){
 
 if(confirm("Delete Expense?")){
 
-let expenses=
-JSON.parse(localStorage.getItem("expenses"))||[];
+let expenses=JSON.parse(localStorage.getItem("expenses"))||[];
 
 expenses.splice(index,1);
 
@@ -5034,8 +5081,7 @@ loadExpenses();
 
 }
 
-}
-function showDayBook(){
+}function showDayBook(){
 
 document.getElementById("pageTitle").innerHTML="Day Book";
 
@@ -5049,19 +5095,13 @@ document.getElementById("content").innerHTML=`
 
 onclick="printDayBook()"
 
-style="
-padding:10px 20px;
-background:#0b7a3e;
-color:white;
-border:none;
-border-radius:6px;">
+style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
 
 Print
 
 </button>
 
 </div>
-
 
 <br>
 
@@ -5126,21 +5166,17 @@ onchange="loadDayBook()">
 
 `;
 
-document.getElementById("dayBookDate").value =
-new Date().toISOString().split("T")[0];
+document.getElementById("dayBookDate").value =new Date().toISOString().split("T")[0];
 
 loadDayBook();
 
-}
-function loadDayBook(){
+}function loadDayBook(){
 
 let date=document.getElementById("dayBookDate").value;
 
-let history=
-JSON.parse(localStorage.getItem("collectionHistory"))||[];
+let history=JSON.parse(localStorage.getItem("collectionHistory"))||[];
 
-let expenses=
-JSON.parse(localStorage.getItem("expenses"))||[];
+let expenses=JSON.parse(localStorage.getItem("expenses"))||[];
 
 let html="";
 
@@ -5168,8 +5204,7 @@ html+=`
 
 `;
 
-}
-function printDayBook(){
+}function printDayBook(){
 
 let data=document.getElementById("content").innerHTML;
 
@@ -5187,7 +5222,7 @@ w.document.write(`
 
 body{
 
-font-family:Arial;
+font-family:'Montserrat',sans-serif;
 
 padding:30px;
 
@@ -5353,17 +5388,13 @@ html+=`
 
 document.getElementById("dayBookTable").innerHTML=html;
 
-document.getElementById("dbCollection").innerHTML=
-"₹"+collection.toFixed(2);
+document.getElementById("dbCollection").innerHTML="₹"+collection.toFixed(2);
 
-document.getElementById("dbExpense").innerHTML=
-"₹"+expense.toFixed(2);
+document.getElementById("dbExpense").innerHTML="₹"+expense.toFixed(2);
 
-document.getElementById("dbBalance").innerHTML=
-"₹"+(collection-expense).toFixed(2);
+document.getElementById("dbBalance").innerHTML="₹"+(collection-expense).toFixed(2);
 
-}
-function showGuarantors(){
+}function showGuarantors(){
 
 document.getElementById("pageTitle").innerHTML="Guarantor Management";
 
@@ -5377,15 +5408,9 @@ document.getElementById("content").innerHTML=`
 
 onclick="openGuarantorModal()"
 
-style="
-padding:10px 20px;
-background:#0b7a3e;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;">
+style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
 
-+ Add Guarantor
+Add Guarantor
 
 </button>
 
@@ -5433,8 +5458,7 @@ onkeyup="loadGuarantors()">
 
 loadGuarantors();
 
-}
-function openGuarantorModal(){
+}function openGuarantorModal(){
 
 document.getElementById("guarantorModal").style.display="flex";
 
@@ -5444,33 +5468,31 @@ function closeGuarantorModal(){
 
 document.getElementById("guarantorModal").style.display="none";
 
-}
-function saveGuarantor(){
+}function saveGuarantor(){
 
-let guarantors=
-JSON.parse(localStorage.getItem("guarantors"))||[];
+let guarantors=JSON.parse(localStorage.getItem("guarantors"))||[];
 
 let id="GTR"+String(guarantors.length+1).padStart(4,"0");
 
 guarantors.push({
 
-id:id,
+id: id,
 
-name:document.getElementById("gtrName").value,
+name: document.getElementById("gtrName").value,
 
-mobile:document.getElementById("gtrMobile").value,
+mobile: document.getElementById("gtrMobile").value,
 
-relation:document.getElementById("gtrRelation").value,
+relation: document.getElementById("gtrRelation").value,
 
-occupation:document.getElementById("gtrOccupation").value,
+occupation: document.getElementById("gtrOccupation").value,
 
-income:document.getElementById("gtrIncome").value,
+income: document.getElementById("gtrIncome").value,
 
-aadhaar:document.getElementById("gtrAadhaar").value,
+aadhaar: document.getElementById("gtrAadhaar").value,
 
-pan:document.getElementById("gtrPan").value,
+pan: document.getElementById("gtrPan").value,
 
-address:document.getElementById("gtrAddress").value
+address: document.getElementById("gtrAddress").value
 
 });
 
@@ -5480,14 +5502,11 @@ closeGuarantorModal();
 
 loadGuarantors();
 
-}
-function loadGuarantors(){
+}function loadGuarantors(){
 
-let guarantors=
-JSON.parse(localStorage.getItem("guarantors"))||[];
+let guarantors=JSON.parse(localStorage.getItem("guarantors"))||[];
 
-let keyword=
-document.getElementById("searchGuarantor")?.value.toLowerCase()||"";
+let keyword=document.getElementById("searchGuarantor")?.value.toLowerCase()||"";
 
 let html="";
 
@@ -5542,13 +5561,11 @@ Delete
 
 document.getElementById("guarantorTable").innerHTML=html;
 
-}
-function deleteGuarantor(index){
+}function deleteGuarantor(index){
 
 if(confirm("Delete this guarantor?")){
 
-let guarantors=
-JSON.parse(localStorage.getItem("guarantors"))||[];
+let guarantors=JSON.parse(localStorage.getItem("guarantors"))||[];
 
 guarantors.splice(index,1);
 
@@ -5558,8 +5575,7 @@ loadGuarantors();
 
 }
 
-}
-let promissoryFileName="";
+}let promissoryFileName="";
 
 function uploadPromissoryDocument(event){
 
@@ -5573,8 +5589,7 @@ const reader=new FileReader();
 
 reader.onload=function(e){
 
-localStorage.setItem("promissoryDocument",e.target.result);
-localStorage.setItem("promissoryDocumentName",file.name);
+localStorage.setItem("promissoryDocument",e.target.result);localStorage.setItem("promissoryDocumentName",file.name);
 
 alert("Promissory Note Uploaded Successfully.");
 
@@ -5584,8 +5599,7 @@ showDocuments();
 
 reader.readAsDataURL(file);
 
-}
-function openDocumentModal(){
+}function openDocumentModal(){
 
 document.getElementById("documentModal").style.display="flex";
 
@@ -5595,7 +5609,7 @@ let html="";
 
 customers.forEach(c=>{
 
-html+=`<option value="${c.id}">${c.name}</option>`;
+html += `<option value="${c.id}">${c.name}</option>`;
 
 });
 
@@ -5607,22 +5621,21 @@ function closeDocumentModal(){
 
 document.getElementById("documentModal").style.display="none";
 
-}
-function saveDocuments(){
+}function saveDocuments(){
 
 let docs=JSON.parse(localStorage.getItem("documents"))||[];
 
 docs.push({
 
-customerId:document.getElementById("docCustomer").value,
+customerId: document.getElementById("docCustomer").value,
 
-photo:document.getElementById("docPhoto").files[0]?.name || "",
+photo: document.getElementById("docPhoto").files[0]?.name || "",
 
-aadhaar:document.getElementById("docAadhaar").files[0]?.name || "",
+aadhaar: document.getElementById("docAadhaar").files[0]?.name || "",
 
-pan:document.getElementById("docPan").files[0]?.name || "",
+pan: document.getElementById("docPan").files[0]?.name || "",
 
-agreement:document.getElementById("docAgreement").files[0]?.name || ""
+agreement: document.getElementById("docAgreement").files[0]?.name || ""
 
 });
 
@@ -5632,8 +5645,7 @@ closeDocumentModal();
 
 loadDocuments();
 
-}
-function loadDocuments(){
+}function loadDocuments(){
 
 let docs=JSON.parse(localStorage.getItem("documents"))||[];
 
@@ -5692,8 +5704,7 @@ Delete
 
 document.getElementById("documentTable").innerHTML=html;
 
-}
-function deleteDocument(index){
+}function deleteDocument(index){
 
 if(confirm("Delete document record?")){
 
@@ -5709,18 +5720,13 @@ loadDocuments();
 
 }
 
-localStorage.setItem(
-"emiSchedule",
-JSON.stringify(schedule)
-);
+localStorage.setItem("emiSchedule",JSON.stringify(schedule));
 
 function uploadSignedPromissory(){
 
-let loanId =
-document.getElementById("promissoryLoanSearch").value;
+let loanId =document.getElementById("promissoryLoanSearch").value;
 
-let file =
-document.getElementById("signedPromissoryFile").files[0];
+let file =document.getElementById("signedPromissoryFile").files[0];
 
 if(!file){
 
@@ -5734,23 +5740,19 @@ let reader = new FileReader();
 
 reader.onload=function(e){
 
-let docs =
-JSON.parse(localStorage.getItem("signedPromissory")) || {};
+let docs =JSON.parse(localStorage.getItem("signedPromissory")) || {};
 
-docs[loanId]={
+docs[loanId] = {
 
-name:file.name,
+name: file.name,
 
-file:e.target.result,
+file: e.target.result,
 
-date:new Date().toLocaleString()
+date: new Date().toLocaleString()
 
 };
 
-localStorage.setItem(
-"signedPromissory",
-JSON.stringify(docs)
-);
+localStorage.setItem("signedPromissory",JSON.stringify(docs));
 
 alert("Signed Promissory Uploaded.");
 
@@ -5760,14 +5762,11 @@ loadPromissory();
 
 reader.readAsDataURL(file);
 
-}
-function downloadSignedPromissory(){
+}function downloadSignedPromissory(){
 
-let loanId =
-document.getElementById("promissoryLoanSearch").value;
+let loanId =document.getElementById("promissoryLoanSearch").value;
 
-let docs =
-JSON.parse(localStorage.getItem("signedPromissory")) || {};
+let docs =JSON.parse(localStorage.getItem("signedPromissory")) || {};
 
 if(!docs[loanId]){
 
@@ -5785,14 +5784,11 @@ a.download=docs[loanId].name;
 
 a.click();
 
-}
-function deleteSignedPromissory(){
+}function deleteSignedPromissory(){
 
-let loanId =
-document.getElementById("promissoryLoanSearch").value;
+let loanId =document.getElementById("promissoryLoanSearch").value;
 
-let docs =
-JSON.parse(localStorage.getItem("signedPromissory")) || {};
+let docs =JSON.parse(localStorage.getItem("signedPromissory")) || {};
 
 if(!docs[loanId]){
 
@@ -5806,10 +5802,7 @@ if(confirm("Delete this signed file?")){
 
 delete docs[loanId];
 
-localStorage.setItem(
-"signedPromissory",
-JSON.stringify(docs)
-);
+localStorage.setItem("signedPromissory",JSON.stringify(docs));
 
 loadPromissory();
 
@@ -5954,7 +5947,6 @@ Close
 </button>
 
 </div>
-
 
 <h2>Add Customer</h2>
 <div class="customer-form"></div>
@@ -6237,17 +6229,13 @@ Cancel
 
 <select id="docCustomer"></select>
 
-<label>Customer Photo</label>
-<input type="file" id="docPhoto" accept="image/*">
+<label>Customer Photo</label><input type="file" id="docPhoto" accept="image/*">
 
-<label>Aadhaar Front</label>
-<input type="file" id="docAadhaar" accept="image/*">
+<label>Aadhaar Front</label><input type="file" id="docAadhaar" accept="image/*">
 
-<label>PAN Card</label>
-<input type="file" id="docPan" accept="image/*">
+<label>PAN Card</label><input type="file" id="docPan" accept="image/*">
 
-<label>Loan Agreement (PDF)</label>
-<input type="file" id="docAgreement" accept=".pdf">
+<label>Loan Agreement (PDF)</label><input type="file" id="docAgreement" accept=".pdf">
 
 <div class="modal-buttons">
 
@@ -6296,138 +6284,135 @@ showStep(currentStep);
 
 }
 
-}
-function showLoanCard(){
+}function showLoanCard(){
 
-    document.getElementById("pageTitle").innerHTML = "Loan Card";
+document.getElementById("pageTitle").innerHTML = "Loan Card";
 
-    document.getElementById("content").innerHTML = `
+document.getElementById("content").innerHTML = `
 
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
 
-        <h2>Loan Card Management</h2>
+    <h2>Loan Card Management</h2>
 
-    </div>
+</div>
 
-    <input
-        id="loanCardSearch"
-        placeholder="Search Customer"
-        style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:20px;"
-        onkeyup="loadLoanCards()">
+<input
+    id="loanCardSearch"
+    placeholder="Search Customer"
+    style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:20px;"
+    onkeyup="loadLoanCards()">
 
-    <table width="100%" border="1" cellspacing="0" cellpadding="10">
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
 
-        <thead style="background:#0b7a3e;color:white;">
-
-            <tr>
-
-                <th>ID</th>
-
-                <th>Name</th>
-
-                <th>Group</th>
-
-                <th>Mobile</th>
-
-                <th>Loan Amount</th>
-
-                <th>Action</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody id="loanCardTable"></tbody>
-
-    </table>
-
-    `;
-
-    loadLoanCards();
-
-}
-function loadLoanCards(){
-
-    let customers = JSON.parse(localStorage.getItem("customers")) || [];
-
-    let loans = JSON.parse(localStorage.getItem("loans")) || [];
-
-    let search = document.getElementById("loanCardSearch").value.toLowerCase();
-
-    let html = "";
-
-    customers.forEach(c=>{
-
-        let loan = loans.find(l=>l.customerId==c.id);
-
-        if(!loan) return;
-
-        if(
-            c.name.toLowerCase().includes(search)==false &&
-            c.mobile.includes(search)==false
-        ) return;
-
-        html += `
+    <thead style="background:#0b7a3e;color:white;">
 
         <tr>
 
-            <td>${c.id}</td>
+            <th>ID</th>
 
-            <td>${c.name}</td>
+            <th>Name</th>
 
-            <td>${c.group}</td>
+            <th>Group</th>
 
-            <td>${c.mobile}</td>
+            <th>Mobile</th>
 
-            <td>₹ ${loan.amount}</td>
+            <th>Loan Amount</th>
 
-            <td>
-
-                <button onclick="printLoanCardFront('${c.id}')">
-
-                    Front
-
-                </button>
-
-                <button onclick="printLoanCardBack('${c.id}')">
-
-                    Back
-
-                </button>
-
-            </td>
+            <th>Action</th>
 
         </tr>
 
-        `;
+    </thead>
 
-    });
+    <tbody id="loanCardTable"></tbody>
 
-    document.getElementById("loanCardTable").innerHTML = html;
+</table>
 
+`;
+
+loadLoanCards();
+
+}function loadLoanCards(){
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let search = document.getElementById("loanCardSearch").value.toLowerCase();
+
+let html = "";
+
+customers.forEach(c=>{
+
+    let loan = loans.find(l=>l.customerId==c.id);
+
+    if(!loan) return;
+
+    if(
+        c.name.toLowerCase().includes(search)==false &&
+        c.mobile.includes(search)==false
+    ) return;
+
+    html += `
+
+    <tr>
+
+        <td>${c.id}</td>
+
+        <td>${c.name}</td>
+
+        <td>${c.group}</td>
+
+        <td>${c.mobile}</td>
+
+        <td>₹ ${loan.amount}</td>
+
+        <td>
+
+            <button onclick="printLoanCardFront('${c.id}')">
+
+                Front
+
+            </button>
+
+            <button onclick="printLoanCardBack('${c.id}')">
+
+                Back
+
+            </button>
+
+        </td>
+
+    </tr>
+
+    `;
+
+});
+
+document.getElementById("loanCardTable").innerHTML = html;
+
+}function printLoanCardFront(customerId){
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let c = customers.find(x=>x.id==customerId);
+
+let loan = loans.find(x=>x.customerId==customerId);
+
+if(!c || !loan){
+    alert("Loan Details Not Found");
+    return;
 }
-function printLoanCardFront(customerId){
 
-    let customers = JSON.parse(localStorage.getItem("customers")) || [];
-    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+let companyName="AARVEE ASSOCIATES";
+let address="Near Bus Stand, Kottur";
+let mobile="8248510416, 8838224040";
 
-    let c = customers.find(x=>x.id==customerId);
+let win=window.open("","","width=1200,height=800");
 
-    let loan = loans.find(x=>x.customerId==customerId);
-
-    if(!c || !loan){
-        alert("Loan Details Not Found");
-        return;
-    }
-
-    let companyName="AARVEE ASSOCIATES";
-    let address="Near Bus Stand, Kottur";
-    let mobile="8248510416, 8838224040";
-
-    let win=window.open("","","width=1200,height=800");
-
-    win.document.write(`
-    <!DOCTYPE html>
+win.document.write(`
+<!DOCTYPE html>
 
 <html>
 
@@ -6447,7 +6432,7 @@ margin:10mm;
 
 body{
 
-font-family:Arial;
+font-family:'Montserrat',sans-serif;
 
 margin:0;
 
