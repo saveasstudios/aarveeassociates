@@ -2944,13 +2944,29 @@ document.getElementById("pageTitle").innerHTML="Loan Card";
 
 document.getElementById("content").innerHTML=`
 
-<div style="display:flex;justify-content:space-between;align-items:center;">
+<div class="table-container" style="padding:25px;">
 
-<h2>Loan Collection Card</h2>
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;">
+
+<div>
+
+<h2 style="margin:0;">
+Loan Collection Card
+</h2>
+
+<p style="
+margin-top:5px;
+color:#666;">
+Print Front & Back A5 Loan Card
+</p>
 
 </div>
 
-<br>
+<div>
 
 <input
 id="loanCardSearch"
@@ -2961,106 +2977,230 @@ placeholder="Enter Loan ID">
 class="btn btn-primary"
 onclick="loadLoanCard()">
 
-Load Loan
+Load Card
 
 </button>
 
-<hr style="margin:20px 0">
+</div>
 
-<div id="loanCardContent"></div>
+</div>
+
+<hr>
+
+<div id="loanCardContent">
+
+<div style="
+padding:80px;
+text-align:center;
+color:#888;">
+
+Select a Loan ID and click
+<b>Load Card</b>
+
+</div>
+
+</div>
+
+</div>
 
 `;
 
 }
 function loadLoanCard(){
 
-    let loanId=document.getElementById("loanCardSearch").value.trim();
+let loanId=document.getElementById("loanCardSearch").value.trim();
 
-    if(loanId==""){
-        alert("Enter Loan ID");
-        return;
+if(loanId==""){
+    alert("Enter Loan ID");
+    return;
+}
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+let loan=loans.find(l=>l.id==loanId);
+
+if(!loan){
+    alert("Loan Not Found");
+    return;
+}
+
+let customer=customers.find(c=>c.id==loan.customerId);
+let collections = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+let history = collections.filter(c=>c.loanId==loan.id);
+
+let rows = "";
+let totalAmount = 0;
+let totalSavings = 0;
+
+for(let i=1;i<=12;i++){
+
+    let h = history[i-1];
+
+    let amount = h ? Number(h.amount) : "";
+    let savings = h ? Number(h.savings || 0) : "";
+
+    if(h){
+        totalAmount += Number(h.amount||0);
+        totalSavings += Number(h.savings||0);
     }
 
-    let loans=JSON.parse(localStorage.getItem("loans"))||[];
-    let customers=JSON.parse(localStorage.getItem("customers"))||[];
+    rows += `
+<tr>
 
-    let loan=loans.find(l=>l.id==loanId);
+<td style="text-align:center;">${i}</td>
 
-    if(!loan){
-        alert("Loan Not Found");
-        return;
-    }
+<td>${h ? h.date : ""}</td>
 
-    let customer=customers.find(c=>c.id==loan.customerId);
+<td style="text-align:right;">
+${h ? amount.toFixed(2) : ""}
+</td>
 
-    document.getElementById("loanCardContent").innerHTML=`
+<td style="text-align:right;">
+${h ? savings.toFixed(2) : ""}
+</td>
 
-<div id="loanCardPrintArea"
-style="
-background:#fff;
-padding:20px;
-border-radius:10px;
-border:1px solid #ddd;">
+<td></td>
 
-<div style="display:flex;justify-content:space-between;align-items:flex-start;">
+</tr>
+`;
 
-<div>
+}
 
-<h2 style="margin:0;color:#0b7a3e;">
-AARVEE ASSOCIATES
-</h2>
+document.getElementById("loanCardContent").innerHTML=`
 
-<p style="margin-top:5px;">
-Loan Collection Card
-</p>
+<div id="loanCardPrintArea">
 
-<table style="margin-top:15px;">
+<!-- FRONT PAGE -->
+
+<div class="loan-front">
+
+<div style="
+width:148mm;
+min-height:210mm;
+margin:auto;
+background:white;
+padding:12mm;
+border:2px solid #000;
+box-sizing:border-box;">
+
+<!-- HEADER -->
+
+<div style="text-align:center;">
+
+<h1 style="
+margin:0;
+font-size:28px;
+font-weight:800;
+letter-spacing:2px;">
+
+AARVEE
+
+</h1>
+
+<div style="
+font-size:18px;
+font-weight:700;
+margin-top:-4px;">
+
+ASSOCIATES
+
+</div>
+
+<hr style="margin:10px 0 15px;">
+
+<div style="font-size:14px;font-weight:600;">
+
+Near Bustand, Kottur.
+
+</div>
+
+<div style="font-size:14px;margin-top:5px;">
+
+Contact : 8248510416, 8838224040
+
+</div>
+
+</div>
+
+<br>
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:flex-start;">
+
+<div style="width:72%;">
+
+<table style="
+width:100%;
+border:none;
+font-size:18px;">
 
 <tr>
 
-<td><b>Loan ID</b></td>
+<td style="border:none;width:35%;"><b>NAME</b></td>
 
-<td>${loan.id}</td>
+<td style="border:none;">:
+${loan.customerName}
+
+</td>
 
 </tr>
 
 <tr>
 
-<td><b>Customer</b></td>
+<td style="border:none;"><b>GROUP</b></td>
 
-<td>${loan.customerName}</td>
+<td style="border:none;">:
+${loan.group}
 
-</tr>
-
-<tr>
-
-<td><b>Group</b></td>
-
-<td>${loan.group}</td>
+</td>
 
 </tr>
 
 <tr>
 
-<td><b>Loan Amount</b></td>
+<td style="border:none;"><b>MOBILE</b></td>
 
-<td>₹${loan.amount}</td>
+<td style="border:none;">:
+${customer?.mobile||""}
 
-</tr>
-
-<tr>
-
-<td><b>Weekly EMI</b></td>
-
-<td>₹${Number(loan.weekly).toFixed(2)}</td>
+</td>
 
 </tr>
 
 <tr>
 
-<td><b>Balance</b></td>
+<td style="border:none;"><b>DATE</b></td>
 
-<td>₹${Number(loan.balance).toFixed(2)}</td>
+<td style="border:none;">:
+${loan.loanDate}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="border:none;"><b>AMOUNT RS.</b></td>
+
+<td style="border:none;">:
+₹${Number(loan.amount).toFixed(2)}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="border:none;"><b>CWF RS.</b></td>
+
+<td style="border:none;">:
+₹${Number(loan.processing||0).toFixed(2)}
+
+</td>
 
 </tr>
 
@@ -3068,14 +3208,14 @@ Loan Collection Card
 
 </div>
 
-<div>
+<div style="width:24%;text-align:center;">
 
 <img
-src="${customer ? customer.photo : ''}"
+src="${customer?.photo||""}"
 style="
-width:120px;
-height:150px;
-border:1px solid #000;
+width:110px;
+height:140px;
+border:2px solid #000;
 object-fit:cover;">
 
 </div>
@@ -3083,6 +3223,49 @@ object-fit:cover;">
 </div>
 
 <br>
+
+<div style="
+border:2px solid #000;
+padding:12px;">
+
+<div style="font-size:15px;line-height:2;">
+
+• வீடு கட்ட, வாங்க கடன்<br>
+
+• வீடு அடமானக் கடன்<br>
+
+• காலி இடம் அடமானக் கடன்<br>
+
+• தனி நபர் கடன்<br>
+
+• வியாபாரக் கடன்<br>
+
+• இருசக்கர வாகன கடன்<br>
+
+• வணிக வாகன கடன்<br>
+
+• நகை கடன்
+
+</div>
+
+<br>
+
+<div style="
+text-align:center;
+font-weight:bold;
+font-size:18px;">
+
+அதிக வட்டியுள்ள அடகு நகைகளை மீட்டு,<br>
+
+குறைந்த வட்டியில் மாற்றித்தரப்படும்
+
+</div>
+
+</div>
+
+<br>
+
+<div style="text-align:center;">
 
 <button
 class="btn btn-success"
@@ -3093,87 +3276,239 @@ onclick="printLoanCard()">
 </button>
 
 </div>
+<div style="page-break-before:always;"></div>
+
+<!-- BACK PAGE -->
+
+<div style="
+width:148mm;
+min-height:210mm;
+margin:auto;
+background:white;
+padding:12mm;
+border:2px solid #000;
+box-sizing:border-box;">
+
+<div style="text-align:center;">
+
+<h2 style="
+margin:0;
+font-size:24px;
+font-weight:700;">
+
+AARVEE ASSOCIATES
+
+</h2>
+
+<div style="margin-top:5px;font-size:16px;">
+
+LOAN COLLECTION REGISTER
+
+</div>
+
+</div>
+
+<br>
+
+<table style="
+width:100%;
+border-collapse:collapse;
+font-size:13px;">
+
+<thead>
+
+<tr>
+
+<th>S.No</th>
+
+<th>Date</th>
+
+<th>Amount</th>
+
+<th>Savings</th>
+
+<th>Sign</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+${rows}
+
+<tr>
+
+<td colspan="2"
+style="
+text-align:right;
+font-weight:bold;">
+
+TOTAL
+
+</td>
+
+<td
+style="
+text-align:right;
+font-weight:bold;">
+
+${totalAmount.toFixed(2)}
+
+</td>
+
+<td
+style="
+text-align:right;
+font-weight:bold;">
+
+${totalSavings.toFixed(2)}
+
+</td>
+
+<td></td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
 
 `;
 
 }
-function printLoanCard() {
+function printLoanCard(){
 
-    const content = document.getElementById("loanCardContent").innerHTML;
+let printContents =
+document.getElementById("loanCardPrintArea").innerHTML;
 
-    const win = window.open("", "_blank", "width=800,height=900");
+let w = window.open("", "_blank");
 
-    win.document.write(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Loan Card</title>
+w.document.write(`
 
-        <style>
+<!DOCTYPE html>
 
-        @page{
-            size:A5 portrait;
-            margin:8mm;
-        }
+<html>
 
-        *{
-            box-sizing:border-box;
-            font-family:Arial, Helvetica, sans-serif;
-        }
+<head>
 
-        body{
-            margin:0;
-            padding:0;
-            background:#fff;
-        }
+<title>Loan Card</title>
 
-        .page{
-            width:100%;
-            min-height:100%;
-        }
+<style>
 
-        table{
-            width:100%;
-            border-collapse:collapse;
-        }
+@page{
 
-        table,th,td{
-            border:1px solid #000;
-        }
+    size:A5 portrait;
 
-        th,td{
-            padding:8px;
-            font-size:13px;
-        }
+    margin:6mm;
 
-        img{
-            max-width:100%;
-        }
+}
 
-        button{
-            display:none;
-        }
+*{
 
-        </style>
+box-sizing:border-box;
 
-    </head>
+font-family:Arial,Helvetica,sans-serif;
 
-    <body>
+}
 
-        <div class="page">
-            ${content}
-        </div>
+body{
 
-    </body>
-    </html>
-    `);
+margin:0;
 
-    win.document.close();
+padding:0;
 
-    setTimeout(()=>{
-        win.focus();
-        win.print();
-    },500);
+background:white;
+
+}
+
+.loan-front{
+
+page-break-after:always;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+table,
+th,
+td{
+
+border:1px solid #000;
+
+}
+
+th{
+
+background:#f2f2f2;
+
+font-size:12px;
+
+padding:6px;
+
+}
+
+td{
+
+padding:6px;
+
+font-size:12px;
+
+}
+
+img{
+
+max-width:100%;
+
+}
+
+button{
+
+display:none;
+
+}
+
+h1,h2,h3{
+
+margin:0;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+${printContents}
+
+</body>
+
+</html>
+
+`);
+
+w.document.close();
+
+setTimeout(()=>{
+
+w.focus();
+
+w.print();
+
+},500);
 
 }
 
@@ -5677,13 +6012,42 @@ border-radius:8px;">
 
 <div>
 
-<h2 style="margin:0;color:#0b7a3e;">
-AARVEE ASSOCIATES
-</h2>
+<div style="
+text-align:center;
+border-bottom:3px solid #0b7a3e;
+padding-bottom:12px;
+margin-bottom:18px;">
 
-<h3 style="margin-top:5px;">
-Loan Collection Card
-</h3>
+<h1 style="
+margin:0;
+font-size:28px;
+color:#0b7a3e;
+font-weight:700;">
+
+AARVEE ASSOCIATES
+
+</h1>
+
+<div style="
+font-size:14px;
+margin-top:6px;
+font-weight:bold;
+letter-spacing:1px;">
+
+MICRO FINANCE LOAN COLLECTION CARD
+
+</div>
+
+<div style="
+margin-top:6px;
+font-size:12px;
+color:#666;">
+
+Customer Loan Record
+
+</div>
+
+</div>
 
 <table style="border-collapse:collapse;margin-top:20px;">
 
