@@ -2937,7 +2937,8 @@ Delete
 
 `;
 
-}function showLoanCard(){
+}
+function showLoanCard(){
 
 document.getElementById("pageTitle").innerHTML="Loan Card";
 
@@ -2953,30 +2954,145 @@ document.getElementById("content").innerHTML=`
 
 <input
 id="loanCardSearch"
-placeholder="Enter Loan ID"
-style="
-width:300px;
-padding:12px;
-border:1px solid #ccc;
-border-radius:8px;">
+class="search-box"
+placeholder="Enter Loan ID">
 
 <button
-onclick="loadLoanCard()"
-style="
-padding:12px 25px;
-background:#0b7a3e;
-color:white;
-border:none;
-border-radius:8px;
-margin-left:10px;">
+class="btn btn-primary"
+onclick="loadLoanCard()">
 
 Load Loan
 
 </button>
 
-<hr style="margin:25px 0;">
+<hr style="margin:20px 0">
 
 <div id="loanCardContent"></div>
+
+`;
+
+}
+function loadLoanCard(){
+
+    let loanId=document.getElementById("loanCardSearch").value.trim();
+
+    if(loanId==""){
+        alert("Enter Loan ID");
+        return;
+    }
+
+    let loans=JSON.parse(localStorage.getItem("loans"))||[];
+    let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+    let loan=loans.find(l=>l.id==loanId);
+
+    if(!loan){
+        alert("Loan Not Found");
+        return;
+    }
+
+    let customer=customers.find(c=>c.id==loan.customerId);
+
+    document.getElementById("loanCardContent").innerHTML=`
+
+<div id="loanCardPrintArea"
+style="
+background:#fff;
+padding:20px;
+border-radius:10px;
+border:1px solid #ddd;">
+
+<div style="display:flex;justify-content:space-between;align-items:flex-start;">
+
+<div>
+
+<h2 style="margin:0;color:#0b7a3e;">
+AARVEE ASSOCIATES
+</h2>
+
+<p style="margin-top:5px;">
+Loan Collection Card
+</p>
+
+<table style="margin-top:15px;">
+
+<tr>
+
+<td><b>Loan ID</b></td>
+
+<td>${loan.id}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Customer</b></td>
+
+<td>${loan.customerName}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Group</b></td>
+
+<td>${loan.group}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Loan Amount</b></td>
+
+<td>₹${loan.amount}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Weekly EMI</b></td>
+
+<td>₹${Number(loan.weekly).toFixed(2)}</td>
+
+</tr>
+
+<tr>
+
+<td><b>Balance</b></td>
+
+<td>₹${Number(loan.balance).toFixed(2)}</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<div>
+
+<img
+src="${customer ? customer.photo : ''}"
+style="
+width:120px;
+height:150px;
+border:1px solid #000;
+object-fit:cover;">
+
+</div>
+
+</div>
+
+<br>
+
+<button
+class="btn btn-success"
+onclick="printLoanCard()">
+
+🖨 Print Loan Card
+
+</button>
+
+</div>
 
 `;
 
@@ -3058,704 +3174,6 @@ function printLoanCard() {
         win.focus();
         win.print();
     },500);
-
-}
-function printLoanFront() {
-
-    let id = document.getElementById("loanCardSearch").value.trim();
-
-    let loans = JSON.parse(localStorage.getItem("loans")) || [];
-    let customers = JSON.parse(localStorage.getItem("customers")) || [];
-
-    let loan = loans.find(l => l.id == id);
-
-    if (!loan) {
-        alert("Loan not found.");
-        return;
-    }
-
-    let customer = customers.find(c => c.id == loan.customerId);
-
-    let html = `
-<!DOCTYPE html>
-<html>
-
-<head>
-
-<title>Loan Card</title>
-
-<style>
-
-@page{
-    size:A5 portrait;
-    margin:6mm;
-}
-
-*{
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
-}
-
-body{
-    margin:0;
-    padding:0;
-    background:#fff;
-}
-
-.card{
-    width:100%;
-    min-height:198mm;
-    border:2px solid #000;
-    padding:14px;
-}
-
-.header{
-    display:flex;
-    align-items:flex-start;
-}
-
-.logo{
-    width:65px;
-    height:65px;
-    border:1px solid #000;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin-right:15px;
-}
-
-.logo img{
-    max-width:100%;
-    max-height:100%;
-}
-
-.headText{
-    flex:1;
-}
-
-.company{
-    font-size:26px;
-    font-weight:700;
-    margin-top:4px;
-}
-
-.address{
-    text-align:center;
-    font-size:14px;
-    margin-top:25px;
-    line-height:20px;
-}
-
-.details{
-    width:100%;
-    margin-top:20px;
-    border-collapse:collapse;
-}
-
-.details td{
-    padding:7px 8px;
-    font-size:17px;
-}
-
-.label{
-    width:150px;
-    font-weight:bold;
-}
-
-.value{
-    border-bottom:1px solid #000;
-}
-
-.services{
-    border:2px solid #000;
-    margin-top:18px;
-    padding:12px 16px;
-}
-
-.services p{
-    margin:8px 0;
-    font-size:16px;
-}
-
-.footerBox{
-    margin-top:18px;
-    border:2px solid #000;
-    padding:15px;
-    text-align:center;
-    font-size:18px;
-    font-weight:bold;
-    line-height:32px;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="card">
-
-<div class="header">
-
-<div class="logo">
-<img src="logo.png">
-</div>
-
-<div class="headText">
-
-<div class="company">
-AARVEE ASSOCIATES
-</div>
-
-<div class="address">
-Near Bus Stand, Kottur<br>
-Contact : 8248510416, 8838224040
-</div>
-
-</div>
-
-</div>
-
-<table class="details">
-
-<tr>
-<td class="label">NAME</td>
-<td class="value">${customer.name || ""}</td>
-</tr>
-
-<tr>
-<td class="label">GROUP</td>
-<td class="value">${customer.group || ""}</td>
-</tr>
-
-<tr>
-<td class="label">MOBILE</td>
-<td class="value">${customer.mobile || ""}</td>
-</tr>
-
-<tr>
-<td class="label">DATE</td>
-<td class="value">${loan.loanDate || ""}</td>
-</tr>
-
-<tr>
-<td class="label">AMOUNT</td>
-<td class="value">₹ ${Number(loan.amount || 0).toFixed(2)}</td>
-</tr>
-
-</table>
-
-<div class="services">
-
-<p>► வீடு கட்ட, வாங்க கடன்</p>
-
-<p>► வீடு அடமான கடன்</p>
-
-<p>► காலி இடம் அடமான கடன்</p>
-
-<p>► தனிநபர் கடன்</p>
-
-<p>► வியாபார கடன்</p>
-
-<p>► இருசக்கர வாகன கடன்</p>
-
-<p>► வணிக வாகன கடன்</p>
-
-<p>► நகை கடன்</p>
-
-</div>
-
-<div class="footerBox">
-
-அதிக வட்டியுள்ள கடன் தொகைகளை மீட்டு,<br>
-
-குறைந்த வட்டியில் மாற்றித் தரப்படும்
-
-</div>
-
-</div>
-
-</body>
-
-</html>
-`;
-
-    let w = window.open("", "_blank", "width=800,height=900");
-
-    w.document.write(html);
-
-    w.document.close();
-
-    w.focus();
-
-    setTimeout(function () {
-        w.print();
-    }, 500);
-
-}
-function printLoanBack() {
-
-    let id = document.getElementById("loanCardSearch").value.trim();
-
-    let loans = JSON.parse(localStorage.getItem("loans")) || [];
-    let customers = JSON.parse(localStorage.getItem("customers")) || [];
-
-    let loan = loans.find(l => l.id == id);
-
-    if (!loan) {
-        alert("Loan not found.");
-        return;
-    }
-
-    let customer = customers.find(c => c.id == loan.customerId);
-
-    let emi = Number(loan.weekly).toFixed(2);
-    let total = Number(loan.total).toFixed(2);
-
-    let rows = "";
-
-    for (let i = 1; i <= Number(loan.weeks); i++) {
-
-        rows += `
-        <tr>
-            <td>${i}</td>
-            <td></td>
-            <td>₹ ${emi}</td>
-            <td></td>
-        </tr>`;
-    }
-
-    rows += `
-    <tr class="totalRow">
-        <td><b>TOTAL</b></td>
-        <td></td>
-        <td><b>₹ ${total}</b></td>
-        <td></td>
-    </tr>`;
-
-    let html = `
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<title>Loan Card Back</title>
-
-<style>
-
-@page{
-    size:A5 portrait;
-    margin:6mm;
-}
-
-*{
-    box-sizing:border-box;
-    font-family:Arial,Helvetica,sans-serif;
-}
-
-body{
-    margin:0;
-    padding:0;
-    background:#fff;
-}
-
-.card{
-    width:100%;
-    min-height:198mm;
-}
-
-.header{
-    text-align:center;
-    margin-bottom:15px;
-}
-
-.header h2{
-    margin:0;
-    font-size:26px;
-}
-
-.header p{
-    margin:5px 0;
-    font-size:14px;
-}
-
-.info{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:15px;
-    font-size:14px;
-    font-weight:bold;
-    flex-wrap:wrap;
-    gap:8px;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-table,
-th,
-td{
-    border:1px solid #000;
-}
-
-th{
-    padding:8px;
-    text-align:center;
-    font-size:15px;
-    background:#f3f3f3;
-}
-
-td{
-    height:38px;
-    text-align:center;
-    font-size:15px;
-}
-
-.totalRow td{
-    font-weight:bold;
-    background:#fafafa;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="card">
-
-<div class="header">
-
-<h2>AARVEE ASSOCIATES</h2>
-
-<p>Near Bus Stand, Kottur</p>
-
-<p>Contact : 8248510416, 8838224040</p>
-
-</div>
-
-<div class="info">
-
-<div>Loan ID : ${loan.id}</div>
-
-<div>Name : ${customer.name}</div>
-
-<div>Group : ${customer.group}</div>
-
-</div>
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>S.NO</th>
-
-<th>DATE</th>
-
-<th>AMOUNT</th>
-
-<th>SIGN</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-${rows}
-
-</tbody>
-
-</table>
-
-</div>
-
-</body>
-
-</html>
-`;
-
-    let w = window.open("", "_blank", "width=800,height=900");
-
-    w.document.write(html);
-
-    w.document.close();
-
-    w.focus();
-
-    setTimeout(function () {
-        w.print();
-    }, 500);
-
-}
-function printLoanBoth() {
-
-    let id = document.getElementById("loanCardSearch").value.trim();
-
-    if (id === "") {
-        alert("Please enter Loan ID.");
-        return;
-    }
-
-    let loans = JSON.parse(localStorage.getItem("loans")) || [];
-
-    let loan = loans.find(l => l.id == id);
-
-    if (!loan) {
-        alert("Loan not found.");
-        return;
-    }
-
-    // Print Front Side
-    printLoanFront();
-
-    // Wait before opening Back Side
-    setTimeout(function () {
-
-        printLoanBack();
-
-    }, 2500);
-
-}
-
-function loadLoanCard(){
-
-
-
-let id=document.getElementById("loanCardSearch").value.trim();
-
-
-
-let loans=JSON.parse(localStorage.getItem("loans"))||[];
-
-
-
-let customers=JSON.parse(localStorage.getItem("customers"))||[];
-
-
-
-let loan=loans.find(x=>x.id==id);
-
-
-
-if(!loan){
-
-
-
-alert("Loan not found");
-
-
-
-return;
-
-
-
-}
-
-
-
-let customer=customers.find(c=>c.id==loan.customerId);
-
-
-
-document.getElementById("loanCardContent").innerHTML=`
-
-
-
-<div style="
-
-background:white;
-
-padding:30px;
-
-border-radius:10px;
-
-box-shadow:0 5px 20px rgba(0,0,0,.1);
-
-">
-
-
-
-<h2>AARVEE ASSOCIATES</h2>
-
-
-
-<hr>
-
-
-
-<br>
-
-
-
-<table width="100%">
-
-
-
-<tr>
-
-
-
-<td width="70%">
-
-
-
-<b>Loan ID</b><br>
-
-
-
-${loan.id}
-
-
-
-</td>
-
-
-
-<td rowspan="5" align="center">
-
-
-
-<img
-
-
-
-src="${customer.photo}"
-
-
-
-style="width:120px;height:120px;border-radius:8px;object-fit;border:2px solid #ddd;">
-
-
-
-</td>
-
-
-
-</tr>
-
-
-
-<tr>
-
-
-
-<td>
-
-
-
-<b>Name</b><br>
-
-
-
-${customer.name}
-
-
-
-</td>
-
-
-
-</tr>
-
-
-
-<tr>
-
-
-
-<td>
-
-
-
-<b>Group</b><br>
-
-
-
-${customer.group}
-
-
-
-</td>
-
-
-
-</tr>
-
-
-
-<tr>
-
-
-
-<td>
-
-
-
-<b>Loan Amount</b><br>
-
-
-
-₹${loan.amount}
-
-
-
-</td>
-
-
-
-</tr>
-
-
-
-<tr>
-
-
-
-<td>
-
-
-
-<b>Weekly EMI</b><br>
-
-
-
-₹${loan.weekly}
-
-
-
-</td>
-
-
-
-</tr>
-
-
-
-</table>
-
-
-
-<br>
-
-
-
-<button class="btn btn-success" onclick="printLoanFront()">
-🖨 Print Loan Card
-</button>
-
-</div>
-
-
-
-`;
-
-
 
 }
 
@@ -6230,502 +5648,106 @@ showStep(currentStep);
 
 }
 
-}function showLoanCard(){
+}function loadLoanCard(){
 
-document.getElementById("pageTitle").innerHTML = "Loan Card";
+    let loanId=document.getElementById("loanCardSearch").value.trim();
 
-document.getElementById("content").innerHTML = `
+    let loans=JSON.parse(localStorage.getItem("loans"))||[];
+    let customers=JSON.parse(localStorage.getItem("customers"))||[];
 
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    let loan=loans.find(l=>l.id===loanId);
 
-    <h2>Loan Card Management</h2>
+    if(!loan){
+        alert("Loan not found.");
+        return;
+    }
+
+    let customer=customers.find(c=>c.id===loan.customerId);
+
+    document.getElementById("loanCardContent").innerHTML=`
+
+<div id="loanCardPrintArea"
+style="
+background:#fff;
+padding:20px;
+border:1px solid #ccc;
+border-radius:8px;">
+
+<div style="display:flex;justify-content:space-between;">
+
+<div>
+
+<h2 style="margin:0;color:#0b7a3e;">
+AARVEE ASSOCIATES
+</h2>
+
+<h3 style="margin-top:5px;">
+Loan Collection Card
+</h3>
+
+<table style="border-collapse:collapse;margin-top:20px;">
+
+<tr>
+<td><b>Loan ID</b></td>
+<td style="padding-left:20px;">${loan.id}</td>
+</tr>
+
+<tr>
+<td><b>Customer</b></td>
+<td style="padding-left:20px;">${loan.customerName}</td>
+</tr>
+
+<tr>
+<td><b>Group</b></td>
+<td style="padding-left:20px;">${loan.group}</td>
+</tr>
+
+<tr>
+<td><b>Loan Amount</b></td>
+<td style="padding-left:20px;">₹${Number(loan.amount).toFixed(2)}</td>
+</tr>
+
+<tr>
+<td><b>Weekly EMI</b></td>
+<td style="padding-left:20px;">₹${Number(loan.weekly).toFixed(2)}</td>
+</tr>
+
+<tr>
+<td><b>Balance</b></td>
+<td style="padding-left:20px;">₹${Number(loan.balance).toFixed(2)}</td>
+</tr>
+
+</table>
 
 </div>
 
-<input
-    id="loanCardSearch"
-    placeholder="Search Customer"
-    style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:20px;"
-    onkeyup="loadLoanCards()">
+<div>
 
-<table width="100%" border="1" cellspacing="0" cellpadding="10">
+<img
+src="${customer?.photo||''}"
+style="
+width:120px;
+height:150px;
+border:1px solid #000;
+object-fit:cover;">
 
-    <thead style="background:#0b7a3e;color:white;">
+</div>
 
-        <tr>
+</div>
 
-            <th>ID</th>
+<br>
 
-            <th>Name</th>
+<button
+class="btn btn-success"
+onclick="printLoanCard()">
 
-            <th>Group</th>
+🖨 Print Loan Card
 
-            <th>Mobile</th>
+</button>
 
-            <th>Loan Amount</th>
-
-            <th>Action</th>
-
-        </tr>
-
-    </thead>
-
-    <tbody id="loanCardTable"></tbody>
-
-</table>
+</div>
 
 `;
-
-loadLoanCards();
-
-}function loadLoanCards(){
-
-let customers = JSON.parse(localStorage.getItem("customers")) || [];
-
-let loans = JSON.parse(localStorage.getItem("loans")) || [];
-
-let search = document.getElementById("loanCardSearch").value.toLowerCase();
-
-let html = "";
-
-customers.forEach(c=>{
-
-    let loan = loans.find(l=>l.customerId==c.id);
-
-    if(!loan) return;
-
-    if(
-        c.name.toLowerCase().includes(search)==false &&
-        c.mobile.includes(search)==false
-    ) return;
-
-    html += `
-
-    <tr>
-
-        <td>${c.id}</td>
-
-        <td>${c.name}</td>
-
-        <td>${c.group}</td>
-
-        <td>${c.mobile}</td>
-
-        <td>₹ ${loan.amount}</td>
-
-        <td>
-
-            <button onclick="printLoanCardFront('${c.id}')">
-
-                Front
-
-            </button>
-
-            <button onclick="printLoanCardBack('${c.id}')">
-
-                Back
-
-            </button>
-
-        </td>
-
-    </tr>
-
-    `;
-
-});
-
-document.getElementById("loanCardTable").innerHTML = html;
-
-}function printLoanCardFront(customerId){
-
-let customers = JSON.parse(localStorage.getItem("customers")) || [];
-let loans = JSON.parse(localStorage.getItem("loans")) || [];
-
-let c = customers.find(x=>x.id==customerId);
-
-let loan = loans.find(x=>x.customerId==customerId);
-
-if(!c || !loan){
-    alert("Loan Details Not Found");
-    return;
-}
-
-let companyName="AARVEE ASSOCIATES";
-let address="Near Bus Stand, Kottur";
-let mobile="8248510416, 8838224040";
-
-let win=window.open("","","width=1200,height=800");
-
-win.document.write(`
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<title>Loan Card Front</title>
-
-<style>
-
-@page{
-
-size:A4 landscape;
-
-margin:10mm;
-
-}
-
-body{
-
-font-family:'Montserrat',sans-serif;
-
-margin:0;
-
-padding:0;
-
-}
-
-.container{
-
-display:flex;
-
-justify-content:space-between;
-
-gap:20px;
-
-}
-
-.card{
-
-width:48%;
-
-border:2px solid black;
-
-padding:15px;
-
-box-sizing:border-box;
-
-}
-
-.header{
-
-display:flex;
-
-align-items:center;
-
-margin-bottom:10px;
-
-}
-
-.logo{
-
-width:70px;
-
-height:70px;
-
-border:1px solid #000;
-
-margin-right:15px;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:12px;
-
-}
-
-.company{
-
-font-size:32px;
-
-font-weight:bold;
-
-}
-
-.address{
-
-text-align:center;
-
-font-size:18px;
-
-margin-top:5px;
-
-}
-
-.contact{
-
-text-align:center;
-
-font-size:18px;
-
-margin-bottom:20px;
-
-}
-
-table{
-
-width:100%;
-
-font-size:20px;
-
-border-collapse:collapse;
-
-}
-
-td{
-
-padding:8px;
-
-}
-
-.rules{
-
-border:2px solid #000;
-
-margin-top:20px;
-
-padding:15px;
-
-font-size:18px;
-
-line-height:32px;
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-    <div class="card">
-
-<div class="header">
-
-<div class="logo">
-
-LOGO
-
-</div>
-
-<div>
-
-<div class="company">
-
-${companyName}
-
-</div>
-
-</div>
-
-</div>
-
-<div class="address">
-
-${address}
-
-</div>
-
-<div class="contact">
-
-Contact : ${mobile}
-
-</div>
-
-<table>
-
-<tr>
-
-<td width="35%"><b>NAME</b></td>
-
-<td>${c.name}</td>
-
-</tr>
-
-<tr>
-
-<td><b>GROUP</b></td>
-
-<td>${c.group}</td>
-
-</tr>
-
-<tr>
-
-<td><b>MOBILE</b></td>
-
-<td>${c.mobile}</td>
-
-</tr>
-
-<tr>
-
-<td><b>DATE</b></td>
-
-<td>${loan.date}</td>
-
-</tr>
-
-<tr>
-
-<td><b>AMOUNT</b></td>
-
-<td>₹ ${loan.amount}</td>
-
-</tr>
-
-</table>
-
-<div class="rules">
-
-➤ வீடு கட்ட, வாங்க கடன்<br>
-
-➤ வீடு அடமான கடன்<br>
-
-➤ காவி இடம் அடமான கடன்<br>
-
-➤ தனிநபர் கடன்<br>
-
-➤ வியாபார கடன்<br>
-
-➤ இருக்கிற வாகன கடன்<br>
-
-➤ வணிக வாகன கடன்<br>
-
-➤ நகை கடன்<br><br>
-
-<b>
-
-அதிக வட்டியுள்ள கடன் தொகைகளை மீட்டு,
-
-குறைந்த வட்டியில் மாற்றித்தரப்படும்
-
-</b>
-
-</div>
-
-</div>
-<div class="card">
-
-<div class="header">
-
-<div class="logo">
-
-LOGO
-
-</div>
-
-<div>
-
-<div class="company">
-
-${companyName}
-
-</div>
-
-</div>
-
-</div>
-
-<div class="address">
-
-${address}
-
-</div>
-
-<div class="contact">
-
-Contact : ${mobile}
-
-</div>
-
-<table>
-
-<tr>
-
-<td width="35%"><b>NAME</b></td>
-
-<td>${c.name}</td>
-
-</tr>
-
-<tr>
-
-<td><b>GROUP</b></td>
-
-<td>${c.group}</td>
-
-</tr>
-
-<tr>
-
-<td><b>MOBILE</b></td>
-
-<td>${c.mobile}</td>
-
-</tr>
-
-<tr>
-
-<td><b>DATE</b></td>
-
-<td>${loan.date}</td>
-
-</tr>
-
-<tr>
-
-<td><b>AMOUNT</b></td>
-
-<td>₹ ${loan.amount}</td>
-
-</tr>
-
-</table>
-
-<div class="rules">
-
-➤ வீடு கட்ட, வாங்க கடன்<br>
-
-➤ வீடு அடமான கடன்<br>
-
-➤ காவி இடம் அடமான கடன்<br>
-
-➤ தனிநபர் கடன்<br>
-
-➤ வியாபார கடன்<br>
-
-➤ இருக்கிற வாகன கடன்<br>
-
-➤ வணிக வாகன கடன்<br>
-
-➤ நகை கடன்<br><br>
-
-<b>
-
-அதிக வட்டியுள்ள கடன் தொகைகளை மீட்டு,
-
-குறைந்த வட்டியில் மாற்றித்தரப்படும்
-
-</b>
-
-</div>
-
-</div>
-</div>
-
-</body>
-
-`);
-
-win.document.close();
-
-win.print();
 
 }
 
