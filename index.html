@@ -1,3 +1,2985 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AARVEE ASSOCIATES - Loan Management System</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Montserrat',sans-serif;
+}
+
+:root{
+
+--primary:#0F766E;
+--primary-dark:#0B5E57;
+--sidebar:#0B1320;
+--sidebar-hover:#162235;
+--accent:#14B8A6;
+--background:#F4F7FB;
+--card:#FFFFFF;
+--border:#E5E7EB;
+--text:#1F2937;
+--text-light:#6B7280;
+--success:#16A34A;
+--warning:#F59E0B;
+--danger:#DC2626;
+--shadow:0 10px 35px rgba(15,23,42,.08);
+
+}
+
+body{
+
+margin:0;
+
+background:var(--background);
+
+color:var(--text);
+
+font-family:'Montserrat',sans-serif;
+
+overflow:hidden;
+
+}
+
+/* LOGIN */
+
+#loginPage{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#0b7a3e,#0f9d58);
+}
+
+.login-box{
+
+width:380px;
+background:#fff;
+padding:35px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,.2);
+
+}
+
+.login-box h1{
+
+text-align:center;
+color:#0b7a3e;
+margin-bottom:5px;
+
+}
+
+.login-box p{
+
+text-align:center;
+margin-bottom:30px;
+color:#777;
+
+}
+
+.login-box input{
+
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:15px;
+
+}
+
+.login-box button{
+
+width:100%;
+padding:12px;
+background:#0b7a3e;
+color:white;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+
+}
+
+.login-box button:hover{
+
+background:#086232;
+
+}
+
+/* APP */
+
+#app{
+
+display:none;
+width:100%;
+height:100vh;
+
+}
+
+/* SIDEBAR */
+
+.sidebar{
+
+position:fixed;
+
+left:0;
+
+top:0;
+
+width:260px;
+
+height:100vh;
+
+background:linear-gradient(
+180deg,
+#0B1320,
+#152238
+);
+
+color:white;
+
+overflow:auto;
+
+box-shadow:8px 0 25px rgba(0,0,0,.18);
+
+}
+
+.logo{
+
+padding:28px;
+
+font-size:22px;
+
+font-weight:700;
+
+letter-spacing:1px;
+
+text-align:center;
+
+background:rgba(255,255,255,.04);
+
+border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.menu{
+
+list-style:none;
+
+}
+
+.menu li{
+
+padding:16px 25px;
+
+margin:8px 12px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+transition:.25s;
+
+font-weight:500;
+
+color:#CBD5E1;
+
+}
+
+.menu li:hover{
+
+background:#14B8A6;
+
+color:white;
+
+transform:translateX(6px);
+
+}
+
+/* MAIN */
+
+.main{
+    margin-left:260px;
+height:100vh;
+overflow-y:auto;
+overflow-x:hidden;
+background:#f5f7fb;
+
+}
+
+.header{
+
+height:75px;
+
+background:white;
+
+padding:22px 35px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+font-size:26px;
+
+font-weight:700;
+
+box-shadow:var(--shadow);
+
+border-bottom:1px solid var(--border);
+
+}
+
+.content{
+
+padding:35px;
+
+background:#F4F7FB;
+
+height:calc(100vh - 75px);
+
+min-height:calc(100vh - 75px);
+
+overflow-y:auto;
+
+overflow-x:hidden;
+
+padding-bottom:50px;
+
+box-sizing:border-box;
+
+}
+
+/* CARDS */
+
+.cards{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+gap:25px;
+
+margin-top:10px;
+
+}
+
+.card{
+
+background:#ffffff;
+
+border-radius:18px;
+
+padding:28px;
+
+box-shadow:0 15px 40px rgba(15,23,42,.08);
+
+border:1px solid #E5E7EB;
+
+transition:.3s;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.card:hover{
+
+transform:translateY(-6px);
+
+box-shadow:0 25px 50px rgba(15,23,42,.15);
+
+}
+
+.card::before{
+
+content:"";
+
+position:absolute;
+
+left:0;
+
+top:0;
+
+width:6px;
+
+height:100%;
+
+background:linear-gradient(180deg,#14B8A6,#0F766E);
+
+}
+
+.card h3{
+
+font-size:15px;
+
+font-weight:600;
+
+color:#6B7280;
+
+margin-bottom:15px;
+
+}
+
+.card h1{
+
+font-size:34px;
+
+font-weight:700;
+
+color:#0F172A;
+
+margin:0;
+
+}
+
+.card small{
+
+display:block;
+
+margin-top:12px;
+
+font-size:13px;
+
+color:#9CA3AF;
+
+}
+
+/* ===== PREMIUM BUTTONS ===== */
+
+.btn{
+
+display:inline-flex;
+
+align-items:center;
+
+justify-content:center;
+
+padding:10px 18px;
+
+border:none;
+
+border-radius:10px;
+
+font-size:14px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.25s;
+
+text-decoration:none;
+
+}
+
+/* ===== SEARCH BOX ===== */
+
+.search-box{
+
+width:320px;
+
+padding:12px 18px;
+
+border:1px solid #D1D5DB;
+
+border-radius:12px;
+
+background:white;
+
+font-size:14px;
+
+outline:none;
+
+transition:.3s;
+
+}
+
+.search-box:focus{
+
+border-color:#14B8A6;
+
+box-shadow:0 0 0 4px rgba(20,184,166,.15);
+
+}
+
+.modal-box input,
+.modal-box select,
+.modal-box textarea{
+
+width:100%;
+margin-bottom:15px;
+
+}
+
+.btn:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 8px 18px rgba(0,0,0,.15);
+
+}
+
+.btn-primary{
+
+background:#0F766E;
+
+color:#fff;
+
+}
+
+.btn-primary:hover{
+
+background:#0B5E57;
+
+}
+
+.btn-success{
+
+background:#16A34A;
+
+color:#fff;
+
+}
+
+.btn-warning{
+
+background:#F59E0B;
+
+color:#fff;
+
+}
+
+.btn-info{
+
+background:#2563EB;
+
+color:#fff;
+
+}
+
+.btn-danger{
+
+background:#DC2626;
+
+color:#fff;
+
+}
+
+.btn-purple{
+
+background:#7C3AED;
+
+color:#fff;
+
+}
+
+.modal-box input,
+.modal-box select,
+.modal-box textarea{
+
+width:100%;
+margin-bottom:15px;
+
+}
+
+.modal-box img{
+
+    max-width:100%;
+
+}
+
+.modal-box::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+.modal-box::-webkit-scrollbar-thumb{
+
+    background:#0b7a3e;
+
+    border-radius:20px;
+
+}
+/* MODAL */
+
+.modal{
+
+display:none;
+
+position:fixed;
+
+left:0;
+
+top:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(0,0,0,.5);
+
+justify-content:center;
+
+align-items:flex-start;
+
+overflow-y:auto;
+
+padding:30px 0;
+
+z-index:999;
+
+}
+
+.modal-box{
+
+    width:700px;
+    max-width:95%;
+
+    background:#fff;
+
+    padding:25px;
+
+    border-radius:10px;
+
+    margin:20px auto;
+
+    height:85vh;
+
+    overflow-y:auto;
+
+    overflow-x:hidden;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.modal-box h2{
+
+margin-bottom:20px;
+
+color:#0b7a3e;
+
+}
+
+.modal-box input,
+.modal-box select{
+
+width:100%;
+
+padding:12px;
+
+margin-bottom:15px;
+
+border:1px solid #ccc;
+
+border-radius:8px;
+
+}
+
+.modal-buttons{
+
+display:flex;
+
+justify-content:flex-end;
+
+gap:10px;
+
+}
+
+.modal-buttons button{
+
+padding:10px 20px;
+
+background:#0b7a3e;
+
+border:none;
+
+color:white;
+
+border-radius:6px;
+
+cursor:pointer;
+
+}
+.modal-box::-webkit-scrollbar{
+
+width:8px;
+
+}
+
+.modal-box::-webkit-scrollbar-thumb{
+
+background:#0b7a3e;
+
+border-radius:20px;
+
+}
+
+.modal-box::-webkit-scrollbar-track{
+
+background:#eee;
+
+}
+.modal-buttons button{
+
+padding:10px 20px;
+
+background:#0b7a3e;
+
+border:none;
+
+color:white;
+
+border-radius:6px;
+
+cursor:pointer;
+
+}
+/* ===== PREMIUM TABLE ===== */
+
+.table-container{
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(15,23,42,.08);
+    overflow:hidden;
+    border:1px solid #E5E7EB;
+    margin-top:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+}
+
+thead{
+    background:#0F766E;
+    color:#fff;
+}
+
+thead th{
+    padding:16px;
+    font-size:14px;
+    font-weight:600;
+    text-align:left;
+}
+
+tbody td{
+    padding:15px;
+    border-bottom:1px solid #ECEFF3;
+    font-size:14px;
+}
+
+tbody tr:nth-child(even){
+    background:#FAFBFC;
+}
+
+tbody tr:hover{
+    background:#EEF9F8;
+    transition:.2s;
+}
+
+table button{
+    padding:8px 14px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:600;
+}
+
+/* <-- PASTE HERE */
+
+</style>
+
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="loginPage">
+
+<div class="login-box">
+
+<h1>AARVEE ASSOCIATES</h1>
+
+<p>Loan Management System</p>
+
+<input id="user" placeholder="User ID">
+
+<input id="pin" type="password" placeholder="PIN">
+
+<button onclick="login()">LOGIN</button>
+
+</div>
+
+</div>
+
+<!-- APP -->
+
+<div id="app">
+
+<div class="sidebar">
+
+<div class="logo">
+
+AARVEE Associates
+
+</div>
+
+<ul class="menu">
+
+<li onclick="showPage('dashboard')">🏠 Dashboard</li>
+
+<li onclick="showPage('groups')">👥 Group Entry</li>
+
+<li onclick="showPage('customers')">👤 Customer Entry</li>
+
+<li onclick="showPage('guarantor')">🛡️ Guarantors</li>
+
+<li onclick="showPage('loan')">💰 Loan Entry</li>
+
+<li onclick="showPage('approval')">✅ Loan Approval</li>
+
+<li onclick="showPage('emi')">📅 EMI Schedule</li>
+
+<li onclick="showPage('promissory')">📄 Promissory Note</li>
+<li onclick="showPage('loancard')">📒 Loan Card</li>
+
+<li onclick="showPage('dailyCollection')">📅 Daily Collection</li>
+
+<li onclick="showPage('history')">📒 Collection History</li>
+
+<li onclick="showPage('expense')">💸 Expenses</li>
+
+<li onclick="showPage('daybook')">📘 Day Book</li>
+
+<li onclick="showPage('reports')">📄 Reports</li>
+
+<li onclick="logout()">
+🚪 Logout
+</li>
+
+</ul>
+
+</div>
+
+<div class="main">
+
+<div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+
+<div id="pageTitle">Dashboard</div>
+
+<div style="font-size:14px;color:#666;">
+
+👤 <b id="currentUser">Guest</b>
+
+</div>
+
+</div>
+
+<div class="content" id="content">
+
+<div class="cards">
+
+<div class="card">
+
+<h3>Total Groups</h3>
+
+<h1 id="groupCount">0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Total Customers</h3>
+
+<h1>0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Active Loans</h3>
+
+<h1 id="loanCount">0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Today's Collection</h3>
+
+<h1>₹0</h1>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="customerModal" class="modal">
+
+<div class="modal-box">
+
+    <h2>Add Customer</h2>
+
+<label>Customer Name</label><input id="cName" placeholder="Customer Name">
+
+<label>Father / Husband Name</label><input id="cFather" placeholder="Father / Husband Name">
+
+<label>Mobile Number</label><input id="cMobile" placeholder="Mobile Number">
+
+<label>Alternate Mobile</label><input id="cAltMobile" placeholder="Alternate Mobile">
+
+<label>Aadhaar Number</label><input id="cAadhaar" placeholder="Aadhaar Number">
+
+<label>PAN Number</label><input id="cPan" placeholder="PAN Number">
+
+<label>Door No / House No</label><input id="cDoorNo" placeholder="Door No / House No">
+
+<label>Street</label><input id="cStreet" placeholder="Street">
+
+<label>Area / Village</label><input id="cArea" placeholder="Area / Village">
+
+<label>City / Taluk</label><input id="cCity" placeholder="City / Taluk">
+
+<label>District</label><input id="cDistrict" placeholder="District">
+
+<label>State</label><input id="cState" value="Tamil Nadu">
+
+<label>Pincode</label><input id="cPincode" placeholder="Pincode">
+
+<label>Group</label><select id="cGroup"></select>
+
+<label>Guarantor</label><select id="cGuarantor"></select>
+
+    <label>Customer Photo</label>
+
+    <input
+        type="file"
+        id="cPhoto"
+        accept="image/*"
+        onchange="previewPhoto(event)">
+
+    <img
+        id="photoPreview"
+        style="display:none;width:120px;height:120px;border-radius:50%;margin-bottom:15px;object-fit:cover;">
+
+    <label>Aadhaar Front</label>
+
+    <input
+        type="file"
+        id="aadhaarFront"
+        accept="image/*"
+        onchange="previewAadhaarFront(event)">
+
+    <label>Aadhaar Back</label>
+
+    <input
+        type="file"
+        id="aadhaarBack"
+        accept="image/*"
+        onchange="previewAadhaarBack(event)">
+
+    <div class="modal-buttons">
+
+        <button onclick="saveCustomer()">
+
+            Save Customer
+
+        </button>
+
+        <button onclick="closeCustomerModal()">
+
+            Cancel
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+const users = {
+
+vivek: "2710",
+
+generol: "1234",
+
+rasak: "0786"
+
+};
+
+let editingGroupIndex = -1;
+let editingCustomerIndex = -1;
+let customerPhoto="";
+let aadhaarFrontData = "";
+let aadhaarBackData = "";
+
+function login() {
+
+    let username = document.getElementById("user").value.trim().toLowerCase();
+    let password = document.getElementById("pin").value.trim();
+
+    if (users[username] && users[username] === password) {
+
+    localStorage.setItem("loggedIn","true");
+    localStorage.setItem("currentUser",username);
+
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("app").style.display = "block";
+
+    document.getElementById("currentUser").innerHTML =
+        username.charAt(0).toUpperCase() + username.slice(1);
+
+    loadDashboard();
+    showDashboard();
+} else {
+        alert("Invalid Username or Password");
+    }
+}
+
+function logout(){
+
+    if(!confirm("Logout?")) return;
+
+    sessionStorage.clear();
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("currentUser");
+
+    document.getElementById("app").style.display="none";
+    document.getElementById("loginPage").style.display="flex";
+
+    document.getElementById("user").value="";
+    document.getElementById("pin").value="";
+
+    location.reload();
+
+}
+
+function loadDashboard(){
+
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+document.getElementById("loanCount").innerHTML = loans.length;
+
+let groups=JSON.parse(localStorage.getItem("groups"))||[];
+
+document.getElementById("groupCount").innerHTML=groups.length;
+
+}
+function showDashboard(){
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let activeLoans = loans.filter(l=>l.status=="Active").length;
+
+let closedLoans = loans.filter(l=>l.status=="Closed").length;
+
+let outstanding = loans.reduce((t,l)=>t+Number(l.balance||0),0);
+
+let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+document.getElementById("pageTitle").innerHTML="Dashboard";
+
+document.getElementById("content").innerHTML=`
+
+<div class="cards">
+
+<div class="card">
+
+<h3>👥 Total Groups</h3>
+
+<h1 id="groupCount">${groups.length}</h1>
+
+<small>Registered Groups</small>
+
+</div>
+
+<div class="card">
+
+<h3>👤 Total Customers</h3>
+
+<h1>${customers.length}</h1>
+
+<small>Registered Customers</small>
+
+</div>
+
+<div class="card">
+
+<h3>💰 Active Loans</h3>
+
+<h1>${activeLoans}</h1>
+
+<small>Currently Running</small>
+
+</div>
+
+<div class="card">
+
+<h3>✔ Closed Loans</h3>
+
+<h1>${closedLoans}</h1>
+
+<small>Completed Loans</small>
+
+</div>
+
+<div class="card">
+
+<h3>📅 Today's Collection</h3>
+
+<h1 id="todayCollection">₹0</h1>
+
+<small>Today's EMI Collection</small>
+
+</div>
+
+<div class="card">
+
+<h3>📈 Weekly Collection</h3>
+
+<h1 id="weeklyCollection">₹0</h1>
+
+<small>Current Week</small>
+
+</div>
+
+<div class="card">
+
+<h3>💳 Outstanding Balance</h3>
+
+<h1>₹${outstanding.toFixed(2)}</h1>
+
+<small>Pending Loan Amount</small>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+function showGroups(){
+
+document.getElementById("pageTitle").innerHTML="Group Entry";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+<h2>Group Entry</h2>
+
+<button
+class="btn btn-primary"
+onclick="openGroupModal()">
+
+➕ Add Group
+
+</button>
+
+</div>
+
+<input
+class="search-box"
+id="searchGroup"
+placeholder="🔍 Search Group"
+onkeyup="loadGroups()">
+
+<div class="table-container">
+
+<div style="overflow-x:auto;">
+
+<table>
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>ID</th>
+<th>Group Name</th>
+<th>Area</th>
+<th>Meeting Day</th>
+<th>Collection Day</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="groupTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+`;
+
+loadGroups();
+
+}
+function showPage(page){
+
+    document.getElementById("pageTitle").innerHTML =
+    page.charAt(0).toUpperCase() + page.slice(1);
+
+    if(page=="dashboard"){
+        loadDashboard();
+        showDashboard();
+    }
+
+    if(page=="groups"){
+        showGroups();
+    }
+
+    if(page=="customers"){
+    showCustomers();
+}
+    if(page=="guarantor"){
+    showGuarantors();
+}
+    if(page=="loan"){
+        showLoans();
+    }
+    if(page=="approval"){
+    showApproval();
+}
+    if(page=="emi"){
+    showEMI();
+}
+if(page=="promissory"){
+    showPromissory();
+}
+if(page=="loancard"){
+        showLoanCard();
+}
+    if(page=="collection"){
+        showCollections();
+    }
+    if(page=="dailyCollection"){
+    showDailyCollection();
+}
+    if(page=="history"){
+    showHistory();
+}
+    if(page=="reports"){
+    showReports();
+}
+if(page=="expense"){
+    showExpenses();
+}
+if(page=="daybook"){
+    showDayBook();
+}
+}
+function showCollections(){
+
+    document.getElementById("pageTitle").innerHTML="Daily Collection";
+
+    document.getElementById("content").innerHTML=`
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+        <h2>Weekly Collection</h2>
+
+    </div>
+
+    <input
+        id="searchCollection"
+        placeholder="Search Customer"
+        style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:20px;"
+        onkeyup="loadCollections()">
+
+    <table width="100%" cellpadding="10" cellspacing="0" border="1">
+
+        <thead style="background:#0b7a3e;color:white;">
+
+            <tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Father</th>
+
+<th>Mobile</th>
+
+<th>Aadhaar</th>
+
+<th>Group</th>
+
+<th>Guarantor</th>
+
+<th>Action</th>
+
+</tr>
+
+        </thead>
+
+        <tbody id="collectionTable"></tbody>
+
+    </table>
+
+    `;
+
+    loadCollections();
+
+}
+function showDailyCollection(){
+
+    document.getElementById("pageTitle").innerHTML = "Daily Collection";
+
+    document.getElementById("content").innerHTML = `
+
+    <div class="table-container" style="padding:20px;margin-bottom:20px;">
+
+        <table style="width:100%;border:none;">
+
+            <tr>
+
+                <td style="width:180px;"><b>Collection Day :</b></td>
+
+                <td>
+
+                    <select id="collectionDay" class="search-box" onchange="loadDailyCollection()">
+
+                        <option>Monday</option>
+                        <option>Tuesday</option>
+                        <option>Wednesday</option>
+                        <option>Thursday</option>
+                        <option>Friday</option>
+                        <option>Saturday</option>
+                        <option>Sunday</option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td><b>Centre Name :</b></td>
+
+                <td>
+
+                    <select id="collectionCentre" class="search-box" onchange="loadDailyCollection()">
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td><b>Date :</b></td>
+
+                <td>
+
+                    <input
+                    type="date"
+                    id="entryDate"
+                    class="search-box">
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td><b>Collection Date :</b></td>
+
+                <td>
+
+                    <input
+                    type="date"
+                    id="collectionDate"
+                    class="search-box">
+
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+
+        <h2>Daily Collection Register</h2>
+
+        <h2 id="todayTotal" style="color:#0b7a3e;">
+            Today's Total : ₹0.00
+        </h2>
+
+    </div>
+
+    <br>
+
+    <input
+    id="dailySearch"
+    class="search-box"
+    placeholder="🔍 Search Customer / Group / Loan ID"
+    onkeyup="loadDailyCollection()">
+
+    <br><br>
+
+    <div class="table-container">
+
+    <div style="overflow-x:auto;">
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Loan ID</th>
+                <th>Customer</th>
+                <th>Group</th>
+                <th>Weekly EMI</th>
+                <th>Total Paid</th>
+                <th>Balance</th>
+                <th>Last Collection</th>
+                <th>Collect</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="dailyCollectionTable">
+
+        </tbody>
+
+    </table>
+
+    </div>
+
+    </div>
+
+    `;
+
+    loadCollectionCentres();
+
+    document.getElementById("entryDate").value =
+    new Date().toISOString().split("T")[0];
+
+    document.getElementById("collectionDate").value =
+    new Date().toISOString().split("T")[0];
+
+    loadDailyCollection();
+
+}
+function loadCollectionCentres(){
+
+    let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+    let html = '<option value="">All Centres</option>';
+
+    groups.forEach(g=>{
+
+        html += `
+        <option value="${g.name}" data-day="${g.collection}">
+            ${g.name}
+        </option>`;
+
+    });
+
+    document.getElementById("collectionCentre").innerHTML = html;
+
+    document.getElementById("collectionCentre").onchange = function(){
+
+        let opt = this.options[this.selectedIndex];
+
+        document.getElementById("collectionDay").value =
+            opt.getAttribute("data-day") || "";
+
+        loadDailyCollection();
+
+    };
+
+}
+function loadDailyCollection(){
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let keyword =
+document.getElementById("dailySearch")?.value.toLowerCase() || "";
+
+let centre =
+document.getElementById("collectionCentre")?.value || "";
+
+let collectionDay =
+document.getElementById("collectionDay")?.value || "";
+
+let history =
+JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+let today =
+new Date().toLocaleDateString();
+
+let todayTotal = 0;
+
+history.forEach(h=>{
+
+if(h.date==today){
+
+todayTotal += Number(h.amount);
+
+}
+
+});
+
+let html="";
+
+loans
+.filter(l=>l.status=="Active")
+.sort((a,b)=>{
+
+if(a.group==b.group){
+
+return a.customerName.localeCompare(b.customerName);
+
+}
+
+return a.group.localeCompare(b.group);
+
+})
+.forEach((loan,index)=>{
+
+if(
+
+(centre=="" || loan.group==centre) &&
+
+(
+
+loan.customerName.toLowerCase().includes(keyword) ||
+
+loan.group.toLowerCase().includes(keyword) ||
+
+loan.id.toLowerCase().includes(keyword)
+
+)
+
+){
+
+html += `
+
+<tr>
+
+<td>${loan.id}</td>
+
+<td>${loan.customerName}</td>
+
+<td>${loan.group}</td>
+
+<td>₹${Number(loan.weekly).toFixed(2)}</td>
+
+<td>₹${Number(loan.paid||0).toFixed(2)}</td>
+
+<td>₹${Number(loan.balance||0).toFixed(2)}</td>
+
+<td>${loan.lastCollectionDate || "-"}</td>
+
+<td>
+
+<button
+style="
+background:#0b7a3e;
+color:white;
+padding:6px 12px;
+border:none;
+border-radius:5px;"
+onclick="collectEMI(${index})">
+
+Collect
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("dailyCollectionTable").innerHTML = html;
+
+document.getElementById("todayTotal").innerHTML =
+"Today's Total : ₹"+todayTotal.toFixed(2);
+
+}
+function showHistory(){
+
+document.getElementById("pageTitle").innerHTML="Collection History";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+<h2>Collection History</h2>
+
+<input
+id="historySearch"
+placeholder="Search Customer"
+style="padding:10px;width:300px;border:1px solid #ccc;border-radius:6px;"
+onkeyup="loadHistory()">
+
+</div>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Receipt</th>
+
+<th>Date</th>
+
+<th>Loan ID</th>
+
+<th>Customer</th>
+
+<th>Amount</th>
+
+<th>Balance</th>
+
+<th>Collected By</th>
+
+<th>Print</th>
+
+</tr>
+
+</thead>
+
+<tbody id="historyTable">
+
+</tbody>
+
+</table>
+
+`;
+
+loadHistory();
+
+}
+function loadHistory(){
+
+let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+let keyword = document.getElementById("historySearch")?.value.toLowerCase() || "";
+
+let html = "";
+
+history.forEach((h,index)=>{
+
+if(h.customer.toLowerCase().includes(keyword)){
+
+html += `
+
+<tr>
+
+<td>RCPT${String(index+1).padStart(4,"0")}</td>
+
+<td>${h.date}</td>
+
+<td>${h.loanId}</td>
+
+<td>${h.customer}</td>
+
+<td>₹${h.amount.toFixed(2)}</td>
+
+<td>₹${h.balance.toFixed(2)}</td>
+
+<td>${h.collectedBy}</td>
+
+<td>
+
+<button
+
+style="background:#007bff;color:white;border:none;padding:5px 10px;border-radius:5px;"
+
+onclick="printReceipt(${index})">
+
+Print
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("historyTable").innerHTML=html;
+
+}
+function printReceipt(index){
+
+let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+let h = history[index];
+
+let w = window.open("", "_blank", "width=500,height=700");
+
+w.document.write(`
+
+<html>
+
+<head>
+
+<title>Receipt</title>
+
+<style>
+
+body{
+
+font-family:'Montserrat',sans-serif;
+
+padding:20px;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+td{
+
+padding:8px;
+
+border:1px solid #ccc;
+
+}
+
+h2{
+
+text-align:center;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>AARVEE ASSOCIATES</h2>
+
+<h3 style="text-align:center;">Collection Receipt</h3>
+
+<table>
+
+<tr><td>Receipt No</td><td>RCPT${String(index+1).padStart(4,"0")}</td></tr>
+
+<tr><td>Date</td><td>${h.date}</td></tr>
+
+<tr><td>Loan ID</td><td>${h.loanId}</td></tr>
+
+<tr><td>Customer</td><td>${h.customer}</td></tr>
+
+<tr><td>Amount</td><td>₹${h.amount.toFixed(2)}</td></tr>
+
+<tr><td>Balance</td><td>₹${h.balance.toFixed(2)}</td></tr>
+
+<tr><td>Collected By</td><td>${h.collectedBy}</td></tr>
+
+</table>
+
+<br><br>
+
+<div style="text-align:center;">
+
+Thank you.
+
+</div>
+
+</body>
+
+`);
+
+w.document.close();
+
+w.print();
+
+}function showReports(){
+
+document.getElementById("pageTitle").innerHTML="Reports";
+
+document.getElementById("content").innerHTML=`
+
+<h2 style="margin-bottom:20px;">Reports</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Groups</h3>
+<h1 id="rGroups">0</h1>
+</div>
+
+<div class="card">
+<h3>Total Customers</h3>
+<h1 id="rCustomers">0</h1>
+</div>
+
+<div class="card">
+<h3>Total Loans</h3>
+<h1 id="rLoans">0</h1>
+</div>
+
+<div class="card">
+<h3>Total Outstanding</h3>
+<h1 id="rOutstanding">₹0</h1>
+</div>
+
+</div>
+
+<br>
+
+<button
+ onclick="exportBackup()"
+ style="
+     padding:10px 20px;
+     background:#0b7a3e;
+     color:white;
+     border:none;
+     border-radius:6px;
+     cursor:pointer;
+ ">Download Backup</button>
+
+<br><br>
+
+<input
+ type="file"
+ id="restoreFile"
+ accept=".json"
+ onchange="restoreBackup(event)">
+
+`;
+
+loadReport();
+
+}function loadReport(){
+
+let groups=JSON.parse(localStorage.getItem("groups"))||[];
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+let outstanding=0;
+
+loans.forEach(l=>{
+
+outstanding+=Number(l.balance);
+
+});
+
+document.getElementById("rGroups").innerHTML=groups.length;
+
+document.getElementById("rCustomers").innerHTML=customers.length;
+
+document.getElementById("rLoans").innerHTML=loans.length;
+
+document.getElementById("rOutstanding").innerHTML="₹"+outstanding.toFixed(2);
+
+}function exportBackup(){
+
+let backup={
+
+groups: JSON.parse(localStorage.getItem("groups")) || [],
+customers: JSON.parse(localStorage.getItem("customers")) || [],
+loans: JSON.parse(localStorage.getItem("loans")) || [],
+history: JSON.parse(localStorage.getItem("collectionHistory")) || []
+
+};
+
+let blob=new Blob(
+
+[JSON.stringify(backup,null,2)],
+
+{type:"application/json"}
+
+);
+
+let url=URL.createObjectURL(blob);
+
+let a=document.createElement("a");
+
+a.href=url;
+
+a.download="AARVEE_Backup.json";
+
+a.click();
+
+URL.revokeObjectURL(url);
+
+}function restoreBackup(event){
+
+let file=event.target.files[0];
+
+if(!file)return;
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+let data=JSON.parse(e.target.result);
+
+localStorage.setItem("groups",JSON.stringify(data.groups||[]));
+
+localStorage.setItem("customers",JSON.stringify(data.customers||[]));
+
+localStorage.setItem("loans",JSON.stringify(data.loans||[]));
+
+localStorage.setItem("collectionHistory",JSON.stringify(data.history||[]));
+
+alert("Backup Restored Successfully.");
+
+showDashboard();
+
+};
+
+reader.readAsText(file);
+
+}
+
+function openGroupModal(){
+
+editingGroupIndex=-1;
+
+document.getElementById("gName").value="";
+
+document.getElementById("gArea").value="";
+
+document.getElementById("gMeeting").selectedIndex=0;
+
+document.getElementById("gCollection").selectedIndex=0;
+
+document.getElementById("groupModal").style.display="flex";
+
+}function closeGroupModal(){
+
+document.getElementById("groupModal").style.display="none";
+
+}function saveGroup(){
+
+let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+if(editingGroupIndex==-1){
+
+let id="GRP"+String(groups.length+1).padStart(4,"0");
+
+groups.push({
+
+id:id,
+
+name:document.getElementById("gName").value,
+
+area:document.getElementById("gArea").value,
+
+meeting:document.getElementById("gMeeting").value,
+
+collection:document.getElementById("gCollection").value
+
+});
+
+}else{
+
+groups[editingGroupIndex].name=document.getElementById("gName").value;
+
+groups[editingGroupIndex].area=document.getElementById("gArea").value;
+
+groups[editingGroupIndex].meeting=document.getElementById("gMeeting").value;
+
+groups[editingGroupIndex].collection=document.getElementById("gCollection").value;
+
+editingGroupIndex=-1;
+
+}
+
+localStorage.setItem("groups",JSON.stringify(groups));
+
+document.getElementById("gName").value="";
+
+document.getElementById("gArea").value="";
+
+closeGroupModal();
+
+loadGroups();
+
+showDashboard();
+
+}
+
+function loadGroups(){
+
+let groups=JSON.parse(localStorage.getItem("groups"))||[];
+
+let search=document.getElementById("searchGroup");
+
+let keyword="";
+
+if(search){
+
+keyword=search.value.toLowerCase();
+
+}
+
+let html="";
+
+groups.forEach((g,index)=>{
+
+if(
+
+g.name.toLowerCase().includes(keyword) ||
+
+g.area.toLowerCase().includes(keyword)
+
+){
+
+html+=`
+
+<tr>
+
+<td>${g.id}</td>
+
+<td>${g.name}</td>
+
+<td>${g.area}</td>
+
+<td>${g.meeting}</td>
+
+<td>${g.collection}</td>
+
+<td>
+
+<button
+class="btn btn-info"
+onclick="editGroup(${index})">
+
+✏ Edit
+
+</button>
+
+<button
+class="btn btn-danger"
+onclick="deleteGroup(${index})">
+
+🗑 Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+let table=document.getElementById("groupTable");
+
+if(table){
+
+table.innerHTML=html;
+
+}
+
+}function deleteGroup(index){
+
+if(confirm("Delete this Group?")){
+
+let groups=JSON.parse(localStorage.getItem("groups"))||[];
+
+groups.splice(index,1);
+
+localStorage.setItem("groups",JSON.stringify(groups));
+
+loadGroups();
+
+showDashboard();
+
+}
+
+}function editGroup(index){
+
+let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+let g = groups[index];
+
+editingGroupIndex = index;
+
+document.getElementById("gName").value = g.name;
+
+document.getElementById("gArea").value = g.area;
+
+document.getElementById("gMeeting").value = g.meeting;
+
+document.getElementById("gCollection").value = g.collection;
+
+document.getElementById("groupModal").style.display = "flex";
+
+}function openCustomerModal(){
+
+console.log("Step 1");
+
+editingCustomerIndex = -1;
+
+customerPhoto = "";
+aadhaarFrontData = "";
+aadhaarBackData = "";
+
+console.log("Step 2");
+
+const modal = document.getElementById("customerModal");
+
+console.log(modal);
+
+if(!modal){
+    alert("Customer Modal Not Found");
+    return;
+}
+
+modal.style.display = "flex";
+
+console.log("Step 3");
+
+let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+let html = "";
+
+groups.forEach(g=>{
+    html += `<option value="${g.name}">${g.name}</option>`;
+});
+
+document.getElementById("cGroup").innerHTML = html;
+let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
+
+let ghtml = "";
+
+guarantors.forEach(g=>{
+
+ghtml += `<option value="${g.name}">${g.name}</option>`;
+
+});
+
+document.getElementById("cGuarantor").innerHTML = ghtml;
+
+console.log("Step 4");
+
+document.getElementById("cName").value="";
+document.getElementById("cFather").value="";
+document.getElementById("cMobile").value="";
+document.getElementById("cAltMobile").value="";
+document.getElementById("cAadhaar").value="";
+document.getElementById("cPan").value="";
+    document.getElementById("cDoorNo").value="";
+
+document.getElementById("cStreet").value="";document.getElementById("cArea").value="";document.getElementById("cCity").value="";document.getElementById("cDistrict").value="";document.getElementById("cState").value="Tamil Nadu";document.getElementById("cPincode").value="";document.getElementById("cPhoto").value="";document.getElementById("aadhaarFront").value="";document.getElementById("aadhaarBack").value="";
+
+console.log("Step 5");
+
+document.getElementById("photoPreview").src="";
+document.getElementById("photoPreview").style.display="none";
+
+}
+
+function closeCustomerModal(){
+
+document.getElementById("customerModal").style.display="none";
+
+}function previewPhoto(event){
+
+let file=event.target.files[0];
+
+if(!file) return;
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+customerPhoto=e.target.result;
+
+document.getElementById("photoPreview").src=customerPhoto;
+
+document.getElementById("photoPreview").style.display="block";
+
+}
+
+reader.readAsDataURL(file);
+
+}function previewAadhaarFront(event){
+
+let file = event.target.files[0];
+
+if(!file) return;
+
+let reader = new FileReader();
+
+reader.onload = function(e){
+
+    aadhaarFrontData = e.target.result;
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+function previewAadhaarBack(event){
+
+let file = event.target.files[0];
+
+if(!file) return;
+
+let reader = new FileReader();
+
+reader.onload = function(e){
+
+    aadhaarBackData = e.target.result;
+
+};
+
+reader.readAsDataURL(file);
+
+}function saveCustomer(){
+
+if(document.getElementById("cName").value.trim()==""){
+    alert("Customer Name is required.");
+    return;
+}
+
+if(document.getElementById("cMobile").value.trim()==""){
+    alert("Mobile Number is required.");
+    return;
+}
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+let address =
+    document.getElementById("cDoorNo").value + ", " +
+    document.getElementById("cStreet").value + ", " +
+    document.getElementById("cArea").value + ", " +
+    document.getElementById("cCity").value + ", " +
+    document.getElementById("cDistrict").value + ", " +
+    document.getElementById("cState").value + " - " +
+    document.getElementById("cPincode").value;
+
+if(editingCustomerIndex==-1){
+
+    let id="CUS"+String(customers.length+1).padStart(4,"0");
+
+    customers.push({
+        id:id,
+        photo:customerPhoto,
+        aadhaarFront:aadhaarFrontData,
+        aadhaarBack:aadhaarBackData,
+        name:document.getElementById("cName").value,
+        father:document.getElementById("cFather").value,
+        mobile:document.getElementById("cMobile").value,
+        altMobile:document.getElementById("cAltMobile").value,
+        aadhaar:document.getElementById("cAadhaar").value,
+        pan:document.getElementById("cPan").value,
+        doorNo:document.getElementById("cDoorNo").value,
+        street:document.getElementById("cStreet").value,
+        area:document.getElementById("cArea").value,
+        city:document.getElementById("cCity").value,
+        district:document.getElementById("cDistrict").value,
+        state:document.getElementById("cState").value,
+        pincode:document.getElementById("cPincode").value,
+        address:address,
+        group:document.getElementById("cGroup").value,
+        guarantor:document.getElementById("cGuarantor").value
+    });
+
+}else{
+
+    let c = customers[editingCustomerIndex];
+
+    c.photo = customerPhoto;
+    c.aadhaarFront = aadhaarFrontData;
+    c.aadhaarBack = aadhaarBackData;
+    c.name = document.getElementById("cName").value;
+    c.father = document.getElementById("cFather").value;
+    c.mobile = document.getElementById("cMobile").value;
+    c.altMobile = document.getElementById("cAltMobile").value;
+    c.aadhaar = document.getElementById("cAadhaar").value;
+    c.pan = document.getElementById("cPan").value;
+    c.doorNo = document.getElementById("cDoorNo").value;
+    c.street = document.getElementById("cStreet").value;
+    c.area = document.getElementById("cArea").value;
+    c.city = document.getElementById("cCity").value;
+    c.district = document.getElementById("cDistrict").value;
+    c.state = document.getElementById("cState").value;
+    c.pincode = document.getElementById("cPincode").value;
+    c.address = address;
+    c.group = document.getElementById("cGroup").value;
+    c.guarantor = document.getElementById("cGuarantor").value;
+
+    editingCustomerIndex = -1;
+}
+
+localStorage.setItem("customers", JSON.stringify(customers));
+
+closeCustomerModal();
+loadCustomers();
+showDashboard();
+
+}function loadCustomers(){
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+let search=document.getElementById("searchCustomer");
+
+let keyword="";
+
+if(search){
+
+keyword=search.value.toLowerCase();
+
+}
+
+let html="";
+
+customers.forEach((c,index)=>{
+
+if(
+
+c.name.toLowerCase().includes(keyword) ||
+
+c.mobile.includes(keyword)
+
+){
+
+html += `
+
+<tr>
+
+<td>
+
+${c.photo
+
+?
+
+`<img src="${c.photo}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;">`
+
+:
+
+`<div style="width:45px;height:45px;border-radius:50%;background:#ddd;"></div>`
+
+}
+
+</td>
+
+<td>${c.id}</td>
+
+<td>${c.name}</td>
+
+<td>${c.father || ""}</td>
+
+<td>${c.mobile}</td>
+
+<td>${c.aadhaar || ""}</td>
+
+<td>${c.group}</td>
+
+<td>${c.guarantor || ""}</td>
+
+<td>
+
+<button
+style="background:#17a2b8;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;"
+onclick="viewCustomer(${index})">
+
+View
+
+</button>
+
+<button
+style="background:#007bff;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;"
+onclick="editCustomer(${index})">
+
+Edit
+
+</button>
+
+<button
+style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;"
+onclick="deleteCustomer(${index})">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+let table=document.getElementById("customerTable");
+
+if(table){
+
+table.innerHTML=html;
+
+}
+
+}function deleteCustomer(index){
+
+if(confirm("Delete Customer?")){
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+customers.splice(index,1);
+
+localStorage.setItem("customers",JSON.stringify(customers));
+
+loadCustomers();
+
+showDashboard();
+
+}
+
+}function editCustomer(index){
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+editingCustomerIndex = index;
+
+let customer = customers[index];
+
+let html = "";
+
+groups.forEach(g=>{
+
+    html += `<option value="${g.name}" ${
+        g.name===customer.group ? "selected" : ""
+    }>${g.name}</option>`;
+
+});
+
+document.getElementById("cGroup").innerHTML = html;
+let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
+
+let ghtml = "";
+
+guarantors.forEach(g=>{
+
+ghtml += `<option value="${g.name}" ${
+    g.name == customer.guarantor ? "selected" : ""
+}>${g.name}</option>`;
+
+});
+
+document.getElementById("cGuarantor").innerHTML = ghtml;
+
+document.getElementById("cName").value = customer.name || "";
+
+document.getElementById("cFather").value = customer.father || "";
+
+document.getElementById("cMobile").value = customer.mobile || "";
+
+document.getElementById("cAltMobile").value = customer.altMobile || "";
+
+document.getElementById("cAadhaar").value = customer.aadhaar || "";
+
+document.getElementById("cPan").value = customer.pan || "";
+
+    document.getElementById("cDoorNo").value = customer.doorNo || "";
+
+document.getElementById("cStreet").value = customer.street || "";document.getElementById("cArea").value = customer.area || "";document.getElementById("cCity").value = customer.city || "";document.getElementById("cDistrict").value = customer.district || "";document.getElementById("cState").value = customer.state || "Tamil Nadu";document.getElementById("cPincode").value = customer.pincode || "";customerPhoto = customer.photo || "";aadhaarFrontData = customer.aadhaarFront || "";
+
+aadhaarBackData = customer.aadhaarBack || "";
+
+if(customerPhoto!=""){
+
+document.getElementById("photoPreview").src=customerPhoto;
+
+document.getElementById("photoPreview").style.display="block";
+
+}else{
+
+document.getElementById("photoPreview").style.display="none";
+
+}
+
+document.getElementById("customerModal").style.display="flex";
+
+}function showCustomers(){
+
+document.getElementById("pageTitle").innerHTML="Customer Management";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+<h2>Customer Management</h2>
+
+<button
+class="btn btn-primary"
+onclick="openCustomerModal()">
+
+➕ Add Customer
+
+</button>
+
+</div>
+
+<input
+class="search-box"
+id="searchCustomer"
+placeholder="🔍 Search Customer"
+onkeyup="loadCustomers()">
+
+<div class="table-container">
+
+<div style="overflow-x:auto;">
+
+<table>
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Photo</th>
+<th>ID</th>
+<th>Name</th>
+<th>Father</th>
+<th>Mobile</th>
+<th>Aadhaar</th>
+<th>Group</th>
+<th>Guarantor</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="customerTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+`;
+
+loadCustomers();
+
+}function viewCustomer(index){
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+let c = customers[index];
+
+let customerLoans = loans.filter(l => l.customerId == c.id);
+
+let customerHistory = history.filter(h => h.customer == c.name);
+
+let loanHTML = "";
+
+if(customerLoans.length==0){
+
+loanHTML="<p style='color:red;'>No Active Loan</p>";
+
+}else{
+
+customerLoans.forEach(l=>{
+
+loanHTML += `
+
+<div style="padding:15px;border:1px solid #ddd;border-radius:8px;margin-bottom:10px;">
+
+<b>Loan ID :</b> ${l.id}<br>
+
+<b>Loan Amount :</b> ₹${l.amount}<br>
+
+<b>Outstanding :</b> ₹${l.balance.toFixed(2)}<br>
+
+<b>Status :</b> ${l.status}
+
+</div>
+
+`;
+
+});
+
+}
+
+let historyHTML="";
+
+if(customerHistory.length==0){
+
+historyHTML="<p>No Collection History</p>";
+
+}else{
+
+customerHistory.forEach(h=>{
+
+historyHTML+=`
+
+<tr>
+
+<td>${h.date}</td>
+
+<td>₹${h.amount}</td>
+
+<td>₹${h.balance.toFixed(2)}</td>
+
+<td>${h.collectedBy}</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+document.getElementById("pageTitle").innerHTML="Customer Profile";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:25px;">
+
+<div style="background:white;padding:20px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,.1);text-align:center;">
+
+<img
+
+src="${c.photo || ''}"
+
+style="width:180px;height:180px;border-radius:50%;object-fit;background:#ddd;border:3px solid #0b7a3e;">
+
+<h2>${c.name}</h2>
+
+<p>${c.group}</p>
+
+</div>
+
+<div style="background:white;padding:20px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,.1);">
+
+<h3>Customer Details</h3>
+
+<hr><br>
+
+<b>Customer ID :</b> ${c.id}<br><br>
+
+<b>Father Name :</b> ${c.father || ""}<br><br>
+
+<b>Mobile :</b> ${c.mobile}<br><br>
+
+<b>Alternate :</b> ${c.altMobile || ""}<br><br>
+
+<b>Aadhaar :</b> ${c.aadhaar || ""}<br><br>
+
+<b>PAN :</b> ${c.pan || ""}<br><br>
+
+<b>Address :</b> ${c.address || ""}
+
+</div>
+
+</div>
+
+<br>
+
+<h2>Loan Details</h2>
+
+${loanHTML}
+
+<br>
+
+<h2>Collection History</h2>
+
+<table width="100%" border="1" cellpadding="10">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Date</th>
+
+<th>Amount</th>
+
+<th>Balance</th>
+
+<th>Collected By</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+${historyHTML}
+
+</tbody>
+
+</table>
+
+<br>
+
+<button
+
+onclick="showCustomers()"
+
+style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
+
+← Back
+
+</button>
+
+`;
+
+}function openLoanModal(){
+
+document.getElementById("loanModal").style.display = "flex";
+
+// Customers
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+let customerHTML = '<option value="">Select Customer</option>';
+
+customers.forEach(c=>{
+    customerHTML += `
+    <option value="${c.id}">
+        ${c.name} (${c.group})
+    </option>`;
+});
+
+document.getElementById("loanCustomer").innerHTML = customerHTML;
+
+// Guarantors
+let guarantors = JSON.parse(localStorage.getItem("guarantors")) || [];
+
+let guarantorHTML = '<option value="">Select Guarantor</option>';
+
+guarantors.forEach(g=>{
+
+    guarantorHTML += `
+    <option value="${g.name}">
+        ${g.name}
+    </option>`;
+
+});
+
+document.getElementById("loanGuarantor").innerHTML = guarantorHTML;
+
+}function loadCustomerGuarantor(){
+
+let customerId = document.getElementById("loanCustomer").value;
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+let customer = customers.find(c => c.id == customerId);
+
+if(!customer) return;
+
+document.getElementById("loanGuarantor").innerHTML =
+    `<option value="${customer.guarantor}">
+        ${customer.guarantor}
+    </option>`;
+
+}
+
+function closeLoanModal(){
+
+document.getElementById("loanModal").style.display="none";
+
+}function showLoans(){
+
+document.getElementById("pageTitle").innerHTML="Loan Management";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+<h2>Loan Management</h2>
+
+<button
+class="btn btn-primary"
+onclick="openLoanModal()">
+
+➕ New Loan
+
+</button>
+
+</div>
+
+<input
+class="search-box"
+id="searchLoan"
+placeholder="🔍 Search Customer / Loan ID"
+onkeyup="loadLoans()">
+
+<div class="table-container">
+
+<div style="overflow-x:auto;">
+
+<table>
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Loan ID</th>
+
+<th>Customer</th>
+
+<th>Loan Type</th>
+
+<th>Loan Date</th>
+
+<th>Loan Amount</th>
+
+<th>Balance</th>
+
+<th>Weekly EMI</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="loanTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+`;
+
+loadLoans();
+
+}function showEMI(){
+
+document.getElementById("pageTitle").innerHTML="Customer EMI Register";
+
+document.getElementById("content").innerHTML=`
+
+<h2>Customer EMI Register</h2>
+
+<br>
+
+<input
+id="searchEMI"
+placeholder="Search Customer / Loan ID / Group"
+style="
+width:350px;
+padding:10px;
+border:1px solid #ccc;
+border-radius:6px;"
+onkeyup="loadEMI()">
+
+<br><br>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Loan ID</th>
+<th>Customer</th>
+<th>Group</th>
+<th>Weekly EMI</th>
+<th>Total Paid</th>
+<th>Balance</th>
+<th>Last Collection</th>
+<th>Status</th>
+<th>Collect</th>
+
+</tr>
+
+</thead>
+
+<tbody id="emiTable"></tbody>
+
+</table>
+
+`;
+
+loadEMI();
+
+}function showPromissory(){
+
+document.getElementById("pageTitle").innerHTML="Promissory Note";
+
+document.getElementById("content").innerHTML=`
+
+<h2>Promissory Note</h2>
+
+<br>
+
+<input
+id="promissoryLoanSearch"
+placeholder="Enter Loan ID"
+style="
+padding:10px;
+width:300px;
+border:1px solid #ccc;
+border-radius:6px;">
+
+<button
+onclick="loadPromissory()"
+style="
+padding:10px 20px;
+background:#0b7a3e;
+color:white;
+border:none;
+border-radius:6px;
+margin-left:10px;">
+
+Load
+
+</button>
+
+<div id="promissoryContent"></div>
+
+<hr style="margin:30px 0;">
+
+<h3>Signed Promissory Note</h3>
+
+<input
+type="file"
+id="signedPromissoryFile"
+accept=".pdf,.jpg,.jpeg,.png">
+
+<br><br>
+
+<button onclick="uploadSignedPromissory()">
+Upload
+</button>
+
+<button onclick="downloadSignedPromissory()">
+Download
+</button>
+
+<button onclick="deleteSignedPromissory()">
+Delete
+</button>
+
+<p id="signedFileName"></p>
+
+`;
+
+}function showLoanCard(){
+
+document.getElementById("pageTitle").innerHTML="Loan Card";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;align-items:center;">
+
+<h2>Loan Collection Card</h2>
+
+</div>
+
+<br>
+
+<input
+id="loanCardSearch"
+placeholder="Enter Loan ID"
+style="
+width:300px;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;">
+
+<button
+onclick="loadLoanCard()"
+style="
+padding:12px 25px;
+background:#0b7a3e;
+color:white;
+border:none;
+border-radius:8px;
+margin-left:10px;">
+
+Load Loan
+
+</button>
+
+<hr style="margin:25px 0;">
+
+<div id="loanCardContent"></div>
+
+`;
+
+}
 function printLoanCard() {
 
     const content = document.getElementById("loanCardContent").innerHTML;
@@ -77,3 +3059,3795 @@ function printLoanCard() {
     },500);
 
 }
+function printLoanFront(){
+
+let id = document.getElementById("loanCardSearch").value.trim();
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+let loan = loans.find(l => l.id == id);
+
+if(!loan){alert("Loan not found.");return;}
+
+let customer = customers.find(c => c.id == loan.customerId);
+
+let html = `
+
+<html>
+
+<head>
+
+<title>Loan Card</title>
+
+<style>
+
+@page{
+    size:A5 portrait;
+    margin:8mm;
+}
+
+body{
+
+    margin:0;
+    padding:0;
+    font-family:'Montserrat',sans-serif;
+    background:#fff;
+
+}
+
+.card{
+
+width:100%;
+
+height:100%;
+
+box-sizing:border-box;
+
+border:3px solid #b30000;
+
+padding:15px;
+
+border-radius:8px;
+
+}
+
+.header{
+
+    text-align:center;
+
+}
+
+.header img{
+
+    width:90%;
+    max-height:80px;
+    object-fit:contain;
+
+}
+
+.company{
+
+    font-size:16px;
+    font-weight:bold;
+    margin-top:5px;
+
+}
+
+.contact{
+
+    font-size:15px;
+    font-weight:bold;
+    margin-bottom:20px;
+
+}
+
+.details{
+
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+
+}
+
+.details td{
+
+padding:12px 4px;
+
+font-size:18px;
+
+vertical-align:middle;
+
+}
+
+.label{
+
+width:140px;
+
+font-size:18px;
+
+font-weight:bold;
+
+letter-spacing:0.5px;
+
+}
+
+.value{
+
+border-bottom:2px solid #000;
+
+padding-left:12px;
+
+font-size:18px;
+
+font-weight:bold;
+
+}
+
+.services{
+
+    margin-top:20px;
+
+    border:2px solid #000;
+
+    padding:15px;
+
+}
+
+.services ul{
+
+    margin:0;
+
+    padding-left:25px;
+
+}
+
+.services li{
+
+    font-size:17px;
+
+    margin-bottom:8px;
+
+}
+
+.footer{
+
+    margin-top:15px;
+
+    text-align:center;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="header">
+
+<img src="logo.png">
+
+<div class="company">
+
+Near Bus Stand, Kottur.
+
+</div>
+
+<div class="contact">
+
+Contact : 8248510416, 8838224040
+
+</div>
+
+</div>
+
+<table class="details">
+
+<tr>
+
+<td class="label">NAME</td>
+
+<td class="value">${customer.name}</td>
+
+</tr>
+
+<tr>
+
+<td class="label">GROUP</td>
+
+<td class="value">${customer.group}</td>
+
+</tr>
+
+<tr>
+
+<td class="label">MOBILE</td>
+
+<td class="value">${customer.mobile}</td>
+
+</tr>
+
+<tr>
+
+<td class="label">DATE</td>
+
+<td class="value">${loan.loanDate}</td>
+
+</tr>
+
+<tr>
+
+<td class="label">Amount Rs.</td>
+
+<td class="value">₹${Number(loan.amount).toFixed(2)}</td>
+
+</tr>
+
+</table>
+
+<div class="services">
+
+<table style="width:100%;border-collapse:collapse;">
+
+<tr>
+<td style="padding:6px;font-size:17px;">✓ வீடு கட்ட கடன்</td>
+<td style="padding:6px;font-size:17px;">✓ வீடு வாங்க கடன்</td>
+</tr>
+
+<tr>
+<td style="padding:6px;font-size:17px;">✓ வீடு அடமானக் கடன்</td>
+<td style="padding:6px;font-size:17px;">✓ காலி இடம் அடமானக் கடன்</td>
+</tr>
+
+<tr>
+<td style="padding:6px;font-size:17px;">✓ தனிநபர் கடன்</td>
+<td style="padding:6px;font-size:17px;">✓ வியாபாரக் கடன்</td>
+</tr>
+
+<tr>
+<td style="padding:6px;font-size:17px;">✓ இருசக்கர வாகன கடன்</td>
+<td style="padding:6px;font-size:17px;">✓ வணிக வாகன கடன்</td>
+</tr>
+
+<tr>
+<td colspan="2"
+style="
+padding-top:15px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+line-height:30px;">
+
+அதிக வட்டியுள்ள அடகு நகைகளை<br>
+
+மீட்டு குறைந்த வட்டியில்<br>
+
+மாற்றித் தரப்படும்
+
+</td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
+
+`;
+
+let w = window.open("", "", "width=700,height=900");
+
+w.document.write(html);
+
+w.document.close();
+
+w.focus();
+
+setTimeout(function(){
+
+    w.print();
+
+},500);
+
+}
+function printLoanBack(){
+
+    let id = document.getElementById("loanCardSearch").value.trim();
+
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+    let loan = loans.find(l => l.id == id);
+
+    if(!loan){
+        alert("Loan not found.");
+        return;
+    }
+
+    let customer = customers.find(c => c.id == loan.customerId);
+
+    let rows = "";
+
+    for(let i=1;i<=25;i++){
+
+        rows += `
+        <tr>
+            <td style="text-align:center;">${i}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>`;
+    }
+
+    let html = `
+    <html>
+
+    <head>
+
+    <title>Loan Card Back</title>
+
+    <style>
+
+    @page{
+        size:A5 portrait;
+        margin:8mm;
+    }
+
+    body{
+        margin:0;
+        font-family:Arial,sans-serif;
+        background:white;
+    }
+
+    .card{
+
+        border:3px solid #b30000;
+        border-radius:8px;
+        padding:15px;
+
+    }
+
+    h2{
+
+        text-align:center;
+        margin:0;
+
+    }
+
+    .info{
+
+        margin-top:15px;
+        margin-bottom:15px;
+        font-size:15px;
+
+    }
+
+    table{
+
+        width:100%;
+        border-collapse:collapse;
+
+    }
+
+    table,
+    th,
+    td{
+
+        border:1px solid #000;
+
+    }
+
+    th{
+
+        background:#f2f2f2;
+        font-size:13px;
+        padding:6px;
+
+    }
+
+    td{
+
+        height:28px;
+        padding:4px;
+        font-size:12px;
+
+    }
+
+    </style>
+
+    </head>
+
+    <body>
+
+    <div class="card">
+
+        <h2>AARVEE ASSOCIATES</h2>
+
+        <div class="info">
+
+            <b>Loan ID :</b> ${loan.id}
+            <br>
+
+            <b>Name :</b> ${customer.name}
+            <br>
+
+            <b>Group :</b> ${customer.group}
+            <br>
+
+            <b>Loan Amount :</b> ₹${Number(loan.amount).toFixed(2)}
+            <br>
+
+            <b>Weekly EMI :</b> ₹${Number(loan.weekly).toFixed(2)}
+
+        </div>
+
+        <table>
+
+            <tr>
+
+                <th>Week</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Signature</th>
+
+            </tr>
+
+            ${rows}
+
+        </table>
+
+    </div>
+
+    </body>
+
+    </html>
+    `;
+
+    let w = window.open("","_blank","width=700,height=900");
+
+    w.document.write(html);
+
+    w.document.close();
+
+    setTimeout(function(){
+
+        w.print();
+
+    },500);
+
+}
+function printLoanBoth(){
+
+    let id = document.getElementById("loanCardSearch").value.trim();
+
+    if(id==""){
+        alert("Enter Loan ID");
+        return;
+    }
+
+    printLoanFront();
+
+    setTimeout(function(){
+
+        printLoanBack();
+
+    },1500);
+
+}
+
+function loadLoanCard(){
+
+
+
+let id=document.getElementById("loanCardSearch").value.trim();
+
+
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+
+
+let loan=loans.find(x=>x.id==id);
+
+
+
+if(!loan){
+
+
+
+alert("Loan not found");
+
+
+
+return;
+
+
+
+}
+
+
+
+let customer=customers.find(c=>c.id==loan.customerId);
+
+
+
+document.getElementById("loanCardContent").innerHTML=`
+
+
+
+<div style="
+
+background:white;
+
+padding:30px;
+
+border-radius:10px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.1);
+
+">
+
+
+
+<h2>AARVEE ASSOCIATES</h2>
+
+
+
+<hr>
+
+
+
+<br>
+
+
+
+<table width="100%">
+
+
+
+<tr>
+
+
+
+<td width="70%">
+
+
+
+<b>Loan ID</b><br>
+
+
+
+${loan.id}
+
+
+
+</td>
+
+
+
+<td rowspan="5" align="center">
+
+
+
+<img
+
+
+
+src="${customer.photo}"
+
+
+
+style="width:120px;height:120px;border-radius:8px;object-fit;border:2px solid #ddd;">
+
+
+
+</td>
+
+
+
+</tr>
+
+
+
+<tr>
+
+
+
+<td>
+
+
+
+<b>Name</b><br>
+
+
+
+${customer.name}
+
+
+
+</td>
+
+
+
+</tr>
+
+
+
+<tr>
+
+
+
+<td>
+
+
+
+<b>Group</b><br>
+
+
+
+${customer.group}
+
+
+
+</td>
+
+
+
+</tr>
+
+
+
+<tr>
+
+
+
+<td>
+
+
+
+<b>Loan Amount</b><br>
+
+
+
+₹${loan.amount}
+
+
+
+</td>
+
+
+
+</tr>
+
+
+
+<tr>
+
+
+
+<td>
+
+
+
+<b>Weekly EMI</b><br>
+
+
+
+₹${loan.weekly}
+
+
+
+</td>
+
+
+
+</tr>
+
+
+
+</table>
+
+
+
+<br>
+
+
+
+<button class="btn btn-success" onclick="printLoanFront()">
+
+🖨 Print Front
+
+</button>
+
+
+
+<button class="btn btn-info" onclick="printLoanBack()">
+
+🖨 Print Back
+
+</button>
+
+
+
+<button class="btn btn-warning" onclick="printLoanBoth()">
+
+🖨 Print Front & Back
+
+</button>
+
+</div>
+
+
+
+`;
+
+
+
+}
+
+function loadPromissory(){
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+let loanId = document.getElementById("promissoryLoanSearch").value;
+let loan = loans.find(l=>l.id==loanId);
+
+if(!loan){
+
+alert("Loan not found.");
+
+return;
+
+}
+
+let customer = customers.find(c=>c.id==loan.customerId);
+
+document.getElementById("promissoryContent").innerHTML=`
+
+<div id="promissoryPrint">
+
+<div class="title">
+
+<h1>PROMISSORY NOTE</h1>
+
+</div>
+
+<table>
+
+<tr>
+
+<td width="22%"><b>NAME</b></td>
+
+<td width="2%">:</td>
+
+<td width="46%">${customer.name}</td>
+
+<td width="10%"><b>DATE</b></td>
+
+<td width="2%">:</td>
+
+<td>${loan.loanDate}</td>
+
+</tr>
+
+<tr>
+
+<td><b>ADDRESS</b></td>
+
+<td>:</td>
+
+<td colspan="4">
+
+${customer.address || "-"}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td><b>AADHAAR NUMBER</b></td>
+
+<td>:</td>
+
+<td>${customer.aadhaar}</td>
+
+<td><b>MOBILE</b></td>
+
+<td>:</td>
+
+<td>${customer.mobile}</td>
+
+</tr>
+
+<tr>
+
+<td><b>AMOUNT</b></td>
+
+<td>:</td>
+
+<td>
+
+₹${loan.amount}
+
+</td>
+
+<td><b>GROUP</b></td>
+
+<td>:</td>
+
+<td>${customer.group}</td>
+
+</tr>
+
+</table>
+
+<p class="paragraph">
+
+I, the undersigned, hereby promise to repay the above loan amount received from AARVEE ASSOCIATES together with the agreed interest as per the loan agreement.
+
+I understand that any delay in repayment may attract additional charges and that the company has the right to recover the dues according to the agreed terms and applicable law.
+
+</p>
+
+<div style="margin-top:25px;">
+
+<b>WITNESSES :</b>
+
+<br><br>
+
+
+
+<br><br>
+
+
+
+</div>
+
+<div class="thumb">
+
+<div style="flex:1;"></div>
+
+<div>
+Signature /<br>
+Thumb Impression
+</div>
+
+</div>
+
+<div style="clear:both;"></div>
+
+<hr style="margin-top:40px;">
+
+<div class="images">
+
+<div class="photo-box">
+
+<img src="${customer.photo || ''}">
+
+</div>
+
+<div class="aadhaar-box">
+
+<img src="${customer.aadhaarFront || ''}">
+
+</div>
+
+<div class="aadhaar-box">
+
+<img src="${customer.aadhaarBack || ''}">
+
+</div>
+
+</div>
+
+<div class="signatures">
+
+<div>
+
+<div class="line"></div>
+
+குழு தலைவர் கையொப்பம்
+
+</div>
+
+<div>
+
+<div class="line"></div>
+
+உறுப்பினர் கையொப்பம்
+
+</div>
+
+</div>
+
+<br><br>
+
+<button onclick="printPromissory()">
+
+Print
+
+</button>
+
+</div>
+
+`;
+
+let signed = JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+if(signed[loan.id]){
+
+document.getElementById("signedFileName").innerHTML ="Current File : " + signed[loan.id].name;
+
+}else{
+
+document.getElementById("signedFileName").innerHTML="No signed file uploaded.";
+
+}
+
+}
+
+function printPromissory(){
+
+let printContent = document.getElementById("promissoryPrint").innerHTML;
+
+let w = window.open("", "_blank");
+
+w.document.write(`
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Promissory Note</title>
+
+<style>
+
+@page{
+    size:A4 portrait;
+    margin:10mm;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#000;
+    background:#fff;
+}
+
+.page{
+    width:190mm;
+    min-height:277mm;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    font-size:24px;
+    margin:0;
+    margin-bottom:20px;
+    border-bottom:2px solid #000;
+    display:inline-block;
+    padding-bottom:5px;
+}
+
+.title{
+    text-align:center;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+td{
+    padding:6px;
+    vertical-align:top;
+    font-size:16px;
+}
+
+.paragraph{
+
+    text-align:justify;
+
+    line-height:30px;
+
+    font-size:17px;
+
+    margin-top:25px;
+
+}
+
+.thumb{
+
+    width:100px;
+
+    height:100px;
+
+    border:1px solid #000;
+
+    float:right;
+
+    margin-top:10px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:flex-end;
+
+    align-items:center;
+
+    padding-bottom:6px;
+
+    box-sizing:border-box;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+    text-align:center;
+
+}
+
+.images{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:12px;
+
+    margin-top:35px;
+
+}
+
+.photo-box{
+
+    width:22%;
+
+}
+
+.aadhaar-box{
+
+    width:38%;
+
+}
+
+.photo-box img{
+
+    width:100%;
+
+    height:160px;
+
+    border:1px solid #000;
+
+    object-fit:cover;
+
+}
+
+.aadhaar-box img{
+
+    width:100%;
+
+    height:160px;
+
+    border:1px solid #000;
+
+    object-fit:contain;
+
+}
+
+.signatures{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-top:60px;
+
+}
+
+.signatures div{
+
+    width:40%;
+
+    text-align:center;
+
+}
+
+.line{
+
+    border-top:1px solid #000;
+
+    margin-bottom:8px;
+
+}
+
+button{
+
+display:none;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="page">
+
+${printContent}
+
+</div>
+
+</body>
+
+`);
+
+w.document.close();
+
+setTimeout(function(){
+
+w.print();
+
+},500);
+
+}function showApproval(){
+
+document.getElementById("pageTitle").innerHTML="Loan Approval";
+
+document.getElementById("content").innerHTML=`
+
+<h2>Pending Loan Approval</h2>
+
+<br>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Loan ID</th>
+
+<th>Customer</th>
+
+<th>Loan Amount</th>
+
+<th>Status</th>
+
+<th>Approve</th>
+
+<th>Reject</th>
+
+</tr>
+
+</thead>
+
+<tbody id="approvalTable"></tbody>
+
+</table>
+
+`;
+
+loadApproval();
+
+}function loadApproval(){
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+let html="";
+
+loans.forEach((loan,index)=>{
+
+if(loan.status=="Pending"){
+
+html+=`
+
+<tr>
+
+<td>${loan.id}</td>
+
+<td>${loan.customerName}</td>
+
+<td>₹${loan.amount}</td>
+
+<td>
+
+<span style="
+background:orange;
+color:white;
+padding:5px 12px;
+border-radius:20px;">
+
+Pending
+
+</span>
+
+</td>
+
+<td>
+
+<button
+
+onclick="approveLoan(${index})"
+
+style="background:#28a745;color:white;border:none;padding:8px 15px;border-radius:5px;">
+
+Approve
+
+</button>
+
+</td>
+
+<td>
+
+<button
+
+onclick="rejectLoan(${index})"
+
+style="background:red;color:white;border:none;padding:8px 15px;border-radius:5px;">
+
+Reject
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("approvalTable").innerHTML=html;
+
+}function approveLoan(index){
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+let currentUser=document.getElementById("currentUser").innerText;
+
+loans[index].status="Active";
+
+loans[index].approvedBy=currentUser;
+
+loans[index].approvedDate=new Date().toLocaleString();
+
+localStorage.setItem("loans",JSON.stringify(loans));
+
+loadApproval();
+
+showDashboard();
+
+alert("Loan Approved Successfully.");
+
+loadLoans();
+
+}function rejectLoan(index){
+
+let loans =JSON.parse(localStorage.getItem("loans")) || [];
+
+let reason = prompt("Reason for rejection?");
+
+if(reason==null) return;
+
+let currentUser =document.getElementById("currentUser").innerText;
+
+loans[index].status="Rejected";
+
+loans[index].rejectedBy=currentUser;
+
+loans[index].rejectedDate=new Date().toLocaleString();
+
+loans[index].rejectReason=reason;
+
+localStorage.setItem("loans",JSON.stringify(loans));
+
+loadApproval();
+
+showDashboard();
+
+alert("Loan Rejected Successfully.");
+
+}function loadEMI(){
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let keyword =document.getElementById("searchEMI")?.value.toLowerCase() || "";
+
+let html = "";
+
+loans.forEach((loan,index)=>{
+
+if(
+
+loan.customerName.toLowerCase().includes(keyword) ||
+
+loan.id.toLowerCase().includes(keyword) ||
+
+(loan.group||"").toLowerCase().includes(keyword)
+
+){
+
+html += `
+
+<tr>
+
+<td>${loan.id}</td>
+
+<td>${loan.customerName}</td>
+
+<td>${loan.group}</td>
+
+<td>₹${Number(loan.weekly).toFixed(2)}</td>
+
+<td>₹${Number(loan.paid||0).toFixed(2)}</td>
+
+<td>₹${Number(loan.balance||0).toFixed(2)}</td>
+
+<td>${loan.lastCollectionDate || "-"}</td>
+
+<td>
+
+<span style="background:${loan.status=="Closed"?"red":"green"};color:white;padding:5px 10px;border-radius:20px;">
+
+${loan.status}
+
+</span>
+
+</td>
+
+<td>
+
+${loan.status=="Closed"
+
+?
+
+`Closed`
+
+:
+
+`<button
+style="
+background:#0b7a3e;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:5px;"
+onclick="collectEMI(${index})">
+
+Collect
+
+</button>`
+
+}
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("emiTable").innerHTML = html;
+
+}function saveLoan(){
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+let customerId=document.getElementById("loanCustomer").value;
+
+let customer=customers.find(c=>c.id===customerId);
+
+let amount=parseFloat(document.getElementById("loanAmount").value);
+
+if(!customer){
+
+alert("Please select a customer.");
+
+return;
+
+}
+
+if(isNaN(amount) || amount<=0){
+
+alert("Enter a valid loan amount.");
+
+return;
+
+}
+
+let processing = parseFloat(document.getElementById("processingFee")?.value || 0);
+
+let insurance = parseFloat(document.getElementById("insuranceFee")?.value || 0);
+
+let loanDate = document.getElementById("loanDate")?.value || "";
+
+let loanType = document.getElementById("loanType")?.value || "";
+
+let interest = parseFloat(document.getElementById("loanInterest")?.value || 0);
+
+let weeks = parseInt(document.getElementById("loanWeeks")?.value || 0);
+
+let interestAmount = (amount * interest) / 100;
+
+let total = amount + interestAmount + processing + insurance;
+
+let weekly = (total / weeks).toFixed(2);
+
+let balance = Number(total);
+
+let guarantor = document.getElementById("loanGuarantor")?.value || "";
+
+let loan = {
+
+    id: "LOAN" + String(loans.length + 1).padStart(4, "0"),
+
+    customerId: customer.id,
+
+    customerName: customer.name,
+
+    group: customer.group,
+
+    guarantor: guarantor,
+
+    processing: processing,
+
+    insurance: insurance,
+
+    loanDate: loanDate,
+
+    loanType: loanType,
+
+    amount: amount,
+
+    interest: interest,
+
+    interestAmount: interestAmount,
+
+    total: total,
+
+    weeks: weeks,
+
+    weekly: Number(weekly),
+
+    paid: 0,
+
+    balance: balance,
+
+    status: "Pending",
+
+    approvedBy: "",
+
+    approvedDate: ""
+
+};
+
+if(editingLoanIndex==-1){
+
+loans.push(loan);
+
+}else{
+
+loan.id = loans[editingLoanIndex].id;
+loan.status = loans[editingLoanIndex].status;
+loan.paid = loans[editingLoanIndex].paid;
+loans[editingLoanIndex] = loan;
+
+editingLoanIndex = -1;
+loan.approvedBy = loans[editingLoanIndex].approvedBy;
+loan.approvedDate = loans[editingLoanIndex].approvedDate;
+
+loans[editingLoanIndex] = loan;
+
+editingLoanIndex = -1;
+
+}if(editingLoanIndex==-1){
+
+let schedules =JSON.parse(localStorage.getItem("emiSchedule")) || [];
+
+let dueDate = new Date(loanDate);
+
+for(let i=1;i<=weeks;i++){
+
+schedules.push({
+
+    loanId:loan.id,
+
+    emiNo:i,
+
+    dueDate:dueDate.toLocaleDateString(),
+
+    amount:Number(weekly),
+
+    paid:false,
+
+    paidDate:"",
+
+    balance:Number(weekly)
+
+});
+
+dueDate.setDate(dueDate.getDate()+7);
+
+}
+
+localStorage.setItem("emiSchedule", JSON.stringify(schedules));
+
+}   // <-- Missing closing brace for the outer if(editingLoanIndex==-1)
+
+localStorage.setItem("loans", JSON.stringify(loans));
+
+closeLoanModal();
+
+loadLoans();
+
+showDashboard();
+
+}
+
+function loadLoans(){
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+let keyword=document.getElementById("searchLoan")?.value.toLowerCase()||"";
+
+let html="";
+
+loans.forEach((loan,index)=>{
+
+if(
+
+loan.customerName.toLowerCase().includes(keyword) ||
+
+loan.id.toLowerCase().includes(keyword)
+
+){
+
+html+=`
+
+<tr>
+
+<td>${loan.id}</td>
+
+<td>${loan.customerName}</td>
+
+<td>${loan.loanType}</td>
+
+<td>${loan.loanDate}</td>
+
+<td>₹${loan.amount.toFixed(2)}</td>
+
+<td>₹${loan.balance.toFixed(2)}</td>
+
+<td>₹${loan.weekly}</td>
+
+<td>
+
+<span style="background:#28a745;color:white;padding:4px 10px;border-radius:20px;">
+
+${loan.status}
+
+</span>
+
+</td>
+
+<td>
+
+<button
+onclick="viewLoan(${index})"
+style="
+background:#2196f3;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+margin:2px;">
+
+View
+
+</button>
+
+<button
+onclick="editLoan(${index})"
+style="
+background:#ff9800;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+margin:2px;">
+
+Edit
+
+</button>
+
+<button
+onclick="printPromissoryLoan(${index})"
+style="
+background:#4caf50;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+margin:2px;">
+
+Promissory
+
+</button>
+
+<button
+onclick="printCollectionCard(${index})"
+style="
+background:#673ab7;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+margin:2px;">
+
+Collection Card
+
+</button>
+
+<button
+onclick="deleteLoan(${index})"
+style="
+background:red;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+margin:2px;">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("loanTable").innerHTML=html;
+
+}function deleteLoan(index){
+
+if(confirm("Delete this loan?")){
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+loans.splice(index,1);
+
+localStorage.setItem("loans",JSON.stringify(loans));
+
+loadLoans();
+
+showDashboard();
+
+}
+
+}function viewLoan(index){
+
+let loans =JSON.parse(localStorage.getItem("loans"))||[];
+
+let loan = loans[index];
+
+alert(
+
+"Loan ID : "+loan.id+
+
+"\nCustomer : "+loan.customerName+
+
+"\nAmount : ₹"+loan.amount+
+
+"\nBalance : ₹"+loan.balance+
+
+"\nStatus : "+loan.status
+
+);
+
+}function editLoan(index){
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let loan = loans[index];
+
+editingLoanIndex = index;
+
+openLoanModal();
+
+setTimeout(function(){
+
+document.getElementById("loanCustomer").value = loan.customerId;document.getElementById("loanAmount").value = loan.amount;document.getElementById("processingFee").value = loan.processing || 0;document.getElementById("insuranceFee").value = loan.insurance || 0;document.getElementById("loanDate").value = loan.loanDate;document.getElementById("loanType").value = loan.loanType;document.getElementById("loanInterest").value = loan.interest;document.getElementById("loanWeeks").value = loan.weeks;
+
+},100);
+
+if(customers.length>0){
+
+document.getElementById("loanCustomer").selectedIndex = 1;
+
+loadCustomerGuarantor();
+
+}}function printPromissoryLoan(index){
+
+let loans =JSON.parse(localStorage.getItem("loans"))||[];
+
+document.getElementById("promissoryLoanSearch").value=
+
+loans[index].id;
+
+showPromissory();
+
+setTimeout(function(){
+
+document.getElementById("promissoryLoanSearch").value=
+
+loans[index].id;
+
+loadPromissory();
+
+},300);
+
+}function printCollectionCard(index){
+
+let loans =JSON.parse(localStorage.getItem("loans"))||[];
+
+let customers =JSON.parse(localStorage.getItem("customers"))||[];
+
+let loan = loans[index];
+
+let customer =customers.find(c=>c.id==loan.customerId);let guarantor = document.getElementById("loanGuarantor").value;
+
+if(!customer){
+
+alert("Customer not found.");
+
+return;
+
+}
+
+alert(
+
+"Collection Card\n\n"+
+
+"Customer : "+customer.name+
+
+"\nLoan : "+loan.id+
+
+"\nAmount : ₹"+loan.amount+
+
+"\n\nVersion 2 will open the printable Collection Card."
+
+);
+
+}function loadCollections(){
+
+let loans=JSON.parse(localStorage.getItem("loans"))||[];
+
+let keyword=document.getElementById("searchCollection")?.value.toLowerCase()||"";
+
+let html="";
+
+loans.forEach((loan,index)=>{
+
+if(
+
+loan.customerName.toLowerCase().includes(keyword)
+
+){
+
+html+=`
+
+<tr>
+
+<td>${loan.id}</td>
+
+<td>${loan.customerName}</td>
+
+<td>₹${loan.weekly}</td>
+
+<td>₹${loan.balance.toFixed(2)}</td>
+
+<td>${loan.status}</td>
+
+<td>
+
+<button
+
+style="background:#0b7a3e;color:white;border:none;padding:6px 12px;border-radius:5px;cursor:pointer;"
+
+onclick="collectEMI(${index})">
+
+Collect
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("collectionTable").innerHTML=html;
+
+}function collectEMI(index){
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];let schedule = JSON.parse(localStorage.getItem("emiSchedule")) || [];let history = JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+let loan = loans[index];
+
+if(!loan){alert("Loan not found.");return;}
+
+if(loan.status=="Closed"){alert("Loan already closed.");return;}
+
+let emi = schedule.find(e =>e.loanId==loan.id && !e.paid);
+
+if(!emi){alert("No pending EMI.");return;}
+
+let amount = Number(loan.weekly);
+
+loan.balance = Math.max(0, Number(loan.balance)-amount);loan.paid = Number(loan.paid||0)+amount;loan.lastCollectionDate = new Date().toLocaleDateString();
+
+emi.paid = true;emi.paidDate = new Date().toLocaleDateString();emi.balance = 0;
+
+history.push({
+
+receiptNo:"RCPT"+String(history.length+1).padStart(4,"0"),
+
+loanId: loan.id,
+
+customer: loan.customerName,
+
+group: loan.group,
+
+amount: amount,
+
+date: new Date().toLocaleDateString(),
+
+balance: loan.balance,
+
+collectedBy: document.getElementById("currentUser").innerText
+
+});
+
+loan.balance = Math.max(0, Number(loan.balance));
+
+localStorage.setItem("loans", JSON.stringify(loans));
+localStorage.setItem("emiSchedule", JSON.stringify(schedule));
+localStorage.setItem("collectionHistory", JSON.stringify(history));
+
+if(document.getElementById("loanTable")) loadLoans();
+
+if(document.getElementById("dailyCollectionTable")) loadDailyCollection();
+
+if(document.getElementById("emiTable")) loadEMI();
+
+if(document.getElementById("historyTable")) loadHistory();
+
+showDashboard();
+
+alert("EMI Collected Successfully.");
+
+}
+
+function showExpenses(){
+
+document.getElementById("pageTitle").innerHTML="Expense Management";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+<h2>Expense Management</h2>
+
+<button
+
+onclick="openExpenseModal()"
+
+style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
+
+Add Expense
+
+</button>
+
+</div>
+
+<input
+
+id="expenseSearch"
+
+placeholder="Search Expense"
+
+style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:15px;"
+
+onkeyup="loadExpenses()">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Date</th>
+
+<th>Expense Head</th>
+
+<th>Description</th>
+
+<th>Amount</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="expenseTable">
+
+</tbody>
+
+</table>
+
+`;
+
+loadExpenses();
+
+}function openExpenseModal(){
+
+document.getElementById("expenseModal").style.display="flex";
+
+document.getElementById("expenseDate").value=new Date().toISOString().split("T")[0];
+
+}
+
+function closeExpenseModal(){
+
+document.getElementById("expenseModal").style.display="none";
+
+}function saveExpense(){
+
+let expenses=JSON.parse(localStorage.getItem("expenses"))||[];
+
+expenses.push({
+
+date: document.getElementById("expenseDate").value,
+
+head: document.getElementById("expenseHead").value,
+
+description: document.getElementById("expenseDesc").value,
+
+amount: Number(document.getElementById("expenseAmount").value)
+
+});
+
+localStorage.setItem("expenses",JSON.stringify(expenses));
+
+closeExpenseModal();
+
+loadExpenses();
+
+}function loadExpenses(){
+
+let expenses=JSON.parse(localStorage.getItem("expenses"))||[];
+
+let keyword=document.getElementById("expenseSearch")?.value.toLowerCase()||"";
+
+let html="";
+
+expenses.forEach((e,index)=>{
+
+if(
+
+e.head.toLowerCase().includes(keyword) ||
+
+e.description.toLowerCase().includes(keyword)
+
+){
+
+html+=`
+
+<tr>
+
+<td>${e.date}</td>
+
+<td>${e.head}</td>
+
+<td>${e.description}</td>
+
+<td>₹${e.amount.toFixed(2)}</td>
+
+<td>
+
+<button
+
+onclick="deleteExpense(${index})"
+
+style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;cursor:pointer;">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("expenseTable").innerHTML=html;
+
+}function deleteExpense(index){
+
+if(confirm("Delete Expense?")){
+
+let expenses=JSON.parse(localStorage.getItem("expenses"))||[];
+
+expenses.splice(index,1);
+
+localStorage.setItem("expenses",JSON.stringify(expenses));
+
+loadExpenses();
+
+}
+
+}function showDayBook(){
+
+document.getElementById("pageTitle").innerHTML="Day Book";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;align-items:center;">
+
+<h2>Daily Cash Book</h2>
+
+<button
+
+onclick="printDayBook()"
+
+style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
+
+Print
+
+</button>
+
+</div>
+
+<br>
+
+<input
+type="date"
+id="dayBookDate"
+onchange="loadDayBook()">
+
+<br><br>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>Type</th>
+
+<th>Description</th>
+
+<th>Amount</th>
+
+</tr>
+
+</thead>
+
+<tbody id="dayBookTable">
+
+</tbody>
+
+</table>
+
+<br>
+
+<div style="display:flex;gap:20px;">
+
+<div class="card">
+
+<h3>Total Collection</h3>
+
+<h1 id="dbCollection">₹0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Total Expense</h3>
+
+<h1 id="dbExpense">₹0</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Closing Balance</h3>
+
+<h1 id="dbBalance">₹0</h1>
+
+</div>
+
+</div>
+
+`;
+
+document.getElementById("dayBookDate").value =new Date().toISOString().split("T")[0];
+
+loadDayBook();
+
+}function loadDayBook(){
+
+let date=document.getElementById("dayBookDate").value;
+
+let history=JSON.parse(localStorage.getItem("collectionHistory"))||[];
+
+let expenses=JSON.parse(localStorage.getItem("expenses"))||[];
+
+let html="";
+
+let collection=0;
+
+let expense=0;
+
+history.forEach(h=>{
+
+if(h.date==date){
+
+collection+=Number(h.amount);
+
+html+=`
+
+<tr>
+
+<td>Collection</td>
+
+<td>${h.customer}</td>
+
+<td style="color:green;">₹${h.amount}</td>
+
+</tr>
+
+`;
+
+}function printDayBook(){
+
+let data=document.getElementById("content").innerHTML;
+
+let w=window.open("","_blank");
+
+w.document.write(`
+
+<html>
+
+<head>
+
+<title>Day Book</title>
+
+<style>
+
+body{
+
+font-family:'Montserrat',sans-serif;
+
+padding:30px;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+td,th{
+
+border:1px solid #000;
+
+padding:8px;
+
+}
+
+@media(max-width:768px){
+
+.sidebar{
+
+position:relative;
+width:100%;
+height:auto;
+
+}
+
+.main{
+
+margin-left:0;
+
+height:auto;
+
+}
+
+.header{
+
+font-size:18px;
+padding:15px;
+
+}
+
+.content{
+
+padding:10px;
+
+}
+
+.cards{
+
+grid-template-columns:1fr;
+
+}
+
+.card{
+
+margin-bottom:10px;
+
+}
+
+table{
+
+display:block;
+overflow-x:auto;
+white-space:nowrap;
+
+}
+
+.modal{
+
+padding:5px;
+
+}
+
+.modal-box{
+
+width:98%;
+height:95vh;
+max-height:95vh;
+padding:15px;
+
+}
+
+.modal-buttons{
+
+display:flex;
+flex-direction:column;
+
+}
+
+.modal-buttons button{
+
+width:100%;
+margin-top:8px;
+
+}
+
+input,
+select,
+textarea,
+button{
+
+font-size:16px;
+
+}
+
+img{
+
+max-width:100%;
+height:auto;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+${data}
+
+</body>
+
+`);
+
+w.document.close();
+
+w.print();
+
+}
+
+});
+
+expenses.forEach(e=>{
+
+if(e.date==date){
+
+expense+=Number(e.amount);
+
+html+=`
+
+<tr>
+
+<td>Expense</td>
+
+<td>${e.head}</td>
+
+<td style="color:red;">₹${e.amount}</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("dayBookTable").innerHTML=html;
+
+document.getElementById("dbCollection").innerHTML="₹"+collection.toFixed(2);
+
+document.getElementById("dbExpense").innerHTML="₹"+expense.toFixed(2);
+
+document.getElementById("dbBalance").innerHTML="₹"+(collection-expense).toFixed(2);
+
+}function showGuarantors(){
+
+document.getElementById("pageTitle").innerHTML="Guarantor Management";
+
+document.getElementById("content").innerHTML=`
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+<h2>Guarantors</h2>
+
+<button
+
+onclick="openGuarantorModal()"
+
+style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
+
+Add Guarantor
+
+</button>
+
+</div>
+
+<input
+
+id="searchGuarantor"
+
+placeholder="Search Guarantor"
+
+style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:15px;"
+
+onkeyup="loadGuarantors()">
+
+<table width="100%" border="1" cellpadding="10" cellspacing="0">
+
+<thead style="background:#0b7a3e;color:white;">
+
+<tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Mobile</th>
+
+<th>Relationship</th>
+
+<th>Occupation</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="guarantorTable">
+
+</tbody>
+
+</table>
+
+`;
+
+loadGuarantors();
+
+}function openGuarantorModal(){
+
+document.getElementById("guarantorModal").style.display="flex";
+
+}
+
+function closeGuarantorModal(){
+
+document.getElementById("guarantorModal").style.display="none";
+
+}function saveGuarantor(){
+
+let guarantors=JSON.parse(localStorage.getItem("guarantors"))||[];
+
+let id="GTR"+String(guarantors.length+1).padStart(4,"0");
+
+guarantors.push({
+
+id: id,
+
+name: document.getElementById("gtrName").value,
+
+mobile: document.getElementById("gtrMobile").value,
+
+relation: document.getElementById("gtrRelation").value,
+
+occupation: document.getElementById("gtrOccupation").value,
+
+income: document.getElementById("gtrIncome").value,
+
+aadhaar: document.getElementById("gtrAadhaar").value,
+
+pan: document.getElementById("gtrPan").value,
+
+address: document.getElementById("gtrAddress").value
+
+});
+
+localStorage.setItem("guarantors",JSON.stringify(guarantors));
+
+closeGuarantorModal();
+
+loadGuarantors();
+
+}function loadGuarantors(){
+
+let guarantors=JSON.parse(localStorage.getItem("guarantors"))||[];
+
+let keyword=document.getElementById("searchGuarantor")?.value.toLowerCase()||"";
+
+let html="";
+
+guarantors.forEach((g,index)=>{
+
+if(
+
+g.name.toLowerCase().includes(keyword) ||
+
+g.mobile.includes(keyword)
+
+){
+
+html+=`
+
+<tr>
+
+<td>${g.id}</td>
+
+<td>${g.name}</td>
+
+<td>${g.mobile}</td>
+
+<td>${g.relation}</td>
+
+<td>${g.occupation}</td>
+
+<td>
+
+<button
+onclick="deleteGuarantor(${index})"
+style="
+background:red;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:5px;">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("guarantorTable").innerHTML=html;
+
+}function deleteGuarantor(index){
+
+if(confirm("Delete this guarantor?")){
+
+let guarantors=JSON.parse(localStorage.getItem("guarantors"))||[];
+
+guarantors.splice(index,1);
+
+localStorage.setItem("guarantors",JSON.stringify(guarantors));
+
+loadGuarantors();
+
+}
+
+}let promissoryFileName="";
+
+function uploadPromissoryDocument(event){
+
+const file=event.target.files[0];
+
+if(!file) return;
+
+promissoryFileName=file.name;
+
+const reader=new FileReader();
+
+reader.onload=function(e){
+
+localStorage.setItem("promissoryDocument",e.target.result);localStorage.setItem("promissoryDocumentName",file.name);
+
+alert("Promissory Note Uploaded Successfully.");
+
+showDocuments();
+
+};
+
+reader.readAsDataURL(file);
+
+}function openDocumentModal(){
+
+document.getElementById("documentModal").style.display="flex";
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+let html="";
+
+customers.forEach(c=>{
+
+html += `<option value="${c.id}">${c.name}</option>`;
+
+});
+
+document.getElementById("docCustomer").innerHTML=html;
+
+}
+
+function closeDocumentModal(){
+
+document.getElementById("documentModal").style.display="none";
+
+}function saveDocuments(){
+
+let docs=JSON.parse(localStorage.getItem("documents"))||[];
+
+docs.push({
+
+customerId: document.getElementById("docCustomer").value,
+
+photo: document.getElementById("docPhoto").files[0]?.name || "",
+
+aadhaar: document.getElementById("docAadhaar").files[0]?.name || "",
+
+pan: document.getElementById("docPan").files[0]?.name || "",
+
+agreement: document.getElementById("docAgreement").files[0]?.name || ""
+
+});
+
+localStorage.setItem("documents",JSON.stringify(docs));
+
+closeDocumentModal();
+
+loadDocuments();
+
+}function loadDocuments(){
+
+let docs=JSON.parse(localStorage.getItem("documents"))||[];
+
+let customers=JSON.parse(localStorage.getItem("customers"))||[];
+
+let keyword=document.getElementById("searchDocument")?.value.toLowerCase()||"";
+
+let html="";
+
+docs.forEach((d,index)=>{
+
+let customer=customers.find(c=>c.id===d.customerId);
+
+if(!customer) return;
+
+if(customer.name.toLowerCase().includes(keyword)){
+
+html+=`
+
+<tr>
+
+<td>${customer.name}</td>
+
+<td>${d.photo || "-"}</td>
+
+<td>${d.aadhaar || "-"}</td>
+
+<td>${d.pan || "-"}</td>
+
+<td>${d.agreement || "-"}</td>
+
+<td>
+
+<button
+onclick="deleteDocument(${index})"
+style="
+background:red;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:5px;">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+});
+
+document.getElementById("documentTable").innerHTML=html;
+
+}function deleteDocument(index){
+
+if(confirm("Delete document record?")){
+
+let docs=JSON.parse(localStorage.getItem("documents"))||[];
+
+docs.splice(index,1);
+
+localStorage.setItem("documents",JSON.stringify(docs));
+
+loadDocuments();
+
+}
+
+}
+
+localStorage.setItem("emiSchedule",JSON.stringify(schedule));
+
+function uploadSignedPromissory(){
+
+let loanId =document.getElementById("promissoryLoanSearch").value;
+
+let file =document.getElementById("signedPromissoryFile").files[0];
+
+if(!file){
+
+alert("Select a file.");
+
+return;
+
+}
+
+let reader = new FileReader();
+
+reader.onload=function(e){
+
+let docs =JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+docs[loanId] = {
+
+name: file.name,
+
+file: e.target.result,
+
+date: new Date().toLocaleString()
+
+};
+
+localStorage.setItem("signedPromissory",JSON.stringify(docs));
+
+alert("Signed Promissory Uploaded.");
+
+loadPromissory();
+
+};
+
+reader.readAsDataURL(file);
+
+}function downloadSignedPromissory(){
+
+let loanId =document.getElementById("promissoryLoanSearch").value;
+
+let docs =JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+if(!docs[loanId]){
+
+alert("No file uploaded.");
+
+return;
+
+}
+
+let a=document.createElement("a");
+
+a.href=docs[loanId].file;
+
+a.download=docs[loanId].name;
+
+a.click();
+
+}function deleteSignedPromissory(){
+
+let loanId =document.getElementById("promissoryLoanSearch").value;
+
+let docs =JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+if(!docs[loanId]){
+
+alert("No file found.");
+
+return;
+
+}
+
+if(confirm("Delete this signed file?")){
+
+delete docs[loanId];
+
+localStorage.setItem("signedPromissory",JSON.stringify(docs));
+
+loadPromissory();
+
+}
+
+}
+
+</script>
+
+<!-- CUSTOMER MODAL -->
+
+<h2>Add Customer</h2>
+
+<!-- STEP BUTTONS -->
+
+<div class="wizard">
+
+<button id="step1Btn" onclick="showStep(1)">1. Personal</button>
+
+<button id="step2Btn" onclick="showStep(2)">2. Address</button>
+
+<button id="step3Btn" onclick="showStep(3)">3. Documents</button>
+
+<button id="step4Btn" onclick="showStep(4)">4. Finish</button>
+
+</div>
+
+<!-- STEP 1 -->
+
+<div id="step1" class="step">
+
+<input id="cName" placeholder="Customer Name">
+
+<input id="cFather" placeholder="Father / Husband Name">
+
+<input id="cMobile" placeholder="Mobile Number">
+
+<input id="cAltMobile" placeholder="Alternate Mobile">
+
+<select id="cGender">
+
+<option>Male</option>
+
+<option>Female</option>
+
+</select>
+
+</div>
+
+<!-- STEP 2 -->
+
+<div id="step2" class="step" style="display:none;">
+
+<input id="cAadhaar" placeholder="Aadhaar Number">
+
+<input id="cPan" placeholder="PAN Number">
+
+<textarea id="cAddress"
+
+placeholder="Address"
+
+rows="4"></textarea>
+
+<select id="cGroup">
+
+</select>
+
+</div>
+
+<!-- STEP 3 -->
+
+<div id="step3" class="step" style="display:none;">
+
+<label>Customer Photo</label>
+
+<input
+type="file"
+id="cPhoto"
+accept="image/*">
+
+<label>Aadhaar Front</label>
+
+<input
+type="file"
+id="cAadhaarFront"
+accept="image/*">
+
+<label>Aadhaar Back</label>
+
+<input
+type="file"
+id="cAadhaarBack"
+accept="image/*">
+
+<label>PAN Card</label>
+
+<input
+type="file"
+id="cPanImage"
+accept="image/*">
+
+</div>
+
+<!-- STEP 4 -->
+
+<div id="step4" class="step" style="display:none;">
+
+<h3>Ready to Save</h3>
+
+<p>
+
+Click Save Customer to complete.
+
+</p>
+
+</div>
+
+<div class="modal-buttons">
+
+<button onclick="previousStep()">
+
+Previous
+
+</button>
+
+<button onclick="nextStep()">
+
+Next
+
+</button>
+
+<button onclick="saveCustomer()">
+
+Save Customer
+
+</button>
+
+<button onclick="closeCustomerModal()">
+
+Close
+
+</button>
+
+</div>
+
+<h2>Add Customer</h2>
+<div class="customer-form"></div>
+
+<input id="cName" placeholder="Customer Name">
+
+<input id="cFather" placeholder="Father / Husband Name">
+
+<input
+
+id="cMobile"
+
+type="tel"
+
+maxlength="10"
+
+placeholder="Mobile Number">
+
+<input id="cAltMobile" placeholder="Alternate Mobile">
+
+<input
+
+id="cAadhaar"
+
+maxlength="12"
+
+placeholder="Aadhaar Number">
+
+<input id="cPan" placeholder="PAN Number">
+
+<textarea
+id="cAddress"
+placeholder="Address"
+style="width:100%;height:80px;padding:10px;margin-bottom:15px;border:1px solid #ccc;border-radius:8px;"></textarea>
+
+<select id="cGroup"></select>
+
+<label style="font-weight:bold;">Customer Photo</label>
+
+<input
+type="file"
+id="cPhoto"
+accept="image/*"
+onchange="previewPhoto(event)">
+
+<img
+id="photoPreview"
+style="width:120px;height:120px;border-radius:10px;border:1px solid #ccc;margin-top:10px;display:none;object-fit:cover;">
+
+<hr style="margin:15px 0;">
+
+<label><b>Aadhaar Front</b></label>
+
+<input
+type="file"
+id="cAadhaarFront"
+accept="image/*">
+
+<label><b>Aadhaar Back</b></label>
+
+<input
+type="file"
+id="cAadhaarBack"
+accept="image/*">
+
+<label><b>PAN Card</b></label>
+
+<input
+type="file"
+id="cPan"
+accept="image/*">
+
+<label><b>Voter ID</b></label>
+
+<input
+type="file"
+id="cVoter"
+accept="image/*">
+
+<label><b>Ration Card</b></label>
+
+<input
+type="file"
+id="cRation"
+accept="image/*">
+
+<div class="modal-buttons">
+
+<button onclick="saveCustomer()">Save</button>
+
+<button onclick="closeCustomerModal()">Cancel</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- GROUP MODAL -->
+
+<div id="groupModal" class="modal">
+
+<div class="modal-box">
+
+<h2>Add Group</h2>
+
+<input id="gName" placeholder="Group Name">
+
+<input id="gArea" placeholder="Area">
+
+<select id="gMeeting">
+    <option>Monday</option>
+    <option>Tuesday</option>
+    <option>Wednesday</option>
+    <option>Thursday</option>
+    <option>Friday</option>
+    <option>Saturday</option>
+    <option>Sunday</option>
+</select>
+
+<select id="gCollection">
+    <option>Monday</option>
+    <option>Tuesday</option>
+    <option>Wednesday</option>
+    <option>Thursday</option>
+    <option>Friday</option>
+    <option>Saturday</option>
+    <option>Sunday</option>
+</select>
+
+<div class="modal-buttons">
+
+<button onclick="saveGroup()">Save</button>
+
+<button onclick="closeGroupModal()">Cancel</button>
+
+</div>
+
+</div>
+
+</div>
+<!-- LOAN MODAL -->
+
+<div id="loanModal" class="modal">
+
+<div class="modal-box">
+
+<h2>New Loan</h2>
+
+<select id="loanCustomer" onchange="loadCustomerGuarantor()"></select>
+
+<label>Guarantor</label>
+
+<select id="loanGuarantor" disabled></select>
+
+<input id="loanAmount" type="number" placeholder="Loan Amount">
+
+<input id="loanInterest" type="number" value="24" placeholder="Interest %">
+
+<input id="loanWeeks" type="number" value="50" placeholder="Total Weeks">
+
+<input id="processingFee" type="number" value="0" placeholder="Processing Fee">
+
+<input id="insuranceFee" type="number" value="0" placeholder="Insurance">
+
+<input id="loanDate" type="date">
+
+<select id="loanType">
+
+<option>Group Loan</option>
+
+<option>Business Loan</option>
+
+<option>Personal Loan</option>
+
+</select>
+
+<div class="modal-buttons">
+
+<button onclick="saveLoan()">Save</button>
+
+<button onclick="closeLoanModal()">Cancel</button>
+
+</div>
+
+</div>
+
+</div>
+<div id="expenseModal" class="modal">
+
+<div class="modal-box">
+
+<h2>Add Expense</h2>
+
+<input
+id="expenseDate"
+type="date">
+
+<input
+id="expenseHead"
+placeholder="Expense Head">
+
+<input
+id="expenseDesc"
+placeholder="Description">
+
+<input
+id="expenseAmount"
+type="number"
+placeholder="Amount">
+
+<div class="modal-buttons">
+
+<button onclick="saveExpense()">
+
+Save
+
+</button>
+
+<button onclick="closeExpenseModal()">
+
+Cancel
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+<div id="guarantorModal" class="modal">
+
+<div class="modal-box">
+
+<h2>Add Guarantor</h2>
+
+<input id="gtrName" placeholder="Guarantor Name">
+
+<input id="gtrMobile" placeholder="Mobile Number">
+
+<input id="gtrRelation" placeholder="Relationship">
+
+<input id="gtrOccupation" placeholder="Occupation">
+
+<input id="gtrIncome" type="number" placeholder="Monthly Income">
+
+<input id="gtrAadhaar" placeholder="Aadhaar Number">
+
+<input id="gtrPan" placeholder="PAN Number">
+
+<textarea
+id="gtrAddress"
+placeholder="Address"
+style="width:100%;height:80px;padding:10px;border:1px solid #ccc;border-radius:8px;margin-bottom:15px;"></textarea>
+
+<div class="modal-buttons">
+
+<button onclick="saveGuarantor()">
+
+Save
+
+</button>
+
+<button onclick="closeGuarantorModal()">
+
+Cancel
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+<div id="documentModal" class="modal">
+
+<div class="modal-box">
+
+<h2>Upload Documents</h2>
+
+<select id="docCustomer"></select>
+
+<label>Customer Photo</label><input type="file" id="docPhoto" accept="image/*">
+
+<label>Aadhaar Front</label><input type="file" id="docAadhaar" accept="image/*">
+
+<label>PAN Card</label><input type="file" id="docPan" accept="image/*">
+
+<label>Loan Agreement (PDF)</label><input type="file" id="docAgreement" accept=".pdf">
+
+<div class="modal-buttons">
+
+<button onclick="saveDocuments()">
+Save
+</button>
+
+<button onclick="closeDocumentModal()">
+Cancel
+</button>
+
+</div>
+</div>
+
+<script>
+
+let currentStep = 1;
+
+function showStep(step){
+
+currentStep=step;
+
+document.querySelectorAll(".step").forEach(s=>{
+
+s.style.display="none";
+
+});
+
+document.getElementById("step"+step).style.display="block";
+
+}
+
+function nextStep(){
+
+if(currentStep<4){
+
+currentStep++;
+
+showStep(currentStep);
+
+}
+
+}
+
+function previousStep(){
+
+if(currentStep>1){
+
+currentStep--;
+
+showStep(currentStep);
+
+}
+
+}function showLoanCard(){
+
+document.getElementById("pageTitle").innerHTML = "Loan Card";
+
+document.getElementById("content").innerHTML = `
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+    <h2>Loan Card Management</h2>
+
+</div>
+
+<input
+    id="loanCardSearch"
+    placeholder="Search Customer"
+    style="width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:20px;"
+    onkeyup="loadLoanCards()">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
+
+    <thead style="background:#0b7a3e;color:white;">
+
+        <tr>
+
+            <th>ID</th>
+
+            <th>Name</th>
+
+            <th>Group</th>
+
+            <th>Mobile</th>
+
+            <th>Loan Amount</th>
+
+            <th>Action</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody id="loanCardTable"></tbody>
+
+</table>
+
+`;
+
+loadLoanCards();
+
+}function loadLoanCards(){
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let search = document.getElementById("loanCardSearch").value.toLowerCase();
+
+let html = "";
+
+customers.forEach(c=>{
+
+    let loan = loans.find(l=>l.customerId==c.id);
+
+    if(!loan) return;
+
+    if(
+        c.name.toLowerCase().includes(search)==false &&
+        c.mobile.includes(search)==false
+    ) return;
+
+    html += `
+
+    <tr>
+
+        <td>${c.id}</td>
+
+        <td>${c.name}</td>
+
+        <td>${c.group}</td>
+
+        <td>${c.mobile}</td>
+
+        <td>₹ ${loan.amount}</td>
+
+        <td>
+
+            <button onclick="printLoanCardFront('${c.id}')">
+
+                Front
+
+            </button>
+
+            <button onclick="printLoanCardBack('${c.id}')">
+
+                Back
+
+            </button>
+
+        </td>
+
+    </tr>
+
+    `;
+
+});
+
+document.getElementById("loanCardTable").innerHTML = html;
+
+}function printLoanCardFront(customerId){
+
+let customers = JSON.parse(localStorage.getItem("customers")) || [];
+let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+let c = customers.find(x=>x.id==customerId);
+
+let loan = loans.find(x=>x.customerId==customerId);
+
+if(!c || !loan){
+    alert("Loan Details Not Found");
+    return;
+}
+
+let companyName="AARVEE ASSOCIATES";
+let address="Near Bus Stand, Kottur";
+let mobile="8248510416, 8838224040";
+
+let win=window.open("","","width=1200,height=800");
+
+win.document.write(`
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Loan Card Front</title>
+
+<style>
+
+@page{
+
+size:A4 landscape;
+
+margin:10mm;
+
+}
+
+body{
+
+font-family:'Montserrat',sans-serif;
+
+margin:0;
+
+padding:0;
+
+}
+
+.container{
+
+display:flex;
+
+justify-content:space-between;
+
+gap:20px;
+
+}
+
+.card{
+
+width:48%;
+
+border:2px solid black;
+
+padding:15px;
+
+box-sizing:border-box;
+
+}
+
+.header{
+
+display:flex;
+
+align-items:center;
+
+margin-bottom:10px;
+
+}
+
+.logo{
+
+width:70px;
+
+height:70px;
+
+border:1px solid #000;
+
+margin-right:15px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:12px;
+
+}
+
+.company{
+
+font-size:32px;
+
+font-weight:bold;
+
+}
+
+.address{
+
+text-align:center;
+
+font-size:18px;
+
+margin-top:5px;
+
+}
+
+.contact{
+
+text-align:center;
+
+font-size:18px;
+
+margin-bottom:20px;
+
+}
+
+table{
+
+width:100%;
+
+font-size:20px;
+
+border-collapse:collapse;
+
+}
+
+td{
+
+padding:8px;
+
+}
+
+.rules{
+
+border:2px solid #000;
+
+margin-top:20px;
+
+padding:15px;
+
+font-size:18px;
+
+line-height:32px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+    <div class="card">
+
+<div class="header">
+
+<div class="logo">
+
+LOGO
+
+</div>
+
+<div>
+
+<div class="company">
+
+${companyName}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="address">
+
+${address}
+
+</div>
+
+<div class="contact">
+
+Contact : ${mobile}
+
+</div>
+
+<table>
+
+<tr>
+
+<td width="35%"><b>NAME</b></td>
+
+<td>${c.name}</td>
+
+</tr>
+
+<tr>
+
+<td><b>GROUP</b></td>
+
+<td>${c.group}</td>
+
+</tr>
+
+<tr>
+
+<td><b>MOBILE</b></td>
+
+<td>${c.mobile}</td>
+
+</tr>
+
+<tr>
+
+<td><b>DATE</b></td>
+
+<td>${loan.date}</td>
+
+</tr>
+
+<tr>
+
+<td><b>AMOUNT</b></td>
+
+<td>₹ ${loan.amount}</td>
+
+</tr>
+
+</table>
+
+<div class="rules">
+
+➤ வீடு கட்ட, வாங்க கடன்<br>
+
+➤ வீடு அடமான கடன்<br>
+
+➤ காவி இடம் அடமான கடன்<br>
+
+➤ தனிநபர் கடன்<br>
+
+➤ வியாபார கடன்<br>
+
+➤ இருக்கிற வாகன கடன்<br>
+
+➤ வணிக வாகன கடன்<br>
+
+➤ நகை கடன்<br><br>
+
+<b>
+
+அதிக வட்டியுள்ள கடன் தொகைகளை மீட்டு,
+
+குறைந்த வட்டியில் மாற்றித்தரப்படும்
+
+</b>
+
+</div>
+
+</div>
+<div class="card">
+
+<div class="header">
+
+<div class="logo">
+
+LOGO
+
+</div>
+
+<div>
+
+<div class="company">
+
+${companyName}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="address">
+
+${address}
+
+</div>
+
+<div class="contact">
+
+Contact : ${mobile}
+
+</div>
+
+<table>
+
+<tr>
+
+<td width="35%"><b>NAME</b></td>
+
+<td>${c.name}</td>
+
+</tr>
+
+<tr>
+
+<td><b>GROUP</b></td>
+
+<td>${c.group}</td>
+
+</tr>
+
+<tr>
+
+<td><b>MOBILE</b></td>
+
+<td>${c.mobile}</td>
+
+</tr>
+
+<tr>
+
+<td><b>DATE</b></td>
+
+<td>${loan.date}</td>
+
+</tr>
+
+<tr>
+
+<td><b>AMOUNT</b></td>
+
+<td>₹ ${loan.amount}</td>
+
+</tr>
+
+</table>
+
+<div class="rules">
+
+➤ வீடு கட்ட, வாங்க கடன்<br>
+
+➤ வீடு அடமான கடன்<br>
+
+➤ காவி இடம் அடமான கடன்<br>
+
+➤ தனிநபர் கடன்<br>
+
+➤ வியாபார கடன்<br>
+
+➤ இருக்கிற வாகன கடன்<br>
+
+➤ வணிக வாகன கடன்<br>
+
+➤ நகை கடன்<br><br>
+
+<b>
+
+அதிக வட்டியுள்ள கடன் தொகைகளை மீட்டு,
+
+குறைந்த வட்டியில் மாற்றித்தரப்படும்
+
+</b>
+
+</div>
+
+</div>
+</div>
+
+</body>
+
+`);
+
+win.document.close();
+
+win.print();
+
+}
+
+</script>
+</body>
+</html>
