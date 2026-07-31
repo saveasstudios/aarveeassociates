@@ -780,7 +780,9 @@ AARVEE Associates
 
 <li onclick="showPage('reports')">📄 Reports</li>
 
-<li onclick="logout()">🚪 Logout</li>
+<li onclick="logout()">
+🚪 Logout
+</li>
 
 </ul>
 
@@ -824,7 +826,7 @@ AARVEE Associates
 
 <h3>Active Loans</h3>
 
-<h1>${JSON.parse(localStorage.getItem("loans")||"[]").length}</h1>
+<h1 id="loanCount">0</h1>
 
 </div>
 
@@ -953,27 +955,45 @@ function login() {
 
     if (users[username] && users[username] === password) {
 
-        document.getElementById("loginPage").style.display = "none";
-        document.getElementById("app").style.display = "block";
+    localStorage.setItem("loggedIn","true");
+    localStorage.setItem("currentUser",username);
 
-        document.getElementById("currentUser").innerHTML =
-            username.charAt(0).toUpperCase() + username.slice(1);
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("app").style.display = "block";
 
-        loadDashboard();
-        showDashboard();
+    document.getElementById("currentUser").innerHTML =
+        username.charAt(0).toUpperCase() + username.slice(1);
 
-    } else {
+    loadDashboard();
+    showDashboard();
+} else {
         alert("Invalid Username or Password");
     }
 }
 
 function logout(){
 
-location.reload();
+    if(!confirm("Logout?")) return;
+
+    sessionStorage.clear();
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("currentUser");
+
+    document.getElementById("app").style.display="none";
+    document.getElementById("loginPage").style.display="flex";
+
+    document.getElementById("user").value="";
+    document.getElementById("pin").value="";
+
+    location.reload();
 
 }
 
 function loadDashboard(){
+
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+document.getElementById("loanCount").innerHTML = loans.length;
 
 let groups=JSON.parse(localStorage.getItem("groups"))||[];
 
@@ -4542,13 +4562,11 @@ dueDate.setDate(dueDate.getDate()+7);
 
 }
 
-if(editingLoanIndex==-1){
+localStorage.setItem("emiSchedule", JSON.stringify(schedules));
 
-    localStorage.setItem("emiSchedule",JSON.stringify(schedules));
+}   // <-- Missing closing brace for the outer if(editingLoanIndex==-1)
 
-}
-
-localStorage.setItem("loans",JSON.stringify(loans));
+localStorage.setItem("loans", JSON.stringify(loans));
 
 closeLoanModal();
 
@@ -6246,7 +6264,13 @@ Save
 <button onclick="closeDocumentModal()">
 Cancel
 </button>
-let currentStep=1;
+
+</div>
+</div>
+
+<script>
+
+let currentStep = 1;
 
 function showStep(step){
 
@@ -6784,6 +6808,5 @@ win.print();
 }
 
 </script>
-
 </body>
 </html>
