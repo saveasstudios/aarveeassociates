@@ -4461,68 +4461,77 @@ Collect
 
 document.getElementById("emiTable").innerHTML = html;
 
-}function saveLoan(){
+}
+function saveLoan(){
 
     try{
-
-        console.log("1");
 
         let loans = JSON.parse(localStorage.getItem("loans")) || [];
         let customers = JSON.parse(localStorage.getItem("customers")) || [];
 
-        console.log("2");
-
         let customerId = document.getElementById("loanCustomer").value;
-        let customer = customers.find(c => c.id == customerId);
 
-        console.log("3", customer);
+        if(customerId==""){
+            alert("Please select customer.");
+            return;
+        }
+
+        let customer = customers.find(c=>c.id==customerId);
+
+        if(!customer){
+            alert("Customer not found.");
+            return;
+        }
 
         let amount = Number(document.getElementById("loanAmount").value);
 
-        console.log("4");
+        if(amount<=0){
+            alert("Enter valid loan amount.");
+            return;
+        }
 
-        let processing = Number(document.getElementById("processingFee").value || 0);
-        let insurance = Number(document.getElementById("insuranceFee").value || 0);
-        let interest = Number(document.getElementById("loanInterest").value);
-        let weeks = Number(document.getElementById("loanWeeks").value);
+        let processing = Number(document.getElementById("processingFee")?.value || 0);
+        let insurance = Number(document.getElementById("insuranceFee")?.value || 0);
+        let interest = Number(document.getElementById("loanInterest").value || 0);
+        let weeks = Number(document.getElementById("loanWeeks").value || 1);
 
-        console.log("5");
+        let total = amount + (amount*interest/100) + processing + insurance;
 
         let loan = {
             id:"LOAN"+String(loans.length+1).padStart(4,"0"),
             customerId:customer.id,
             customerName:customer.name,
             group:customer.group,
-            guarantor:document.getElementById("loanGuarantor").value,
-            amount,
-            processing,
-            insurance,
-            interest,
+            guarantor:document.getElementById("loanGuarantor")?.value || "",
+            amount:amount,
+            processing:processing,
+            insurance:insurance,
+            interest:interest,
             interestAmount:amount*interest/100,
-            total:amount+(amount*interest/100)+processing+insurance,
-            weekly:(amount+(amount*interest/100)+processing+insurance)/weeks,
-            weeks,
+            total:total,
+            weekly:total/weeks,
+            weeks:weeks,
             paid:0,
-            balance:amount+(amount*interest/100)+processing+insurance,
+            balance:total,
             loanDate:document.getElementById("loanDate").value,
             loanType:document.getElementById("loanType").value,
             status:"Pending"
         };
 
-        console.log("6");
-
         loans.push(loan);
 
         localStorage.setItem("loans",JSON.stringify(loans));
 
-        console.log("7");
+        alert("Loan Saved Successfully");
 
-        alert("Saved");
+        closeLoanModal();
 
-    }catch(e){
+        loadLoans();
 
-        alert(e.message);
-        console.error(e);
+    }catch(err){
+
+        alert(err.message);
+        console.error(err);
 
     }
 
@@ -6096,7 +6105,9 @@ accept="image/*">
 
 <div class="modal-buttons">
 
-<button onclick="saveLoan()">Save</button>
+<button type="button" onclick="saveLoan()">
+    Save
+</button>
 
 <button onclick="closeLoanModal()">Cancel</button>
 
