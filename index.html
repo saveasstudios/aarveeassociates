@@ -944,6 +944,7 @@ rasak: "0786"
 
 let editingGroupIndex = -1;
 let editingCustomerIndex = -1;
+let editingLoanIndex = -1;
 let customerPhoto="";
 let aadhaarFrontData = "";
 let aadhaarBackData = "";
@@ -4462,65 +4463,69 @@ document.getElementById("emiTable").innerHTML = html;
 
 }function saveLoan(){
 
-    let loans = JSON.parse(localStorage.getItem("loans")) || [];
-    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+    try{
 
-    let customerId = document.getElementById("loanCustomer").value;
-    let customer = customers.find(c => c.id == customerId);
+        console.log("1");
 
-    if(!customer){
-        alert("Please select a customer.");
-        return;
+        let loans = JSON.parse(localStorage.getItem("loans")) || [];
+        let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+        console.log("2");
+
+        let customerId = document.getElementById("loanCustomer").value;
+        let customer = customers.find(c => c.id == customerId);
+
+        console.log("3", customer);
+
+        let amount = Number(document.getElementById("loanAmount").value);
+
+        console.log("4");
+
+        let processing = Number(document.getElementById("processingFee").value || 0);
+        let insurance = Number(document.getElementById("insuranceFee").value || 0);
+        let interest = Number(document.getElementById("loanInterest").value);
+        let weeks = Number(document.getElementById("loanWeeks").value);
+
+        console.log("5");
+
+        let loan = {
+            id:"LOAN"+String(loans.length+1).padStart(4,"0"),
+            customerId:customer.id,
+            customerName:customer.name,
+            group:customer.group,
+            guarantor:document.getElementById("loanGuarantor").value,
+            amount,
+            processing,
+            insurance,
+            interest,
+            interestAmount:amount*interest/100,
+            total:amount+(amount*interest/100)+processing+insurance,
+            weekly:(amount+(amount*interest/100)+processing+insurance)/weeks,
+            weeks,
+            paid:0,
+            balance:amount+(amount*interest/100)+processing+insurance,
+            loanDate:document.getElementById("loanDate").value,
+            loanType:document.getElementById("loanType").value,
+            status:"Pending"
+        };
+
+        console.log("6");
+
+        loans.push(loan);
+
+        localStorage.setItem("loans",JSON.stringify(loans));
+
+        console.log("7");
+
+        alert("Saved");
+
+    }catch(e){
+
+        alert(e.message);
+        console.error(e);
+
     }
 
-    let amount = Number(document.getElementById("loanAmount").value);
-
-    if(amount<=0){
-        alert("Enter valid amount");
-        return;
-    }
-
-    let processing = Number(document.getElementById("processingFee")?.value || 0);
-    let insurance = Number(document.getElementById("insuranceFee")?.value || 0);
-    let interest = Number(document.getElementById("loanInterest").value);
-    let weeks = Number(document.getElementById("loanWeeks").value);
-
-    let interestAmount = amount * interest / 100;
-    let total = amount + interestAmount + processing + insurance;
-    let weekly = total / weeks;
-
-    let loan = {
-        id:"LOAN"+String(loans.length+1).padStart(4,"0"),
-        customerId:customer.id,
-        customerName:customer.name,
-        group:customer.group,
-        guarantor:document.getElementById("loanGuarantor").value,
-        amount,
-        processing,
-        insurance,
-        interest,
-        interestAmount,
-        total,
-        weekly,
-        weeks,
-        paid:0,
-        balance:total,
-        loanDate:document.getElementById("loanDate").value,
-        loanType:document.getElementById("loanType").value,
-        status:"Pending"
-    };
-
-    loans.push(loan);
-
-    localStorage.setItem("loans", JSON.stringify(loans));
-
-    alert("Loan Saved Successfully");
-
-    closeLoanModal();
-
-    loadLoans();
-
-    showDashboard();
 }
 
 function loadLoans(){
