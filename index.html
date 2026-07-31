@@ -4462,159 +4462,65 @@ document.getElementById("emiTable").innerHTML = html;
 
 }function saveLoan(){
 
-let loans=JSON.parse(localStorage.getItem("loans"))||[];
-
-let customers=JSON.parse(localStorage.getItem("customers"))||[];
-
-let customerId=document.getElementById("loanCustomer").value;
-
-let customer=customers.find(c=>c.id===customerId);
-
-let amount=parseFloat(document.getElementById("loanAmount").value);
-
-if(!customer){
-
-alert("Please select a customer.");
-
-return;
-
-}
-
-if(isNaN(amount) || amount<=0){
-
-alert("Enter a valid loan amount.");
-
-return;
-
-}
-
-let processing = parseFloat(document.getElementById("processingFee")?.value || 0);
-
-let insurance = parseFloat(document.getElementById("insuranceFee")?.value || 0);
-
-let loanDate = document.getElementById("loanDate")?.value || "";
-
-let loanType = document.getElementById("loanType")?.value || "";
-
-let interest = parseFloat(document.getElementById("loanInterest")?.value || 0);
-
-let weeks = parseInt(document.getElementById("loanWeeks")?.value || 0);
-
-let interestAmount = (amount * interest) / 100;
-
-let total = amount + interestAmount + processing + insurance;
-
-let weekly = (total / weeks).toFixed(2);
-
-let balance = Number(total);
-
-let guarantor = document.getElementById("loanGuarantor")?.value || "";
-
-let loan = {
-
-    id: "LOAN" + String(loans.length + 1).padStart(4, "0"),
-
-    customerId: customer.id,
-
-    customerName: customer.name,
-
-    group: customer.group,
-
-    guarantor: guarantor,
-
-    processing: processing,
-
-    insurance: insurance,
-
-    loanDate: loanDate,
-
-    loanType: loanType,
-
-    amount: amount,
-
-    interest: interest,
-
-    interestAmount: interestAmount,
-
-    total: total,
-
-    weeks: weeks,
-
-    weekly: Number(weekly),
-
-    paid: 0,
-
-    balance: balance,
-
-    status: "Pending",
-
-    approvedBy: "",
-
-    approvedDate: ""
-
-};
-
-if(editingLoanIndex==-1){
-
-loans.push(loan);
-
-}else{
-
-loan.id = loans[editingLoanIndex].id;
-loan.status = loans[editingLoanIndex].status;
-loan.paid = loans[editingLoanIndex].paid;
-loans[editingLoanIndex] = loan;
-
-editingLoanIndex = -1;
-loan.approvedBy = loans[editingLoanIndex].approvedBy;
-loan.approvedDate = loans[editingLoanIndex].approvedDate;
-
-loans[editingLoanIndex] = loan;
-
-editingLoanIndex = -1;
-
-}if(editingLoanIndex==-1){
-
-let schedules =JSON.parse(localStorage.getItem("emiSchedule")) || [];
-
-let dueDate = new Date(loanDate);
-
-for(let i=1;i<=weeks;i++){
-
-schedules.push({
-
-    loanId:loan.id,
-
-    emiNo:i,
-
-    dueDate:dueDate.toLocaleDateString(),
-
-    amount:Number(weekly),
-
-    paid:false,
-
-    paidDate:"",
-
-    balance:Number(weekly)
-
-});
-
-dueDate.setDate(dueDate.getDate()+7);
-
-}
-
-localStorage.setItem("emiSchedule", JSON.stringify(schedules));
-
-}   // <-- Missing closing brace for the outer if(editingLoanIndex==-1)
-
-localStorage.setItem("loans", JSON.stringify(loans));
-
-closeLoanModal();
-
-loadLoans();
-
-showDashboard();
-
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+
+    let customerId = document.getElementById("loanCustomer").value;
+    let customer = customers.find(c => c.id == customerId);
+
+    if(!customer){
+        alert("Please select a customer.");
+        return;
+    }
+
+    let amount = Number(document.getElementById("loanAmount").value);
+
+    if(amount<=0){
+        alert("Enter valid amount");
+        return;
+    }
+
+    let processing = Number(document.getElementById("processingFee")?.value || 0);
+    let insurance = Number(document.getElementById("insuranceFee")?.value || 0);
+    let interest = Number(document.getElementById("loanInterest").value);
+    let weeks = Number(document.getElementById("loanWeeks").value);
+
+    let interestAmount = amount * interest / 100;
+    let total = amount + interestAmount + processing + insurance;
+    let weekly = total / weeks;
+
+    let loan = {
+        id:"LOAN"+String(loans.length+1).padStart(4,"0"),
+        customerId:customer.id,
+        customerName:customer.name,
+        group:customer.group,
+        guarantor:document.getElementById("loanGuarantor").value,
+        amount,
+        processing,
+        insurance,
+        interest,
+        interestAmount,
+        total,
+        weekly,
+        weeks,
+        paid:0,
+        balance:total,
+        loanDate:document.getElementById("loanDate").value,
+        loanType:document.getElementById("loanType").value,
+        status:"Pending"
+    };
+
+    loans.push(loan);
+
+    localStorage.setItem("loans", JSON.stringify(loans));
+
+    alert("Loan Saved Successfully");
+
+    closeLoanModal();
+
+    loadLoans();
+
+    showDashboard();
 }
 
 function loadLoans(){
