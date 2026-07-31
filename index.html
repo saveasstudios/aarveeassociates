@@ -3060,20 +3060,24 @@ function printLoanCard() {
     },500);
 
 }
-function printLoanFront(){
+function printLoanFront() {
 
-let id = document.getElementById("loanCardSearch").value.trim();
+    let id = document.getElementById("loanCardSearch").value.trim();
 
-let loans = JSON.parse(localStorage.getItem("loans")) || [];let customers = JSON.parse(localStorage.getItem("customers")) || [];
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
 
-let loan = loans.find(l => l.id == id);
+    let loan = loans.find(l => l.id == id);
 
-if(!loan){alert("Loan not found.");return;}
+    if (!loan) {
+        alert("Loan not found.");
+        return;
+    }
 
-let customer = customers.find(c => c.id == loan.customerId);
+    let customer = customers.find(c => c.id == loan.customerId);
 
-let html = `
-
+    let html = `
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -3084,142 +3088,103 @@ let html = `
 
 @page{
     size:A5 portrait;
-    margin:8mm;
+    margin:6mm;
+}
+
+*{
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
 body{
-
     margin:0;
     padding:0;
-    font-family:'Montserrat',sans-serif;
     background:#fff;
-
 }
 
 .card{
-
-width:100%;
-
-height:100%;
-
-box-sizing:border-box;
-
-border:3px solid #b30000;
-
-padding:15px;
-
-border-radius:8px;
-
+    width:100%;
+    min-height:198mm;
+    border:2px solid #000;
+    padding:14px;
 }
 
 .header{
-
-    text-align:center;
-
+    display:flex;
+    align-items:flex-start;
 }
 
-.header img{
+.logo{
+    width:65px;
+    height:65px;
+    border:1px solid #000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-right:15px;
+}
 
-    width:90%;
-    max-height:80px;
-    object-fit:contain;
+.logo img{
+    max-width:100%;
+    max-height:100%;
+}
 
+.headText{
+    flex:1;
 }
 
 .company{
-
-    font-size:16px;
-    font-weight:bold;
-    margin-top:5px;
-
+    font-size:26px;
+    font-weight:700;
+    margin-top:4px;
 }
 
-.contact{
-
-    font-size:15px;
-    font-weight:bold;
-    margin-bottom:20px;
-
+.address{
+    text-align:center;
+    font-size:14px;
+    margin-top:25px;
+    line-height:20px;
 }
 
 .details{
-
     width:100%;
+    margin-top:20px;
     border-collapse:collapse;
-    margin-top:10px;
-
 }
 
 .details td{
-
-padding:12px 4px;
-
-font-size:18px;
-
-vertical-align:middle;
-
+    padding:7px 8px;
+    font-size:17px;
 }
 
 .label{
-
-width:140px;
-
-font-size:18px;
-
-font-weight:bold;
-
-letter-spacing:0.5px;
-
+    width:150px;
+    font-weight:bold;
 }
 
 .value{
-
-border-bottom:2px solid #000;
-
-padding-left:12px;
-
-font-size:18px;
-
-font-weight:bold;
-
+    border-bottom:1px solid #000;
 }
 
 .services{
-
-    margin-top:20px;
-
     border:2px solid #000;
+    margin-top:18px;
+    padding:12px 16px;
+}
 
+.services p{
+    margin:8px 0;
+    font-size:16px;
+}
+
+.footerBox{
+    margin-top:18px;
+    border:2px solid #000;
     padding:15px;
-
-}
-
-.services ul{
-
-    margin:0;
-
-    padding-left:25px;
-
-}
-
-.services li{
-
-    font-size:17px;
-
-    margin-bottom:8px;
-
-}
-
-.footer{
-
-    margin-top:15px;
-
     text-align:center;
-
-    font-size:20px;
-
+    font-size:18px;
     font-weight:bold;
-
+    line-height:32px;
 }
 
 </style>
@@ -3232,17 +3197,20 @@ font-weight:bold;
 
 <div class="header">
 
+<div class="logo">
 <img src="logo.png">
-
-<div class="company">
-
-Near Bus Stand, Kottur.
-
 </div>
 
-<div class="contact">
+<div class="headText">
 
+<div class="company">
+AARVEE ASSOCIATES
+</div>
+
+<div class="address">
+Near Bus Stand, Kottur<br>
 Contact : 8248510416, 8838224040
+</div>
 
 </div>
 
@@ -3251,90 +3219,57 @@ Contact : 8248510416, 8838224040
 <table class="details">
 
 <tr>
-
 <td class="label">NAME</td>
-
-<td class="value">${customer.name}</td>
-
+<td class="value">${customer.name || ""}</td>
 </tr>
 
 <tr>
-
 <td class="label">GROUP</td>
-
-<td class="value">${customer.group}</td>
-
+<td class="value">${customer.group || ""}</td>
 </tr>
 
 <tr>
-
 <td class="label">MOBILE</td>
-
-<td class="value">${customer.mobile}</td>
-
+<td class="value">${customer.mobile || ""}</td>
 </tr>
 
 <tr>
-
 <td class="label">DATE</td>
-
-<td class="value">${loan.loanDate}</td>
-
+<td class="value">${loan.loanDate || ""}</td>
 </tr>
 
 <tr>
-
-<td class="label">Amount Rs.</td>
-
-<td class="value">₹${Number(loan.amount).toFixed(2)}</td>
-
+<td class="label">AMOUNT</td>
+<td class="value">₹ ${Number(loan.amount || 0).toFixed(2)}</td>
 </tr>
 
 </table>
 
 <div class="services">
 
-<table style="width:100%;border-collapse:collapse;">
+<p>► வீடு கட்ட, வாங்க கடன்</p>
 
-<tr>
-<td style="padding:6px;font-size:17px;">✓ வீடு கட்ட கடன்</td>
-<td style="padding:6px;font-size:17px;">✓ வீடு வாங்க கடன்</td>
-</tr>
+<p>► வீடு அடமான கடன்</p>
 
-<tr>
-<td style="padding:6px;font-size:17px;">✓ வீடு அடமானக் கடன்</td>
-<td style="padding:6px;font-size:17px;">✓ காலி இடம் அடமானக் கடன்</td>
-</tr>
+<p>► காலி இடம் அடமான கடன்</p>
 
-<tr>
-<td style="padding:6px;font-size:17px;">✓ தனிநபர் கடன்</td>
-<td style="padding:6px;font-size:17px;">✓ வியாபாரக் கடன்</td>
-</tr>
+<p>► தனிநபர் கடன்</p>
 
-<tr>
-<td style="padding:6px;font-size:17px;">✓ இருசக்கர வாகன கடன்</td>
-<td style="padding:6px;font-size:17px;">✓ வணிக வாகன கடன்</td>
-</tr>
+<p>► வியாபார கடன்</p>
 
-<tr>
-<td colspan="2"
-style="
-padding-top:15px;
-text-align:center;
-font-size:18px;
-font-weight:bold;
-line-height:30px;">
+<p>► இருசக்கர வாகன கடன்</p>
 
-அதிக வட்டியுள்ள அடகு நகைகளை<br>
+<p>► வணிக வாகன கடன்</p>
 
-மீட்டு குறைந்த வட்டியில்<br>
+<p>► நகை கடன்</p>
 
-மாற்றித் தரப்படும்
+</div>
 
-</td>
-</tr>
+<div class="footerBox">
 
-</table>
+அதிக வட்டியுள்ள கடன் தொகைகளை மீட்டு,<br>
+
+குறைந்த வட்டியில் மாற்றித் தரப்படும்
 
 </div>
 
@@ -3343,25 +3278,22 @@ line-height:30px;">
 </body>
 
 </html>
-
 `;
 
-let w = window.open("", "", "width=700,height=900");
+    let w = window.open("", "_blank", "width=800,height=900");
 
-w.document.write(html);
+    w.document.write(html);
 
-w.document.close();
+    w.document.close();
 
-w.focus();
+    w.focus();
 
-setTimeout(function(){
-
-    w.print();
-
-},500);
+    setTimeout(function () {
+        w.print();
+    }, 500);
 
 }
-function printLoanBack(){
+function printLoanBack() {
 
     let id = document.getElementById("loanCardSearch").value.trim();
 
@@ -3370,179 +3302,224 @@ function printLoanBack(){
 
     let loan = loans.find(l => l.id == id);
 
-    if(!loan){
+    if (!loan) {
         alert("Loan not found.");
         return;
     }
 
     let customer = customers.find(c => c.id == loan.customerId);
 
+    let emi = Number(loan.weekly).toFixed(2);
+    let total = Number(loan.total).toFixed(2);
+
     let rows = "";
 
-    for(let i=1;i<=25;i++){
+    for (let i = 1; i <= Number(loan.weeks); i++) {
 
         rows += `
         <tr>
-            <td style="text-align:center;">${i}</td>
+            <td>${i}</td>
             <td></td>
-            <td></td>
+            <td>₹ ${emi}</td>
             <td></td>
         </tr>`;
     }
 
+    rows += `
+    <tr class="totalRow">
+        <td><b>TOTAL</b></td>
+        <td></td>
+        <td><b>₹ ${total}</b></td>
+        <td></td>
+    </tr>`;
+
     let html = `
-    <html>
+<!DOCTYPE html>
 
-    <head>
+<html>
 
-    <title>Loan Card Back</title>
+<head>
 
-    <style>
+<title>Loan Card Back</title>
 
-    @page{
-        size:A5 portrait;
-        margin:8mm;
-    }
+<style>
 
-    body{
-        margin:0;
-        font-family:Arial,sans-serif;
-        background:white;
-    }
+@page{
+    size:A5 portrait;
+    margin:6mm;
+}
 
-    .card{
+*{
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
 
-        border:3px solid #b30000;
-        border-radius:8px;
-        padding:15px;
+body{
+    margin:0;
+    padding:0;
+    background:#fff;
+}
 
-    }
+.card{
+    width:100%;
+    min-height:198mm;
+}
 
-    h2{
+.header{
+    text-align:center;
+    margin-bottom:15px;
+}
 
-        text-align:center;
-        margin:0;
+.header h2{
+    margin:0;
+    font-size:26px;
+}
 
-    }
+.header p{
+    margin:5px 0;
+    font-size:14px;
+}
 
-    .info{
+.info{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:15px;
+    font-size:14px;
+    font-weight:bold;
+    flex-wrap:wrap;
+    gap:8px;
+}
 
-        margin-top:15px;
-        margin-bottom:15px;
-        font-size:15px;
+table{
+    width:100%;
+    border-collapse:collapse;
+}
 
-    }
+table,
+th,
+td{
+    border:1px solid #000;
+}
 
-    table{
+th{
+    padding:8px;
+    text-align:center;
+    font-size:15px;
+    background:#f3f3f3;
+}
 
-        width:100%;
-        border-collapse:collapse;
+td{
+    height:38px;
+    text-align:center;
+    font-size:15px;
+}
 
-    }
+.totalRow td{
+    font-weight:bold;
+    background:#fafafa;
+}
 
-    table,
-    th,
-    td{
+</style>
 
-        border:1px solid #000;
+</head>
 
-    }
+<body>
 
-    th{
+<div class="card">
 
-        background:#f2f2f2;
-        font-size:13px;
-        padding:6px;
+<div class="header">
 
-    }
+<h2>AARVEE ASSOCIATES</h2>
 
-    td{
+<p>Near Bus Stand, Kottur</p>
 
-        height:28px;
-        padding:4px;
-        font-size:12px;
+<p>Contact : 8248510416, 8838224040</p>
 
-    }
+</div>
 
-    </style>
+<div class="info">
 
-    </head>
+<div>Loan ID : ${loan.id}</div>
 
-    <body>
+<div>Name : ${customer.name}</div>
 
-    <div class="card">
+<div>Group : ${customer.group}</div>
 
-        <h2>AARVEE ASSOCIATES</h2>
+</div>
 
-        <div class="info">
+<table>
 
-            <b>Loan ID :</b> ${loan.id}
-            <br>
+<thead>
 
-            <b>Name :</b> ${customer.name}
-            <br>
+<tr>
 
-            <b>Group :</b> ${customer.group}
-            <br>
+<th>S.NO</th>
 
-            <b>Loan Amount :</b> ₹${Number(loan.amount).toFixed(2)}
-            <br>
+<th>DATE</th>
 
-            <b>Weekly EMI :</b> ₹${Number(loan.weekly).toFixed(2)}
+<th>AMOUNT</th>
 
-        </div>
+<th>SIGN</th>
 
-        <table>
+</tr>
 
-            <tr>
+</thead>
 
-                <th>Week</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Signature</th>
+<tbody>
 
-            </tr>
+${rows}
 
-            ${rows}
+</tbody>
 
-        </table>
+</table>
 
-    </div>
+</div>
 
-    </body>
+</body>
 
-    </html>
-    `;
+</html>
+`;
 
-    let w = window.open("","_blank","width=700,height=900");
+    let w = window.open("", "_blank", "width=800,height=900");
 
     w.document.write(html);
 
     w.document.close();
 
-    setTimeout(function(){
+    w.focus();
 
+    setTimeout(function () {
         w.print();
-
-    },500);
+    }, 500);
 
 }
-function printLoanBoth(){
+function printLoanBoth() {
 
     let id = document.getElementById("loanCardSearch").value.trim();
 
-    if(id==""){
-        alert("Enter Loan ID");
+    if (id === "") {
+        alert("Please enter Loan ID.");
         return;
     }
 
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+    let loan = loans.find(l => l.id == id);
+
+    if (!loan) {
+        alert("Loan not found.");
+        return;
+    }
+
+    // Print Front Side
     printLoanFront();
 
-    setTimeout(function(){
+    // Wait before opening Back Side
+    setTimeout(function () {
 
         printLoanBack();
 
-    },1500);
+    }, 2500);
 
 }
 
