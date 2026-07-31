@@ -3205,7 +3205,7 @@ for(let i=1;i<=12;i++){
     }
 
     rows += `
-<tr style="height:47px;">
+<tr style="height:34px;">
 
 <td
 style="
@@ -3427,7 +3427,7 @@ font-size:18px;
 
 <tr>
 
-<th style="width:12%;height:50px;">S.NO</th>
+<th style="width:12%;height:30px;">S.NO</th>
 
 <th style="width:23%;">DATE</th>
 
@@ -3789,7 +3789,14 @@ h1{
 table{
     width:100%;
     border-collapse:collapse;
-    margin-top:10px;
+    table-layout:fixed;
+    font-size:14px;
+}
+
+th,
+td{
+    padding:4px;
+    height:34px;
 }
 
 td{
