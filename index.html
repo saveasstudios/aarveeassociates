@@ -4245,32 +4245,47 @@ function saveLoan(){
         }
 
         let processing = Number(document.getElementById("processingFee")?.value || 0);
-        let insurance = Number(document.getElementById("insuranceFee")?.value || 0);
-        let interest = Number(document.getElementById("loanInterest").value || 0);
-        let weeks = Number(document.getElementById("loanWeeks").value || 1);
+let insurance = Number(document.getElementById("insuranceFee")?.value || 0);
+let interest = Number(document.getElementById("loanInterest").value || 0);
+let weeks = Number(document.getElementById("loanWeeks").value || 1);
 
-        let total = amount + (amount*interest/100) + processing + insurance;
+// EMI calculation
+// Processing Fee and Insurance are NOT included
+let total = amount + (amount * interest / 100);
 
-        let loan = {
-            id:"LOAN"+String(loans.length+1).padStart(4,"0"),
-            customerId:customer.id,
-            customerName:customer.name,
-            group:customer.group,
-            guarantor:document.getElementById("loanGuarantor")?.value || "",
-            amount:amount,
-            processing:processing,
-            insurance:insurance,
-            interest:interest,
-            interestAmount:amount*interest/100,
-            total:total,
-            weekly:total/weeks,
-            weeks:weeks,
-            paid:0,
-            balance:total,
-            loanDate:document.getElementById("loanDate").value,
-            loanType:document.getElementById("loanType").value,
-            status:"Pending"
-        };
+let loan = {
+    id:"LOAN"+String(loans.length+1).padStart(4,"0"),
+    customerId:customer.id,
+    customerName:customer.name,
+    group:customer.group,
+    guarantor:document.getElementById("loanGuarantor")?.value || "",
+
+    amount:amount,
+
+    // Stored separately
+    processing:processing,
+    insurance:insurance,
+
+    interest:interest,
+    interestAmount:amount * interest / 100,
+
+    // Only Loan Amount + Interest
+    total:total,
+
+    // EMI
+    weekly:total / weeks,
+
+    weeks:weeks,
+
+    paid:0,
+
+    // Outstanding EMI balance
+    balance:total,
+
+    loanDate:document.getElementById("loanDate").value,
+    loanType:document.getElementById("loanType").value,
+    status:"Pending"
+};
 
         loans.push(loan);
 
