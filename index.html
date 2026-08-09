@@ -3546,208 +3546,441 @@ ${card.innerHTML}
     },500);
 
 }
+function numberToWordsIndian(num) {
 
+    num = Math.floor(Number(num));
+
+    if (num === 0) return "Zero";
+
+    const ones = [
+        "", "One", "Two", "Three", "Four",
+        "Five", "Six", "Seven", "Eight", "Nine",
+        "Ten", "Eleven", "Twelve", "Thirteen",
+        "Fourteen", "Fifteen", "Sixteen",
+        "Seventeen", "Eighteen", "Nineteen"
+    ];
+
+    const tens = [
+        "", "", "Twenty", "Thirty", "Forty",
+        "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
+    ];
+
+    function convert(n) {
+
+        if (n < 20) {
+            return ones[n];
+        }
+
+        if (n < 100) {
+            return tens[Math.floor(n / 10)] +
+                (n % 10 ? " " + ones[n % 10] : "");
+        }
+
+        if (n < 1000) {
+            return ones[Math.floor(n / 100)] +
+                " Hundred" +
+                (n % 100 ? " " + convert(n % 100) : "");
+        }
+
+        if (n < 100000) {
+            return convert(Math.floor(n / 1000)) +
+                " Thousand" +
+                (n % 1000 ? " " + convert(n % 1000) : "");
+        }
+
+        if (n < 10000000) {
+            return convert(Math.floor(n / 100000)) +
+                " Lakh" +
+                (n % 100000 ? " " + convert(n % 100000) : "");
+        }
+
+        return convert(Math.floor(n / 10000000)) +
+            " Crore" +
+            (n % 10000000 ? " " + convert(n % 10000000) : "");
+    }
+
+    return convert(num);
+}
+
+
+function formatPromissoryDate(dateValue) {
+
+    if (!dateValue) return "-";
+
+    const parts = dateValue.split("-");
+
+    if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+
+    const date = new Date(dateValue);
+
+    if (isNaN(date.getTime())) {
+        return dateValue;
+    }
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+}
 function loadPromissory(){
 
-let loans = JSON.parse(localStorage.getItem("loans")) || [];
+    let loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
 
-let customers = JSON.parse(localStorage.getItem("customers")) || [];
+    let customers =
+        JSON.parse(localStorage.getItem("customers")) || [];
 
-let loanId = document.getElementById("promissoryLoanSearch").value;
-let loan = loans.find(l=>l.id==loanId);
+    let loanId =
+        document.getElementById("promissoryLoanSearch").value.trim();
 
-if(!loan){
+    let loan =
+        loans.find(l => l.id == loanId);
 
-alert("Loan not found.");
+    if(!loan){
 
-return;
+        alert("Loan not found.");
 
-}
+        return;
+    }
 
-let customer = customers.find(c=>c.id==loan.customerId);
+    let customer =
+        customers.find(c => c.id == loan.customerId);
 
-document.getElementById("promissoryContent").innerHTML=`
+    if(!customer){
 
-<div id="promissoryPrint">
+        alert("Customer not found.");
 
-<div class="title">
+        return;
+    }
 
-<h1>PROMISSORY NOTE</h1>
 
-</div>
+    /* =========================
+       PROMISSORY VALUES
+    ========================= */
 
-<table>
+    let amount =
+        Number(loan.amount || 0);
 
-<tr>
+    let amountFormatted =
+        amount.toLocaleString("en-IN", {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        });
 
-<td width="22%"><b>NAME</b></td>
+    let amountWords =
+        numberToWordsIndian(amount) +
+        " Rupees Only";
 
-<td width="2%">:</td>
+    let promissoryDate =
+        formatPromissoryDate(loan.loanDate);
 
-<td width="46%">${customer.name}</td>
 
-<td width="10%"><b>DATE</b></td>
+    /* =========================
+       PROMISSORY NOTE
+    ========================= */
 
-<td width="2%">:</td>
+    document.getElementById("promissoryContent").innerHTML = `
 
-<td>${loan.loanDate}</td>
+    <div id="promissoryPrint">
 
-</tr>
+        <div class="title">
 
-<tr>
+            <h1>PROMISSORY NOTE</h1>
 
-<td><b>ADDRESS</b></td>
+        </div>
 
-<td>:</td>
 
-<td colspan="4">
+        <table class="promissory-details">
 
-${customer.address || "-"}
+            <!-- NAME + DATE -->
 
-</td>
+            <tr>
 
-</tr>
+                <td class="label">
+                    NAME
+                </td>
 
-<tr>
+                <td class="colon">
+                    :
+                </td>
 
-<td><b>AADHAAR NUMBER</b></td>
+                <td class="value left-value">
+                    ${customer.name || "-"}
+                </td>
 
-<td>:</td>
+                <td class="date-label">
+                    DATE
+                </td>
 
-<td>${customer.aadhaar}</td>
+                <td class="colon">
+                    :
+                </td>
 
-<td><b>MOBILE</b></td>
+                <td class="date-value">
+                    ${promissoryDate}
+                </td>
 
-<td>:</td>
+            </tr>
 
-<td>${customer.mobile}</td>
 
-</tr>
+            <!-- ADDRESS -->
 
-<tr>
+            <tr>
 
-<td><b>AMOUNT</b></td>
+                <td class="label">
+                    ADDRESS
+                </td>
 
-<td>:</td>
+                <td class="colon">
+                    :
+                </td>
 
-<td>
+                <td colspan="4" class="value">
+                    ${customer.address || "-"}
+                </td>
 
-₹${loan.amount}
+            </tr>
 
-</td>
 
-<td><b>GROUP</b></td>
+            <!-- MOBILE -->
 
-<td>:</td>
+            <tr>
 
-<td>${customer.group}</td>
+                <td class="label">
+                    MOBILE NUMBER
+                </td>
 
-</tr>
+                <td class="colon">
+                    :
+                </td>
 
-</table>
+                <td colspan="4" class="value">
+                    ${customer.mobile || "-"}
+                </td>
 
-<p class="paragraph">
+            </tr>
 
-I, the undersigned, hereby promise to repay the above loan amount received from AARVEE ASSOCIATES together with the agreed interest as per the loan agreement.
 
-I understand that any delay in repayment may attract additional charges and that the company has the right to recover the dues according to the agreed terms and applicable law.
+            <!-- AADHAAR -->
 
-</p>
+            <tr>
 
-<div style="margin-top:25px;">
+                <td class="label">
+                    AADHAAR NUMBER
+                </td>
 
-<b>WITNESSES :</b>
+                <td class="colon">
+                    :
+                </td>
 
-<br><br>
+                <td colspan="4" class="value">
+                    ${customer.aadhaar || "-"}
+                </td>
 
+            </tr>
 
 
-<br><br>
+            <!-- AMOUNT -->
 
+            <tr>
 
+                <td class="label">
+                    AMOUNT
+                </td>
 
-</div>
+                <td class="colon">
+                    :
+                </td>
 
-<div class="thumb">
+                <td colspan="4" class="value amount-value">
+                    ₹${amountFormatted}
+                </td>
 
-<div style="flex:1;"></div>
+            </tr>
 
-<div>
-Signature /<br>
-Thumb Impression
-</div>
 
-</div>
+            <!-- AMOUNT IN WORDS -->
 
-<div style="clear:both;"></div>
+            <tr>
 
-<hr style="margin-top:40px;">
+                <td class="label">
+                    AMOUNT IN WORDS
+                </td>
 
-<div class="images">
+                <td class="colon">
+                    :
+                </td>
 
-<div class="photo-box">
+                <td colspan="4" class="value amount-words">
+                    ${amountWords}
+                </td>
 
-<img src="${customer.photo || ''}">
+            </tr>
 
-</div>
 
-<div class="aadhaar-box">
+            <!-- GROUP -->
 
-<img src="${customer.aadhaarFront || ''}">
+            <tr>
 
-</div>
+                <td class="label">
+                    GROUP
+                </td>
 
-<div class="aadhaar-box">
+                <td class="colon">
+                    :
+                </td>
 
-<img src="${customer.aadhaarBack || ''}">
+                <td colspan="4" class="value">
+                    ${customer.group || loan.group || "-"}
+                </td>
 
-</div>
+            </tr>
 
-</div>
+        </table>
 
-<div class="signatures">
 
-<div>
+        <p class="paragraph">
 
-<div class="line"></div>
+            I, the undersigned, hereby promise to repay the above
+            loan amount received from AARVEE ASSOCIATES together
+            with the agreed interest as per the loan agreement.
 
-குழு தலைவர் கையொப்பம்
+            <br><br>
 
-</div>
+            I understand that any delay in repayment may attract
+            additional charges and that the company has the right
+            to recover the dues according to the agreed terms
+            and applicable law.
 
-<div>
+        </p>
 
-<div class="line"></div>
 
-உறுப்பினர் கையொப்பம்
+        <div style="margin-top:25px;">
 
-</div>
+            <b>WITNESSES :</b>
 
-</div>
+            <br><br>
 
-<br><br>
+            1. _______________________________________________
 
-<button onclick="printPromissory()">
+            <br><br>
 
-Print
+            2. _______________________________________________
 
-</button>
+        </div>
 
-</div>
 
-`;
+        <div class="thumb">
 
-let signed = JSON.parse(localStorage.getItem("signedPromissory")) || {};
+            <div style="flex:1;"></div>
 
-if(signed[loan.id]){
+            <div>
 
-document.getElementById("signedFileName").innerHTML ="Current File : " + signed[loan.id].name;
+                Signature /<br>
+                Thumb Impression
 
-}else{
+            </div>
 
-document.getElementById("signedFileName").innerHTML="No signed file uploaded.";
+        </div>
 
-}
+
+        <div style="clear:both;"></div>
+
+
+        <hr style="margin-top:40px;">
+
+
+        <div class="images">
+
+            <div class="photo-box">
+
+                <img
+                    src="${customer.photo || ''}"
+                    alt="Customer Photo">
+
+            </div>
+
+
+            <div class="aadhaar-box">
+
+                <img
+                    src="${customer.aadhaarFront || ''}"
+                    alt="Aadhaar Front">
+
+            </div>
+
+
+            <div class="aadhaar-box">
+
+                <img
+                    src="${customer.aadhaarBack || ''}"
+                    alt="Aadhaar Back">
+
+            </div>
+
+        </div>
+
+
+        <div class="signatures">
+
+            <div>
+
+                <div class="line"></div>
+
+                குழு தலைவர் கையொப்பம்
+
+            </div>
+
+
+            <div>
+
+                <div class="line"></div>
+
+                உறுப்பினர் கையொப்பம்
+
+            </div>
+
+        </div>
+
+
+        <br><br>
+
+
+        <button onclick="printPromissory()">
+            Print
+        </button>
+
+
+    </div>
+
+    `;
+
+
+    /* =========================
+       SIGNED FILE
+    ========================= */
+
+    let signed =
+        JSON.parse(
+            localStorage.getItem("signedPromissory")
+        ) || {};
+
+
+    if(signed[loan.id]){
+
+        document.getElementById("signedFileName").innerHTML =
+            "Current File : " +
+            signed[loan.id].name;
+
+    }else{
+
+        document.getElementById("signedFileName").innerHTML =
+            "No signed file uploaded.";
+
+    }
 
 }
 
@@ -3818,6 +4051,64 @@ td{
     padding:6px;
     vertical-align:top;
     font-size:16px;
+}
+.promissory-details{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+    margin-top:10px;
+}
+
+.promissory-details td{
+    border:none;
+    height:auto;
+    padding:7px 5px;
+    vertical-align:top;
+    font-size:15px;
+}
+
+.promissory-details .label{
+    width:22%;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.promissory-details .colon{
+    width:3%;
+    text-align:center;
+    font-weight:bold;
+}
+
+.promissory-details .value{
+    width:75%;
+    font-weight:500;
+    word-wrap:break-word;
+}
+
+.promissory-details .left-value{
+    width:43%;
+}
+
+.promissory-details .date-label{
+    width:9%;
+    font-weight:bold;
+    text-align:right;
+}
+
+.promissory-details .date-value{
+    width:18%;
+    font-weight:600;
+    white-space:nowrap;
+}
+
+.promissory-details .amount-value{
+    font-weight:bold;
+    font-size:17px;
+}
+
+.promissory-details .amount-words{
+    font-weight:600;
+    text-transform:capitalize;
 }
 
 .paragraph{
