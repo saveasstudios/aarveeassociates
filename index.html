@@ -4539,6 +4539,24 @@ function saveLoan(){
 let insurance = Number(document.getElementById("insuranceFee")?.value || 0);
 let interest = Number(document.getElementById("loanInterest").value || 0);
 let weeks = Number(document.getElementById("loanWeeks").value || 1);
+let loanDate = document.getElementById("loanDate").value;
+
+if (!loanDate) {
+    alert("Please select Loan Date.");
+    return;
+}
+
+let dateParts = loanDate.split("-");
+
+if (
+    dateParts.length !== 3 ||
+    dateParts[0].length !== 4 ||
+    Number(dateParts[0]) < 2000 ||
+    Number(dateParts[0]) > 2099
+) {
+    alert("Please enter a valid date with a 4-digit year.");
+    return;
+}
 
 // EMI calculation
 // Processing Fee and Insurance are NOT included
@@ -4573,7 +4591,7 @@ let loan = {
     // Outstanding EMI balance
     balance:total,
 
-    loanDate:document.getElementById("loanDate").value,
+    loanDate:loanDate,
     loanType:document.getElementById("loanType").value,
     status:"Pending"
 };
@@ -4596,7 +4614,18 @@ let loan = {
     }
 
 }
+function formatDateDDMMYYYY(dateValue) {
 
+    if (!dateValue) return "-";
+
+    let parts = dateValue.split("-");
+
+    if (parts.length === 3 && parts[0].length === 4) {
+        return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+
+    return dateValue;
+}
 function loadLoans(){
 
 let loans=JSON.parse(localStorage.getItem("loans"))||[];
@@ -4625,7 +4654,7 @@ html+=`
 
 <td>${loan.loanType}</td>
 
-<td>${loan.loanDate}</td>
+<td>${formatDateDDMMYYYY(loan.loanDate)}</td>
 
 <td>₹${loan.amount.toFixed(2)}</td>
 
@@ -6151,7 +6180,12 @@ accept="image/*">
 
 <input id="insuranceFee" type="number" value="0" placeholder="Insurance">
 
-<input id="loanDate" type="date">
+<input
+    id="loanDate"
+    type="date"
+    min="2000-01-01"
+    max="2099-12-31"
+    required>
 
 <select id="loanType">
 
