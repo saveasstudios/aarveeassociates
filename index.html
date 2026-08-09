@@ -1973,6 +1973,22 @@ document.getElementById("content").innerHTML=`
 
 <br>
 
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+
+<button class="btn btn-primary" onclick="showGroupReport()">
+    👥 Group Report
+</button>
+
+<button class="btn btn-info" onclick="showCustomerReport()">
+    👤 Customer Report
+</button>
+
+</div>
+
+<div id="reportDetails"></div>
+
+<br>
+
 <button
  onclick="exportBackup()"
  style="
@@ -1996,7 +2012,152 @@ document.getElementById("content").innerHTML=`
 
 loadReport();
 
-}function loadReport(){
+}
+
+function showGroupReport(){
+
+    let groups = JSON.parse(localStorage.getItem("groups")) || [];
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+    let html = `
+    <div class="table-container">
+        <div style="padding:20px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;">
+            <h2>Group Report</h2>
+            <button class="btn btn-primary" onclick="printGroupReport()">🖨 Print</button>
+        </div>
+        <div style="overflow-x:auto;">
+        <table id="groupReportTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Group Name</th>
+                    <th>Area</th>
+                    <th>Meeting Day</th>
+                    <th>Collection Day</th>
+                    <th>Customers</th>
+                    <th>Loans</th>
+                    <th>Outstanding</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    groups.forEach(g=>{
+        let groupCustomers = customers.filter(c => c.group === g.name);
+        let groupLoans = loans.filter(l => l.group === g.name);
+        let outstanding = groupLoans.reduce((sum,l)=>sum + Number(l.balance || 0),0);
+
+        html += `
+        <tr>
+            <td>${g.id || "-"}</td>
+            <td>${g.name || "-"}</td>
+            <td>${g.area || "-"}</td>
+            <td>${g.meeting || "-"}</td>
+            <td>${g.collection || "-"}</td>
+            <td>${groupCustomers.length}</td>
+            <td>${groupLoans.length}</td>
+            <td>₹${outstanding.toFixed(2)}</td>
+        </tr>`;
+    });
+
+    if(!groups.length){
+        html += `<tr><td colspan="8" style="text-align:center;">No Groups Found</td></tr>`;
+    }
+
+    html += `</tbody></table></div></div>`;
+
+    document.getElementById("reportDetails").innerHTML = html;
+}
+
+function showCustomerReport(){
+
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+    let loans = JSON.parse(localStorage.getItem("loans")) || [];
+
+    let html = `
+    <div class="table-container">
+        <div style="padding:20px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;">
+            <h2>Customer Report</h2>
+            <button class="btn btn-info" onclick="printCustomerReport()">🖨 Print</button>
+        </div>
+        <div style="overflow-x:auto;">
+        <table id="customerReportTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Customer Name</th>
+                    <th>Father / Husband</th>
+                    <th>Mobile</th>
+                    <th>Aadhaar</th>
+                    <th>Group</th>
+                    <th>Guarantor</th>
+                    <th>Loans</th>
+                    <th>Outstanding</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    customers.forEach(c=>{
+        let customerLoans = loans.filter(l => l.customerId === c.id);
+        let outstanding = customerLoans.reduce((sum,l)=>sum + Number(l.balance || 0),0);
+
+        html += `
+        <tr>
+            <td>${c.id || "-"}</td>
+            <td>${c.name || "-"}</td>
+            <td>${c.father || "-"}</td>
+            <td>${c.mobile || "-"}</td>
+            <td>${c.aadhaar || "-"}</td>
+            <td>${c.group || "-"}</td>
+            <td>${c.guarantor || "-"}</td>
+            <td>${customerLoans.length}</td>
+            <td>₹${outstanding.toFixed(2)}</td>
+        </tr>`;
+    });
+
+    if(!customers.length){
+        html += `<tr><td colspan="9" style="text-align:center;">No Customers Found</td></tr>`;
+    }
+
+    html += `</tbody></table></div></div>`;
+
+    document.getElementById("reportDetails").innerHTML = html;
+}
+
+function printReportTable(title, tableId){
+    let table = document.getElementById(tableId);
+    if(!table) return;
+
+    let w = window.open("", "_blank", "width=1200,height=800");
+    w.document.write(`
+        <html><head><title>${title}</title>
+        <style>
+        body{font-family:Arial,sans-serif;padding:25px;}
+        h1{text-align:center;color:#0F766E;}
+        table{width:100%;border-collapse:collapse;margin-top:20px;}
+        th{background:#0F766E;color:#fff;padding:10px;border:1px solid #ccc;}
+        td{padding:9px;border:1px solid #ccc;}
+        </style></head><body>
+        <h1>AARVEE ASSOCIATES</h1>
+        <h2 style="text-align:center;">${title}</h2>
+        ${table.outerHTML}
+        </body></html>
+    `);
+    w.document.close();
+    w.print();
+}
+
+function printGroupReport(){
+    printReportTable("Group Report", "groupReportTable");
+}
+
+function printCustomerReport(){
+    printReportTable("Customer Report", "customerReportTable");
+}
+
+function loadReport(){
 
 let groups=JSON.parse(localStorage.getItem("groups"))||[];
 
