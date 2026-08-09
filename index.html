@@ -828,6 +828,64 @@ table button{
 }
 
 /* ===========================
+   DYNAMIC WEEKLY LOAN CARD
+=========================== */
+
+.weekly-title{
+    text-align:center;
+    font-size:18px;
+    margin:0 0 12px;
+    font-weight:700;
+}
+
+.weekly-loan-card{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+}
+
+.week-column{
+    border:1px solid #000;
+    padding:0 !important;
+    text-align:center;
+    vertical-align:top;
+    height:180px;
+    overflow:hidden;
+    word-break:break-word;
+}
+
+.week-number{
+    background:#0F766E;
+    color:#fff;
+    font-weight:700;
+    padding:6px 2px;
+    font-size:10px;
+    line-height:1.1;
+}
+
+.week-date{
+    padding:10px 2px 8px;
+    font-size:9px;
+    font-weight:600;
+    border-bottom:1px solid #000;
+    line-height:1.2;
+}
+
+.week-amount{
+    padding:10px 2px;
+    font-size:10px;
+    font-weight:700;
+    border-bottom:1px solid #000;
+    line-height:1.2;
+}
+
+.week-sign{
+    padding-top:18px;
+    font-size:8px;
+    color:#555;
+}
+
+/* ===========================
    PRINT SETTINGS
 =========================== */
 
@@ -3352,306 +3410,465 @@ Select a Loan ID and click
 }
 function loadLoanCard(){
 
-let loanId=document.getElementById("loanCardSearch").value.trim();
+    let loanId =
+        document.getElementById("loanCardSearch").value.trim();
 
-if(loanId==""){
-    alert("Enter Loan ID");
-    return;
-}
-
-let loans=JSON.parse(localStorage.getItem("loans"))||[];
-let customers=JSON.parse(localStorage.getItem("customers"))||[];
-
-let loan=loans.find(l=>l.id==loanId);
-
-if(!loan){
-    alert("Loan Not Found");
-    return;
-}
-
-let customer=customers.find(c=>c.id==loan.customerId);
-let collections = JSON.parse(localStorage.getItem("collectionHistory")) || [];
-
-let history = collections.filter(c=>c.loanId==loan.id);
-
-let rows = "";
-let totalAmount = 0;
-let totalSavings = 0;
-
-for(let i=1;i<=12;i++){
-
-    let h = history[i-1];
-
-    let amount = h ? Number(h.amount) : "";
-    let savings = h ? Number(h.savings || 0) : "";
-
-    if(h){
-        totalAmount += Number(h.amount||0);
-        totalSavings += Number(h.savings||0);
+    if(loanId === ""){
+        alert("Enter Loan ID");
+        return;
     }
 
-    rows += `
-<tr>
+    let loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
 
-<td>
-${i}
-</td>
+    let customers =
+        JSON.parse(localStorage.getItem("customers")) || [];
 
-<td
-style="
-text-align:center;
-">
-${h ? h.date : ""}
-</td>
+    let loan =
+        loans.find(l => l.id == loanId);
 
-<td
-style="
-text-align:center;
-">
-${h ? amount.toFixed(2) : ""}
-</td>
+    if(!loan){
+        alert("Loan Not Found");
+        return;
+    }
 
-<td
-style="
-text-align:center;
-">
-${h ? savings.toFixed(2) : ""}
-</td>
+    let customer =
+        customers.find(c => c.id == loan.customerId);
 
-<td></td>
+    if(!customer){
+        alert("Customer Not Found");
+        return;
+    }
 
-</tr>
-`;
 
-}
+    /* =========================
+       CUSTOMER LOANS
+       ========================= */
 
-document.getElementById("loanCardContent").innerHTML=`
+    // Find ALL loans belonging to this customer
+    let customerLoans =
+        loans.filter(l => l.customerId == loan.customerId);
 
-<div id="loanCardPrintArea">
 
-<!-- FRONT PAGE -->
+    /* =========================
+       TOTAL INSURANCE / CWF
+       ========================= */
 
-<div class="loan-front">
+    let totalInsurance = 0;
 
-<div class="loan-page">
+    customerLoans.forEach(l => {
 
-<div class="loan-header">
+        totalInsurance +=
+            Number(l.insurance || 0);
 
-<h1>AARVEE</h1>
+    });
 
-<h2>ASSOCIATES</h2>
 
-<hr>
+    /* =========================
+       LOAN VALUES
+       ========================= */
 
-<p>Near Bustand, Kottur.</p>
+    let weeks =
+        Number(loan.weeks || 0);
 
-<p>Contact : 8248510416, 8838224040</p>
+    let emi =
+        Number(loan.weekly || 0);
 
-</div>
+    let loanDate =
+        loan.loanDate;
 
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:flex-start;
-margin-top:25px;
-">
 
-<div style="width:72%;">
+    /* =========================
+       FORMAT DATE
+       ========================= */
 
-<div class="loan-fields">
+    function formatLoanCardDate(dateValue){
 
-<div class="loan-row">
+        if(!dateValue) return "";
 
-<div class="loan-label">NAME</div>
+        let parts =
+            dateValue.split("-");
 
-<div class="loan-colon">:</div>
+        if(parts.length === 3){
 
-<div class="loan-value">${loan.customerName}</div>
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
 
-</div>
+        }
 
-<div class="loan-row">
+        return dateValue;
 
-<div class="loan-label">GROUP</div>
+    }
 
-<div class="loan-colon">:</div>
 
-<div class="loan-value">${loan.group}</div>
+    /* =========================
+       EMI DATE
+       ========================= */
 
-</div>
+    function getEMIDate(startDate, weekNumber){
 
-<div class="loan-row">
+        if(!startDate) return "";
 
-<div class="loan-label">MOBILE</div>
+        let date =
+            new Date(startDate + "T00:00:00");
 
-<div class="loan-colon">:</div>
+        date.setDate(
+            date.getDate() +
+            ((weekNumber - 1) * 7)
+        );
 
-<div class="loan-value">${customer ? customer.mobile : ""}</div>
+        let day =
+            String(date.getDate()).padStart(2,"0");
 
-</div>
+        let month =
+            String(date.getMonth() + 1).padStart(2,"0");
 
-<div class="loan-row">
+        let year =
+            date.getFullYear();
 
-<div class="loan-label">DATE</div>
+        return `${day}/${month}/${year}`;
 
-<div class="loan-colon">:</div>
+    }
 
-<div class="loan-value">${loan.loanDate}</div>
 
-</div>
+    /* =========================
+       BACK PAGE
+       DYNAMIC WEEK COLUMNS
+       ========================= */
 
-<div class="loan-row">
+    let weekColumns = "";
 
-<div class="loan-label">AMOUNT RS.</div>
+    for(let i = 1; i <= weeks; i++){
 
-<div class="loan-colon">:</div>
+        let emiDate =
+            getEMIDate(loanDate, i);
 
-<div class="loan-value">₹${Number(loan.amount).toFixed(2)}</div>
+        weekColumns += `
 
-</div>
+        <td class="week-column">
 
-<div class="loan-row">
+            <div class="week-number">
+                WEEK ${i}
+            </div>
 
-<div class="loan-label">CWF RS.</div>
+            <div class="week-date">
+                ${emiDate}
+            </div>
 
-<div class="loan-colon">:</div>
+            <div class="week-amount">
+                ₹${emi.toFixed(2)}
+            </div>
 
-<div class="loan-value">₹${Number(loan.processing||0).toFixed(2)}</div>
+            <div class="week-sign">
+                SIGN
+            </div>
 
-</div>
+        </td>
 
-</div>
+        `;
 
-</div>
+    }
 
-<div style="
-width:23%;
-text-align:center;
-">
 
-<img
-src="${customer && customer.photo ? customer.photo : ''}"
-style="
-width:110px;
-height:140px;
-border:2px solid #000;
-object-fit:cover;
-background:white;
-">
+    /* =========================
+       LOAN CARD
+       ========================= */
 
-</div>
+    document.getElementById("loanCardContent").innerHTML = `
 
-</div>
+    <div id="loanCardPrintArea">
 
-<div class="loan-box">
 
-<ul>
+        <!-- =====================
+             FRONT PAGE
+             ===================== -->
 
-<li>வீடு கட்ட, வாங்க கடன்</li>
+        <div class="loan-front">
 
-<li>வீடு அடமானக் கடன்</li>
+            <div class="loan-page">
 
-<li>காலி இடம் அடமானக் கடன்</li>
+                <div class="loan-header">
 
-<li>தனி நபர் கடன்</li>
+                    <h1>AARVEE</h1>
 
-<li>வியாபாரக் கடன்</li>
+                    <h2>ASSOCIATES</h2>
 
-<li>இருசக்கர வாகன கடன்</li>
+                    <hr>
 
-<li>வணிக வாகன கடன்</li>
+                    <p>
+                        Near Bustand, Kottur.
+                    </p>
 
-<li>நகை கடன்</li>
+                    <p>
+                        Contact : 8248510416, 8838224040
+                    </p>
 
-</ul>
+                </div>
 
-<div class="loan-note">
 
-அதிக வட்டியுள்ள அடகு நகைகளை மீட்டு,<br>
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:flex-start;
+                    margin-top:25px;
+                ">
 
-குறைந்த வட்டியில் மாற்றித்தரப்படும்
 
-</div>
+                    <div style="width:72%;">
 
-</div>
+                        <div class="loan-fields">
 
-<br>
 
-<div class="no-print" style="text-align:center;">
+                            <div class="loan-row">
 
-<button
-class="btn btn-success"
-onclick="printLoanCard()">
+                                <div class="loan-label">
+                                    NAME
+                                </div>
 
-🖨 Print Loan Card
+                                <div class="loan-colon">
+                                    :
+                                </div>
 
-</button>
+                                <div class="loan-value">
+                                    ${loan.customerName}
+                                </div>
 
-</div>
+                            </div>
 
-</div>
 
-</div>
+                            <div class="loan-row">
 
-<!-- BACK PAGE -->
+                                <div class="loan-label">
+                                    GROUP
+                                </div>
 
-<div class="loan-page">
+                                <div class="loan-colon">
+                                    :
+                                </div>
 
-<table class="loan-register">
+                                <div class="loan-value">
+                                    ${loan.group || ""}
+                                </div>
 
-<thead>
+                            </div>
 
-<tr>
 
-<th style="width:12%;height:30px;">S.NO</th>
+                            <div class="loan-row">
 
-<th style="width:23%;">DATE</th>
+                                <div class="loan-label">
+                                    MOBILE
+                                </div>
 
-<th style="width:21%;">AMOUNT (₹)</th>
+                                <div class="loan-colon">
+                                    :
+                                </div>
 
-<th style="width:24%;">SAVINGS (₹)</th>
+                                <div class="loan-value">
+                                    ${customer.mobile || ""}
+                                </div>
 
-<th style="width:20%;">SIGN</th>
+                            </div>
 
-</tr>
 
-</thead>
+                            <div class="loan-row">
 
-<tbody>
+                                <div class="loan-label">
+                                    DATE
+                                </div>
 
-${rows}
+                                <div class="loan-colon">
+                                    :
+                                </div>
 
-<tr>
+                                <div class="loan-value">
+                                    ${formatLoanCardDate(loanDate)}
+                                </div>
 
-<td style="font-weight:bold;">TOTAL</td>
+                            </div>
 
-<td></td>
 
-<td style="text-align:center;font-weight:bold;">
-₹${totalAmount.toFixed(2)}
-</td>
+                            <div class="loan-row">
 
-<td style="text-align:center;font-weight:bold;">
-₹${totalSavings.toFixed(2)}
-</td>
+                                <div class="loan-label">
+                                    AMOUNT RS.
+                                </div>
 
-<td></td>
+                                <div class="loan-colon">
+                                    :
+                                </div>
 
-</tr>
+                                <div class="loan-value">
+                                    ₹${Number(loan.amount).toFixed(2)}
+                                </div>
 
-</tbody>
+                            </div>
 
-</table>
 
-</div>
+                            <div class="loan-row">
 
-</div>
+                                <div class="loan-label">
+                                    CWF RS.
+                                </div>
 
-</div>
+                                <div class="loan-colon">
+                                    :
+                                </div>
 
-</div>
+                                <div class="loan-value">
+                                    ₹${totalInsurance.toFixed(2)}
+                                </div>
 
-`;
+                            </div>
+
+
+                            <div class="loan-row">
+
+                                <div class="loan-label">
+                                    WEEKLY EMI
+                                </div>
+
+                                <div class="loan-colon">
+                                    :
+                                </div>
+
+                                <div class="loan-value">
+                                    ₹${emi.toFixed(2)}
+                                </div>
+
+                            </div>
+
+
+                            <div class="loan-row">
+
+                                <div class="loan-label">
+                                    TOTAL WEEKS
+                                </div>
+
+                                <div class="loan-colon">
+                                    :
+                                </div>
+
+                                <div class="loan-value">
+                                    ${weeks}
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+                    <div style="
+                        width:23%;
+                        text-align:center;
+                    ">
+
+                        <img
+                            src="${customer.photo || ''}"
+                            style="
+                                width:110px;
+                                height:140px;
+                                border:2px solid #000;
+                                object-fit:cover;
+                                background:white;
+                            "
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="loan-box">
+
+                    <ul>
+
+                        <li>வீடு கட்ட, வாங்க கடன்</li>
+
+                        <li>வீடு அடமானக் கடன்</li>
+
+                        <li>காலி இடம் அடமானக் கடன்</li>
+
+                        <li>தனி நபர் கடன்</li>
+
+                        <li>வியாபாரக் கடன்</li>
+
+                        <li>இருசக்கர வாகன கடன்</li>
+
+                        <li>வணிக வாகன கடன்</li>
+
+                        <li>நகை கடன்</li>
+
+                    </ul>
+
+
+                    <div class="loan-note">
+
+                        அதிக வட்டியுள்ள அடகு நகைகளை மீட்டு,<br>
+
+                        குறைந்த வட்டியில் மாற்றித்தரப்படும்
+
+                    </div>
+
+                </div>
+
+
+                <br>
+
+
+                <div class="no-print"
+                    style="text-align:center;">
+
+                    <button
+                        class="btn btn-success"
+                        onclick="printLoanCard()">
+
+                        🖨 Print Loan Card
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             BACK PAGE
+             ===================== -->
+
+        <div class="loan-page loan-back-page" data-weeks="${weeks}">
+
+            <h3 class="weekly-title">
+
+                WEEKLY COLLECTION SCHEDULE
+
+            </h3>
+
+
+            <table class="weekly-loan-card">
+
+                <tbody>
+
+                    <tr>
+
+                        ${weekColumns}
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+
+    </div>
+
+    `;
 
 }
 function printLoanCard(){
@@ -3662,6 +3879,11 @@ function printLoanCard(){
         alert("Loan card not found.");
         return;
     }
+
+    const weekCount =
+        card.querySelectorAll(".week-column").length;
+
+    const isLandscape = weekCount > 12;
 
     const win = window.open("", "_blank");
 
@@ -3675,6 +3897,49 @@ function printLoanCard(){
 <style>
 
 ${document.querySelector("style").innerHTML}
+
+/* Loan Card print override */
+@page{
+    size: A5 ${isLandscape ? "landscape" : "portrait"};
+    margin:0;
+}
+
+@media print{
+
+    html,
+    body{
+        width:${isLandscape ? "210mm" : "148mm"};
+        height:${isLandscape ? "148mm" : "210mm"};
+        margin:0;
+        padding:0;
+        background:#fff;
+    }
+
+    .loan-page{
+        width:${isLandscape ? "210mm" : "148mm"};
+        height:${isLandscape ? "148mm" : "210mm"};
+        min-height:0;
+        margin:0;
+        padding:8mm;
+        box-sizing:border-box;
+        page-break-after:always;
+        break-after:page;
+    }
+
+    .weekly-loan-card{
+        width:100%;
+        table-layout:fixed;
+    }
+
+    .week-column{
+        height:${isLandscape ? "125px" : "180px"};
+    }
+
+    .btn,
+    .no-print{
+        display:none !important;
+    }
+}
 
 body{
     margin:0;
@@ -3707,6 +3972,7 @@ ${card.innerHTML}
     },500);
 
 }
+
 function numberToWordsIndian(num) {
 
     num = Math.floor(Number(num));
