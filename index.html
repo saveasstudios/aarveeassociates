@@ -3424,8 +3424,7 @@ function loadLoanCard(){
     let customers =
         JSON.parse(localStorage.getItem("customers")) || [];
 
-    let loan =
-        loans.find(l => l.id == loanId);
+    let loan = loans.find(l => l.id == loanId);
 
     if(!loan){
         alert("Loan Not Found");
@@ -3440,436 +3439,263 @@ function loadLoanCard(){
         return;
     }
 
-
     /* =========================
-       CUSTOMER LOANS
-       ========================= */
+       TOTAL CWF / INSURANCE
+       ALL LOANS OF THIS CUSTOMER
+    ========================= */
 
-    // Find ALL loans belonging to this customer
-    let customerLoans =
-        loans.filter(l => l.customerId == loan.customerId);
+    let customerLoans = loans.filter(l =>
+        l.customerId == loan.customerId
+    );
 
-
-    /* =========================
-       TOTAL INSURANCE / CWF
-       ========================= */
-
-    let totalInsurance = 0;
-
-    customerLoans.forEach(l => {
-
-        totalInsurance +=
-            Number(l.insurance || 0);
-
-    });
-
+    let totalInsurance = customerLoans.reduce(
+        (sum, l) => sum + Number(l.insurance || 0),
+        0
+    );
 
     /* =========================
        LOAN VALUES
-       ========================= */
+    ========================= */
 
-    let weeks =
-        Number(loan.weeks || 0);
-
-    let emi =
-        Number(loan.weekly || 0);
-
-    let loanDate =
-        loan.loanDate;
-
-
-    /* =========================
-       FORMAT DATE
-       ========================= */
+    let weeks = Math.max(0, Number(loan.weeks || 0));
+    let emi = Number(loan.weekly || 0);
+    let loanDate = loan.loanDate || "";
 
     function formatLoanCardDate(dateValue){
 
         if(!dateValue) return "";
 
-        let parts =
-            dateValue.split("-");
+        let parts = dateValue.split("-");
 
-        if(parts.length === 3){
-
+        if(parts.length === 3 && parts[0].length === 4){
             return `${parts[2]}/${parts[1]}/${parts[0]}`;
-
         }
 
         return dateValue;
-
     }
-
-
-    /* =========================
-       EMI DATE
-       ========================= */
 
     function getEMIDate(startDate, weekNumber){
 
         if(!startDate) return "";
 
-        let date =
-            new Date(startDate + "T00:00:00");
+        let date = new Date(startDate + "T00:00:00");
+
+        if(isNaN(date.getTime())) return "";
 
         date.setDate(
-            date.getDate() +
-            ((weekNumber - 1) * 7)
+            date.getDate() + ((weekNumber - 1) * 7)
         );
 
-        let day =
-            String(date.getDate()).padStart(2,"0");
-
-        let month =
-            String(date.getMonth() + 1).padStart(2,"0");
-
-        let year =
-            date.getFullYear();
+        let day = String(date.getDate()).padStart(2,"0");
+        let month = String(date.getMonth() + 1).padStart(2,"0");
+        let year = date.getFullYear();
 
         return `${day}/${month}/${year}`;
-
     }
 
-
     /* =========================
-       BACK PAGE
-       DYNAMIC WEEK COLUMNS
-       ========================= */
+       BACK SIDE - ONE ROW PER WEEK
+       12 WEEKS = 12 ROWS
+       16 WEEKS = 16 ROWS
+    ========================= */
 
-    let weekColumns = "";
+    let scheduleRows = "";
 
     for(let i = 1; i <= weeks; i++){
 
-        let emiDate =
-            getEMIDate(loanDate, i);
-
-        weekColumns += `
-
-        <td class="week-column">
-
-            <div class="week-number">
-                WEEK ${i}
-            </div>
-
-            <div class="week-date">
-                ${emiDate}
-            </div>
-
-            <div class="week-amount">
-                ₹${emi.toFixed(2)}
-            </div>
-
-            <div class="week-sign">
-                SIGN
-            </div>
-
-        </td>
-
+        scheduleRows += `
+        <tr>
+            <td>${i}</td>
+            <td>${getEMIDate(loanDate, i)}</td>
+            <td>₹${emi.toFixed(2)}</td>
+            <td></td>
+            <td></td>
+        </tr>
         `;
-
     }
 
-
-    /* =========================
-       LOAN CARD
-       ========================= */
+    if(weeks === 0){
+        scheduleRows = `
+        <tr>
+            <td colspan="5">No EMI Schedule</td>
+        </tr>`;
+    }
 
     document.getElementById("loanCardContent").innerHTML = `
 
     <div id="loanCardPrintArea">
 
-
         <!-- =====================
              FRONT PAGE
-             ===================== -->
+        ===================== -->
 
-        <div class="loan-front">
+        <div class="loan-page loan-front-page">
 
-            <div class="loan-page">
+            <div class="loan-header">
+                <h1>AARVEE</h1>
+                <h2>ASSOCIATES</h2>
+                <hr>
+                <p>Near Bustand, Kottur.</p>
+                <p>Contact : 8248510416, 8838224040</p>
+            </div>
 
-                <div class="loan-header">
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:flex-start;
+                margin-top:25px;
+            ">
 
-                    <h1>AARVEE</h1>
+                <div style="width:72%;">
 
-                    <h2>ASSOCIATES</h2>
+                    <div class="loan-fields">
 
-                    <hr>
-
-                    <p>
-                        Near Bustand, Kottur.
-                    </p>
-
-                    <p>
-                        Contact : 8248510416, 8838224040
-                    </p>
-
-                </div>
-
-
-                <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:flex-start;
-                    margin-top:25px;
-                ">
-
-
-                    <div style="width:72%;">
-
-                        <div class="loan-fields">
-
-
-                            <div class="loan-row">
-
-                                <div class="loan-label">
-                                    NAME
-                                </div>
-
-                                <div class="loan-colon">
-                                    :
-                                </div>
-
-                                <div class="loan-value">
-                                    ${loan.customerName}
-                                </div>
-
+                        <div class="loan-row">
+                            <div class="loan-label">NAME</div>
+                            <div class="loan-colon">:</div>
+                            <div class="loan-value">
+                                ${loan.customerName || customer.name || ""}
                             </div>
+                        </div>
 
-
-                            <div class="loan-row">
-
-                                <div class="loan-label">
-                                    GROUP
-                                </div>
-
-                                <div class="loan-colon">
-                                    :
-                                </div>
-
-                                <div class="loan-value">
-                                    ${loan.group || ""}
-                                </div>
-
+                        <div class="loan-row">
+                            <div class="loan-label">GROUP</div>
+                            <div class="loan-colon">:</div>
+                            <div class="loan-value">
+                                ${loan.group || customer.group || ""}
                             </div>
+                        </div>
 
-
-                            <div class="loan-row">
-
-                                <div class="loan-label">
-                                    MOBILE
-                                </div>
-
-                                <div class="loan-colon">
-                                    :
-                                </div>
-
-                                <div class="loan-value">
-                                    ${customer.mobile || ""}
-                                </div>
-
+                        <div class="loan-row">
+                            <div class="loan-label">MOBILE</div>
+                            <div class="loan-colon">:</div>
+                            <div class="loan-value">
+                                ${customer.mobile || ""}
                             </div>
+                        </div>
 
-
-                            <div class="loan-row">
-
-                                <div class="loan-label">
-                                    DATE
-                                </div>
-
-                                <div class="loan-colon">
-                                    :
-                                </div>
-
-                                <div class="loan-value">
-                                    ${formatLoanCardDate(loanDate)}
-                                </div>
-
+                        <div class="loan-row">
+                            <div class="loan-label">DATE</div>
+                            <div class="loan-colon">:</div>
+                            <div class="loan-value">
+                                ${formatLoanCardDate(loanDate)}
                             </div>
+                        </div>
 
-
-                            <div class="loan-row">
-
-                                <div class="loan-label">
-                                    AMOUNT RS.
-                                </div>
-
-                                <div class="loan-colon">
-                                    :
-                                </div>
-
-                                <div class="loan-value">
-                                    ₹${Number(loan.amount).toFixed(2)}
-                                </div>
-
+                        <div class="loan-row">
+                            <div class="loan-label">AMOUNT RS.</div>
+                            <div class="loan-colon">:</div>
+                            <div class="loan-value">
+                                ₹${Number(loan.amount || 0).toFixed(2)}
                             </div>
+                        </div>
 
-
-                            <div class="loan-row">
-
-                                <div class="loan-label">
-                                    CWF RS.
-                                </div>
-
-                                <div class="loan-colon">
-                                    :
-                                </div>
-
-                                <div class="loan-value">
-                                    ₹${totalInsurance.toFixed(2)}
-                                </div>
-
+                        <div class="loan-row">
+                            <div class="loan-label">CWF RS.</div>
+                            <div class="loan-colon">:</div>
+                            <div class="loan-value">
+                                ₹${totalInsurance.toFixed(2)}
                             </div>
+                        </div>
 
-
-                            <div class="loan-row">
-
-                                <div class="loan-label">
-                                    WEEKLY EMI
-                                </div>
-
-                                <div class="loan-colon">
-                                    :
-                                </div>
-
-                                <div class="loan-value">
-                                    ₹${emi.toFixed(2)}
-                                </div>
-
+                        <div class="loan-row">
+                            <div class="loan-label">WEEKLY EMI</div>
+                            <div class="loan-colon">:</div>
+                            <div class="loan-value">
+                                ₹${emi.toFixed(2)}
                             </div>
+                        </div>
 
-
-                            <div class="loan-row">
-
-                                <div class="loan-label">
-                                    TOTAL WEEKS
-                                </div>
-
-                                <div class="loan-colon">
-                                    :
-                                </div>
-
-                                <div class="loan-value">
-                                    ${weeks}
-                                </div>
-
+                        <div class="loan-row">
+                            <div class="loan-label">TOTAL WEEKS</div>
+                            <div class="loan-colon">:</div>
+                            <div class="loan-value">
+                                ${weeks}
                             </div>
-
-
                         </div>
 
                     </div>
-
-
-                    <div style="
-                        width:23%;
-                        text-align:center;
-                    ">
-
-                        <img
-                            src="${customer.photo || ''}"
-                            style="
-                                width:110px;
-                                height:140px;
-                                border:2px solid #000;
-                                object-fit:cover;
-                                background:white;
-                            "
-                        >
-
-                    </div>
-
                 </div>
 
-
-                <div class="loan-box">
-
-                    <ul>
-
-                        <li>வீடு கட்ட, வாங்க கடன்</li>
-
-                        <li>வீடு அடமானக் கடன்</li>
-
-                        <li>காலி இடம் அடமானக் கடன்</li>
-
-                        <li>தனி நபர் கடன்</li>
-
-                        <li>வியாபாரக் கடன்</li>
-
-                        <li>இருசக்கர வாகன கடன்</li>
-
-                        <li>வணிக வாகன கடன்</li>
-
-                        <li>நகை கடன்</li>
-
-                    </ul>
-
-
-                    <div class="loan-note">
-
-                        அதிக வட்டியுள்ள அடகு நகைகளை மீட்டு,<br>
-
-                        குறைந்த வட்டியில் மாற்றித்தரப்படும்
-
-                    </div>
-
+                <div style="width:23%;text-align:center;">
+                    <img
+                        src="${customer.photo || ''}"
+                        style="
+                            width:110px;
+                            height:140px;
+                            border:2px solid #000;
+                            object-fit:cover;
+                            background:white;
+                        "
+                    >
                 </div>
 
+            </div>
 
-                <br>
+            <div class="loan-box">
+                <ul>
+                    <li>வீடு கட்ட, வாங்க கடன்</li>
+                    <li>வீடு அடமானக் கடன்</li>
+                    <li>காலி இடம் அடமானக் கடன்</li>
+                    <li>தனி நபர் கடன்</li>
+                    <li>வியாபாரக் கடன்</li>
+                    <li>இருசக்கர வாகன கடன்</li>
+                    <li>வணிக வாகன கடன்</li>
+                    <li>நகை கடன்</li>
+                </ul>
 
-
-                <div class="no-print"
-                    style="text-align:center;">
-
-                    <button
-                        class="btn btn-success"
-                        onclick="printLoanCard()">
-
-                        🖨 Print Loan Card
-
-                    </button>
-
+                <div class="loan-note">
+                    அதிக வட்டியுள்ள அடகு நகைகளை மீட்டு,<br>
+                    குறைந்த வட்டியில் மாற்றித்தரப்படும்
                 </div>
+            </div>
 
+            <br>
+
+            <div class="no-print" style="text-align:center;">
+                <button
+                    class="btn btn-success"
+                    onclick="printLoanCard()">
+                    🖨 Print Loan Card
+                </button>
             </div>
 
         </div>
 
 
         <!-- =====================
-             BACK PAGE
-             ===================== -->
+             BACK PAGE - EMI REGISTER
+        ===================== -->
 
-        <div class="loan-page loan-back-page" data-weeks="${weeks}">
+        <div class="loan-page loan-back-page">
 
             <h3 class="weekly-title">
-
                 WEEKLY COLLECTION SCHEDULE
-
             </h3>
 
+            <table class="weekly-loan-card weekly-schedule-table">
 
-            <table class="weekly-loan-card">
+                <thead>
+                    <tr>
+                        <th>S.NO</th>
+                        <th>DATE</th>
+                        <th>EMI AMOUNT (₹)</th>
+                        <th>SAVINGS (₹)</th>
+                        <th>SIGN</th>
+                    </tr>
+                </thead>
 
                 <tbody>
-
-                    <tr>
-
-                        ${weekColumns}
-
-                    </tr>
-
+                    ${scheduleRows}
                 </tbody>
 
             </table>
 
-
         </div>
-
 
     </div>
 
     `;
-
 }
 function printLoanCard(){
 
@@ -3880,12 +3706,7 @@ function printLoanCard(){
         return;
     }
 
-    const weekCount =
-        card.querySelectorAll(".week-column").length;
-
-    const isLandscape = weekCount > 12;
-
-    const win = window.open("", "_blank");
+    const win = window.open("", "_blank", "width=900,height=1000");
 
     win.document.write(`
 <!DOCTYPE html>
@@ -3898,41 +3719,85 @@ function printLoanCard(){
 
 ${document.querySelector("style").innerHTML}
 
-/* Loan Card print override */
 @page{
-    size: A5 ${isLandscape ? "landscape" : "portrait"};
+    size:A5 portrait;
     margin:0;
 }
 
 @media print{
 
-    html,
-    body{
-        width:${isLandscape ? "210mm" : "148mm"};
-        height:${isLandscape ? "148mm" : "210mm"};
+    html,body{
+        width:148mm;
         margin:0;
         padding:0;
         background:#fff;
     }
 
     .loan-page{
-        width:${isLandscape ? "210mm" : "148mm"};
-        height:${isLandscape ? "148mm" : "210mm"};
-        min-height:0;
+        width:148mm;
+        min-height:210mm;
+        height:210mm;
         margin:0;
         padding:8mm;
         box-sizing:border-box;
         page-break-after:always;
         break-after:page;
+        overflow:hidden;
     }
 
-    .weekly-loan-card{
+    .loan-front-page,
+    .loan-back-page{
+        page-break-after:always;
+    }
+
+    .weekly-schedule-table{
         width:100%;
+        border-collapse:collapse;
         table-layout:fixed;
+        font-size:11px;
     }
 
-    .week-column{
-        height:${isLandscape ? "125px" : "180px"};
+    .weekly-schedule-table th{
+        background:#0F766E;
+        color:#fff;
+        border:1px solid #000;
+        padding:5px 3px;
+        text-align:center;
+        font-weight:700;
+    }
+
+    .weekly-schedule-table td{
+        border:1px solid #000;
+        padding:0 3px;
+        height:22px;
+        line-height:1;
+        text-align:center;
+        vertical-align:middle;
+    }
+
+    .weekly-schedule-table th:nth-child(1),
+    .weekly-schedule-table td:nth-child(1){
+        width:12%;
+    }
+
+    .weekly-schedule-table th:nth-child(2),
+    .weekly-schedule-table td:nth-child(2){
+        width:25%;
+    }
+
+    .weekly-schedule-table th:nth-child(3),
+    .weekly-schedule-table td:nth-child(3){
+        width:27%;
+    }
+
+    .weekly-schedule-table th:nth-child(4),
+    .weekly-schedule-table td:nth-child(4){
+        width:18%;
+    }
+
+    .weekly-schedule-table th:nth-child(5),
+    .weekly-schedule-table td:nth-child(5){
+        width:18%;
     }
 
     .btn,
@@ -3947,32 +3812,23 @@ body{
 }
 
 </style>
-
 </head>
-
 <body>
 
 ${card.innerHTML}
 
 </body>
-
 </html>
-`);
+    `);
 
     win.document.close();
 
     setTimeout(function(){
-
         win.focus();
-
         win.print();
-
         win.close();
-
     },500);
-
 }
-
 function numberToWordsIndian(num) {
 
     num = Math.floor(Number(num));
