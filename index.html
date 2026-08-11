@@ -3506,7 +3506,7 @@ Select a Loan ID and click
 `;
 
 }
-function loadLoanCard(){
+function aarveeOriginalLoadLoanCard(){
 
     let loanId =
         document.getElementById("loanCardSearch").value.trim();
@@ -4006,7 +4006,7 @@ function formatPromissoryDate(dateValue) {
 
     return `${day}/${month}/${year}`;
 }
-function loadPromissory(){
+function aarveeOriginalLoadPromissory(){
 
     let loans =
         JSON.parse(localStorage.getItem("loans")) || [];
@@ -6747,6 +6747,2410 @@ showStep(currentStep);
 }
 
 }
+
+/* =========================================================
+   AARVEE USER DATA ISOLATION
+   3 USERS ONLY: vivek / generol / rasak
+   ========================================================= */
+
+const AARVEE_USERS = {
+    vivek: "2710",
+    generol: "1234",
+    rasak: "0786"
+};
+
+function aarveeCurrentUser(){
+    return (localStorage.getItem("currentUser") || "").trim().toLowerCase();
+}
+
+function aarveeOwned(record){
+    return !!record && record.ownerUser === aarveeCurrentUser();
+}
+
+function aarveeOwnedList(key){
+    const data = JSON.parse(localStorage.getItem(key)) || [];
+    return data.filter(item => aarveeOwned(item));
+}
+
+function aarveeUserRequired(){
+    const u = aarveeCurrentUser();
+    if(!AARVEE_USERS[u]){
+        alert("Please login again.");
+        return false;
+    }
+    return true;
+}
+
+/* ---------- LOGIN ---------- */
+
+function login(){
+
+    const username =
+        document.getElementById("user").value.trim().toLowerCase();
+
+    const password =
+        document.getElementById("pin").value.trim();
+
+    if(AARVEE_USERS[username] && AARVEE_USERS[username] === password){
+
+        localStorage.setItem("loggedIn","true");
+        localStorage.setItem("currentUser",username);
+
+        document.getElementById("loginPage").style.display="none";
+        document.getElementById("app").style.display="block";
+
+        const currentUserEl =
+            document.getElementById("currentUser");
+
+        if(currentUserEl){
+            currentUserEl.innerHTML =
+                username.charAt(0).toUpperCase() + username.slice(1);
+        }
+
+        loadDashboard();
+        showDashboard();
+
+    }else{
+
+        alert("Invalid Username or Password");
+
+    }
+}
+
+/* ---------- DASHBOARD ---------- */
+
+function loadDashboard(){
+
+    if(!aarveeUserRequired()) return;
+
+    const loans = aarveeOwnedList("loans");
+    const groups = aarveeOwnedList("groups");
+
+    const loanCount = document.getElementById("loanCount");
+    const groupCount = document.getElementById("groupCount");
+
+    if(loanCount) loanCount.innerHTML = loans.length;
+    if(groupCount) groupCount.innerHTML = groups.length;
+}
+
+function showDashboard(){
+
+    if(!aarveeUserRequired()) return;
+
+    const loans = aarveeOwnedList("loans");
+    const groups = aarveeOwnedList("groups");
+    const customers = aarveeOwnedList("customers");
+
+    const activeLoans = loans.filter(l => l.status === "Active").length;
+    const closedLoans = loans.filter(l => l.status === "Closed").length;
+    const outstanding = loans.reduce((t,l) => t + Number(l.balance || 0), 0);
+
+    const history = aarveeOwnedList("collectionHistory");
+    const today = new Date().toLocaleDateString();
+    const todayTotal = history
+        .filter(h => h.date === today)
+        .reduce((s,h) => s + Number(h.amount || 0), 0);
+
+    document.getElementById("pageTitle").innerHTML="Dashboard";
+
+    document.getElementById("content").innerHTML = `
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>👥 Total Groups</h3>
+            <h1 id="groupCount">${groups.length}</h1>
+            <small>Registered Groups</small>
+        </div>
+
+        <div class="card">
+            <h3>👤 Total Customers</h3>
+            <h1>${customers.length}</h1>
+            <small>Registered Customers</small>
+        </div>
+
+        <div class="card">
+            <h3>💰 Active Loans</h3>
+            <h1>${activeLoans}</h1>
+            <small>Currently Running</small>
+        </div>
+
+        <div class="card">
+            <h3>✔ Closed Loans</h3>
+            <h1>${closedLoans}</h1>
+            <small>Completed Loans</small>
+        </div>
+
+        <div class="card">
+            <h3>📅 Today's Collection</h3>
+            <h1 id="todayCollection">₹${todayTotal.toFixed(2)}</h1>
+            <small>Today's EMI Collection</small>
+        </div>
+
+        <div class="card">
+            <h3>📈 Weekly Collection</h3>
+            <h1 id="weeklyCollection">₹0</h1>
+            <small>Current Week</small>
+        </div>
+
+        <div class="card">
+            <h3>💳 Outstanding Balance</h3>
+            <h1>₹${outstanding.toFixed(2)}</h1>
+            <small>Pending Loan Amount</small>
+        </div>
+
+    </div>
+
+    `;
+}
+
+/* ---------- GROUPS ---------- */
+
+function saveGroup(){
+
+    if(!aarveeUserRequired()) return;
+
+    let groups = JSON.parse(localStorage.getItem("groups")) || [];
+
+    if(editingGroupIndex === -1){
+
+        const id =
+            "GRP" + String(groups.length + 1).padStart(4,"0");
+
+        groups.push({
+            id,
+            name: document.getElementById("gName").value.trim(),
+            area: document.getElementById("gArea").value.trim(),
+            meeting: document.getElementById("gMeeting").value,
+            collection: document.getElementById("gCollection").value,
+            ownerUser: aarveeCurrentUser()
+        });
+
+    }else{
+
+        const g = groups[editingGroupIndex];
+
+        if(!aarveeOwned(g)){
+            alert("You cannot edit another user's group.");
+            return;
+        }
+
+        g.name = document.getElementById("gName").value.trim();
+        g.area = document.getElementById("gArea").value.trim();
+        g.meeting = document.getElementById("gMeeting").value;
+        g.collection = document.getElementById("gCollection").value;
+
+        editingGroupIndex = -1;
+    }
+
+    localStorage.setItem("groups", JSON.stringify(groups));
+
+    closeGroupModal();
+    loadGroups();
+    showDashboard();
+}
+
+function loadGroups(){
+
+    if(!aarveeUserRequired()) return;
+
+    const groups = aarveeOwnedList("groups");
+
+    const search =
+        document.getElementById("searchGroup");
+
+    const keyword =
+        search ? search.value.toLowerCase() : "";
+
+    let html = "";
+
+    groups.forEach((g,index) => {
+
+        if(
+            (g.name || "").toLowerCase().includes(keyword) ||
+            (g.area || "").toLowerCase().includes(keyword)
+        ){
+
+            /* Find the original localStorage index for safe edit/delete. */
+            const allGroups =
+                JSON.parse(localStorage.getItem("groups")) || [];
+
+            const originalIndex =
+                allGroups.findIndex(x => x.id === g.id);
+
+            html += `
+                <tr>
+                    <td>${g.id}</td>
+                    <td>${g.name || ""}</td>
+                    <td>${g.area || ""}</td>
+                    <td>${g.meeting || ""}</td>
+                    <td>${g.collection || ""}</td>
+                    <td>
+                        <button
+                            class="btn btn-info"
+                            onclick="editGroup(${originalIndex})">
+                            ✏ Edit
+                        </button>
+
+                        <button
+                            class="btn btn-danger"
+                            onclick="deleteGroup(${originalIndex})">
+                            🗑 Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+
+    const table = document.getElementById("groupTable");
+
+    if(table) table.innerHTML = html;
+}
+
+function editGroup(index){
+
+    const groups =
+        JSON.parse(localStorage.getItem("groups")) || [];
+
+    const g = groups[index];
+
+    if(!aarveeOwned(g)){
+        alert("You cannot edit another user's group.");
+        return;
+    }
+
+    editingGroupIndex = index;
+
+    document.getElementById("gName").value = g.name || "";
+    document.getElementById("gArea").value = g.area || "";
+    document.getElementById("gMeeting").value = g.meeting || "";
+    document.getElementById("gCollection").value = g.collection || "";
+
+    document.getElementById("groupModal").style.display = "flex";
+}
+
+function deleteGroup(index){
+
+    const groups =
+        JSON.parse(localStorage.getItem("groups")) || [];
+
+    if(!aarveeOwned(groups[index])){
+        alert("You cannot delete another user's group.");
+        return;
+    }
+
+    if(confirm("Delete this Group?")){
+
+        groups.splice(index,1);
+
+        localStorage.setItem("groups",JSON.stringify(groups));
+
+        loadGroups();
+        showDashboard();
+    }
+}
+
+/* ---------- CUSTOMER FORM ---------- */
+
+function openCustomerModal(){
+
+    if(!aarveeUserRequired()) return;
+
+    editingCustomerIndex = -1;
+    customerPhoto = "";
+    aadhaarFrontData = "";
+    aadhaarBackData = "";
+
+    const modal = document.getElementById("customerModal");
+
+    if(!modal){
+        alert("Customer Modal Not Found");
+        return;
+    }
+
+    modal.style.display = "flex";
+
+    const groups = aarveeOwnedList("groups");
+    const guarantors = aarveeOwnedList("guarantors");
+
+    const groupEl = document.getElementById("cGroup");
+    const guarantorEl = document.getElementById("cGuarantor");
+
+    if(groupEl){
+        groupEl.innerHTML =
+            '<option value="">Select Group</option>' +
+            groups.map(g =>
+                `<option value="${g.name}">${g.name}</option>`
+            ).join("");
+    }
+
+    if(guarantorEl){
+        guarantorEl.innerHTML =
+            '<option value="">Select Guarantor</option>' +
+            guarantors.map(g =>
+                `<option value="${g.name}">${g.name}</option>`
+            ).join("");
+    }
+
+    [
+        "cName","cFather","cMobile","cAltMobile","cAadhaar","cPan",
+        "cDoorNo","cStreet","cArea","cCity","cDistrict","cPincode"
+    ].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.value = "";
+    });
+
+    const state = document.getElementById("cState");
+    if(state) state.value = "Tamil Nadu";
+
+    ["cPhoto","aadhaarFront","aadhaarBack"].forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.value = "";
+    });
+}
+
+function saveCustomer(){
+
+    if(!aarveeUserRequired()) return;
+
+    const name =
+        document.getElementById("cName").value.trim();
+
+    const mobile =
+        document.getElementById("cMobile").value.trim();
+
+    if(!name){
+        alert("Customer Name is required.");
+        return;
+    }
+
+    if(!mobile){
+        alert("Mobile Number is required.");
+        return;
+    }
+
+    let customers =
+        JSON.parse(localStorage.getItem("customers")) || [];
+
+    const address =
+        document.getElementById("cDoorNo").value + ", " +
+        document.getElementById("cStreet").value + ", " +
+        document.getElementById("cArea").value + ", " +
+        document.getElementById("cCity").value + ", " +
+        document.getElementById("cDistrict").value + ", " +
+        document.getElementById("cState").value + " - " +
+        document.getElementById("cPincode").value;
+
+    if(editingCustomerIndex === -1){
+
+        const id =
+            "CUS" + String(customers.length + 1).padStart(4,"0");
+
+        customers.push({
+            id,
+            ownerUser: aarveeCurrentUser(),
+            photo: customerPhoto,
+            aadhaarFront: aadhaarFrontData,
+            aadhaarBack: aadhaarBackData,
+            name,
+            father: document.getElementById("cFather").value,
+            mobile,
+            altMobile: document.getElementById("cAltMobile").value,
+            aadhaar: document.getElementById("cAadhaar").value,
+            pan: document.getElementById("cPan").value,
+            doorNo: document.getElementById("cDoorNo").value,
+            street: document.getElementById("cStreet").value,
+            area: document.getElementById("cArea").value,
+            city: document.getElementById("cCity").value,
+            district: document.getElementById("cDistrict").value,
+            state: document.getElementById("cState").value,
+            pincode: document.getElementById("cPincode").value,
+            address,
+            group: document.getElementById("cGroup").value,
+            guarantor: document.getElementById("cGuarantor").value
+        });
+
+    }else{
+
+        const c = customers[editingCustomerIndex];
+
+        if(!aarveeOwned(c)){
+            alert("You cannot edit another user's customer.");
+            return;
+        }
+
+        c.photo = customerPhoto;
+        c.aadhaarFront = aadhaarFrontData;
+        c.aadhaarBack = aadhaarBackData;
+        c.name = name;
+        c.father = document.getElementById("cFather").value;
+        c.mobile = mobile;
+        c.altMobile = document.getElementById("cAltMobile").value;
+        c.aadhaar = document.getElementById("cAadhaar").value;
+        c.pan = document.getElementById("cPan").value;
+        c.doorNo = document.getElementById("cDoorNo").value;
+        c.street = document.getElementById("cStreet").value;
+        c.area = document.getElementById("cArea").value;
+        c.city = document.getElementById("cCity").value;
+        c.district = document.getElementById("cDistrict").value;
+        c.state = document.getElementById("cState").value;
+        c.pincode = document.getElementById("cPincode").value;
+        c.address = address;
+        c.group = document.getElementById("cGroup").value;
+        c.guarantor = document.getElementById("cGuarantor").value;
+
+        editingCustomerIndex = -1;
+    }
+
+    localStorage.setItem("customers",JSON.stringify(customers));
+
+    closeCustomerModal();
+    loadCustomers();
+    showDashboard();
+}
+
+function loadCustomers(){
+
+    if(!aarveeUserRequired()) return;
+
+    const allCustomers =
+        JSON.parse(localStorage.getItem("customers")) || [];
+
+    const customers =
+        allCustomers.filter(c => aarveeOwned(c));
+
+    const keyword =
+        document.getElementById("searchCustomer")?.value.toLowerCase() || "";
+
+    let html = "";
+
+    customers.forEach(c => {
+
+        if(
+            (c.name || "").toLowerCase().includes(keyword) ||
+            (c.mobile || "").includes(keyword)
+        ){
+
+            const originalIndex =
+                allCustomers.findIndex(x => x.id === c.id);
+
+            html += `
+                <tr>
+                    <td>
+                        ${c.photo
+                            ? `<img src="${c.photo}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;">`
+                            : `<div style="width:45px;height:45px;border-radius:50%;background:#ddd;"></div>`
+                        }
+                    </td>
+                    <td>${c.id}</td>
+                    <td>${c.name}</td>
+                    <td>${c.father || ""}</td>
+                    <td>${c.mobile}</td>
+                    <td>${c.aadhaar || ""}</td>
+                    <td>${c.group || ""}</td>
+                    <td>${c.guarantor || ""}</td>
+                    <td>
+                        <button
+                            style="background:#17a2b8;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;"
+                            onclick="viewCustomer(${originalIndex})">
+                            View
+                        </button>
+
+                        <button
+                            style="background:#007bff;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;"
+                            onclick="editCustomer(${originalIndex})">
+                            Edit
+                        </button>
+
+                        <button
+                            style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;"
+                            onclick="deleteCustomer(${originalIndex})">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+
+    const table = document.getElementById("customerTable");
+
+    if(table) table.innerHTML = html;
+}
+
+function viewCustomer(index){
+
+    const customers =
+        JSON.parse(localStorage.getItem("customers")) || [];
+
+    const c = customers[index];
+
+    if(!aarveeOwned(c)){
+        alert("Customer not found.");
+        return;
+    }
+
+    /* Keep the original view implementation by opening the customer page
+       through a safe, user-owned lookup. */
+    const loans =
+        aarveeOwnedList("loans")
+            .filter(l => l.customerId === c.id);
+
+    const history =
+        aarveeOwnedList("collectionHistory")
+            .filter(h => h.customer === c.name);
+
+    let loanHTML = loans.length
+        ? loans.map(l => `
+            <div style="padding:15px;border:1px solid #ddd;border-radius:8px;margin-bottom:10px;">
+                <b>Loan ID :</b> ${l.id}<br>
+                <b>Loan Amount :</b> ₹${l.amount}<br>
+                <b>Balance :</b> ₹${Number(l.balance || 0).toFixed(2)}<br>
+                <b>Status :</b> ${l.status}
+            </div>
+        `).join("")
+        : "<p style='color:red;'>No Active Loan</p>";
+
+    document.getElementById("pageTitle").innerHTML = "Customer Details";
+
+    document.getElementById("content").innerHTML = `
+        <div class="table-container" style="padding:25px;">
+            <h2>${c.name}</h2>
+            <br>
+            <p><b>Customer ID:</b> ${c.id}</p>
+            <p><b>Father / Husband:</b> ${c.father || "-"}</p>
+            <p><b>Mobile:</b> ${c.mobile || "-"}</p>
+            <p><b>Aadhaar:</b> ${c.aadhaar || "-"}</p>
+            <p><b>Group:</b> ${c.group || "-"}</p>
+            <p><b>Guarantor:</b> ${c.guarantor || "-"}</p>
+            <br>
+            <h3>Loans</h3>
+            ${loanHTML}
+            <br>
+            <h3>Collection History</h3>
+            ${
+                history.length
+                ? history.map(h => `
+                    <p>${h.date} — ${h.loanId} — ₹${Number(h.amount || 0).toFixed(2)}</p>
+                `).join("")
+                : "<p>No Collection History</p>"
+            }
+            <br>
+            <button
+                onclick="showCustomers()"
+                style="padding:10px 20px;background:#0b7a3e;color:white;border:none;border-radius:6px;cursor:pointer;">
+                ← Back
+            </button>
+        </div>
+    `;
+}
+
+function editCustomer(index){
+
+    const customers =
+        JSON.parse(localStorage.getItem("customers")) || [];
+
+    const c = customers[index];
+
+    if(!aarveeOwned(c)){
+        alert("You cannot edit another user's customer.");
+        return;
+    }
+
+    editingCustomerIndex = index;
+
+    customerPhoto = c.photo || "";
+    aadhaarFrontData = c.aadhaarFront || "";
+    aadhaarBackData = c.aadhaarBack || "";
+
+    const modal = document.getElementById("customerModal");
+
+    if(modal) modal.style.display = "flex";
+
+    const groups = aarveeOwnedList("groups");
+    const guarantors = aarveeOwnedList("guarantors");
+
+    document.getElementById("cGroup").innerHTML =
+        groups.map(g =>
+            `<option value="${g.name}">${g.name}</option>`
+        ).join("");
+
+    document.getElementById("cGuarantor").innerHTML =
+        guarantors.map(g =>
+            `<option value="${g.name}">${g.name}</option>`
+        ).join("");
+
+    document.getElementById("cName").value = c.name || "";
+    document.getElementById("cFather").value = c.father || "";
+    document.getElementById("cMobile").value = c.mobile || "";
+    document.getElementById("cAltMobile").value = c.altMobile || "";
+    document.getElementById("cAadhaar").value = c.aadhaar || "";
+    document.getElementById("cPan").value = c.pan || "";
+    document.getElementById("cDoorNo").value = c.doorNo || "";
+    document.getElementById("cStreet").value = c.street || "";
+    document.getElementById("cArea").value = c.area || "";
+    document.getElementById("cCity").value = c.city || "";
+    document.getElementById("cDistrict").value = c.district || "";
+    document.getElementById("cState").value = c.state || "Tamil Nadu";
+    document.getElementById("cPincode").value = c.pincode || "";
+
+    document.getElementById("cGroup").value = c.group || "";
+    document.getElementById("cGuarantor").value = c.guarantor || "";
+}
+
+function deleteCustomer(index){
+
+    const customers =
+        JSON.parse(localStorage.getItem("customers")) || [];
+
+    if(!aarveeOwned(customers[index])){
+        alert("You cannot delete another user's customer.");
+        return;
+    }
+
+    if(confirm("Delete Customer?")){
+
+        customers.splice(index,1);
+
+        localStorage.setItem("customers",JSON.stringify(customers));
+
+        loadCustomers();
+        showDashboard();
+    }
+}
+
+/* ---------- GUARANTORS ---------- */
+
+function saveGuarantor(){
+
+    if(!aarveeUserRequired()) return;
+
+    const guarantors =
+        JSON.parse(localStorage.getItem("guarantors")) || [];
+
+    guarantors.push({
+        id:"GTR"+String(guarantors.length+1).padStart(4,"0"),
+        ownerUser: aarveeCurrentUser(),
+        name:document.getElementById("gtrName").value,
+        mobile:document.getElementById("gtrMobile").value,
+        relation:document.getElementById("gtrRelation").value,
+        occupation:document.getElementById("gtrOccupation").value,
+        income:document.getElementById("gtrIncome").value,
+        aadhaar:document.getElementById("gtrAadhaar").value,
+        pan:document.getElementById("gtrPan").value,
+        address:document.getElementById("gtrAddress").value
+    });
+
+    localStorage.setItem("guarantors",JSON.stringify(guarantors));
+
+    closeGuarantorModal();
+    loadGuarantors();
+}
+
+function loadGuarantors(){
+
+    if(!aarveeUserRequired()) return;
+
+    const all =
+        JSON.parse(localStorage.getItem("guarantors")) || [];
+
+    const guarantors =
+        all.filter(g => aarveeOwned(g));
+
+    const keyword =
+        document.getElementById("searchGuarantor")?.value.toLowerCase() || "";
+
+    let html = "";
+
+    guarantors.forEach(g => {
+
+        if(
+            (g.name || "").toLowerCase().includes(keyword) ||
+            (g.mobile || "").includes(keyword)
+        ){
+
+            const originalIndex =
+                all.findIndex(x => x.id === g.id);
+
+            html += `
+                <tr>
+                    <td>${g.id}</td>
+                    <td>${g.name}</td>
+                    <td>${g.mobile}</td>
+                    <td>${g.relation}</td>
+                    <td>${g.occupation}</td>
+                    <td>
+                        <button
+                            style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;"
+                            onclick="deleteGuarantor(${originalIndex})">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+
+    const table = document.getElementById("guarantorTable");
+    if(table) table.innerHTML = html;
+}
+
+function deleteGuarantor(index){
+
+    const guarantors =
+        JSON.parse(localStorage.getItem("guarantors")) || [];
+
+    if(!aarveeOwned(guarantors[index])){
+        alert("You cannot delete another user's guarantor.");
+        return;
+    }
+
+    if(confirm("Delete this guarantor?")){
+
+        guarantors.splice(index,1);
+
+        localStorage.setItem("guarantors",JSON.stringify(guarantors));
+
+        loadGuarantors();
+    }
+}
+
+/* ---------- LOANS ---------- */
+
+function openLoanModal(){
+
+    if(!aarveeUserRequired()) return;
+
+    document.getElementById("loanModal").style.display = "flex";
+
+    const customers = aarveeOwnedList("customers");
+
+    let customerHTML =
+        '<option value="">Select Customer</option>';
+
+    customers.forEach(c => {
+        customerHTML += `
+            <option value="${c.id}">
+                ${c.name} (${c.group || ""})
+            </option>
+        `;
+    });
+
+    document.getElementById("loanCustomer").innerHTML =
+        customerHTML;
+
+    const guarantors = aarveeOwnedList("guarantors");
+
+    let guarantorHTML =
+        '<option value="">Select Guarantor</option>';
+
+    guarantors.forEach(g => {
+        guarantorHTML += `
+            <option value="${g.name}">
+                ${g.name}
+            </option>
+        `;
+    });
+
+    document.getElementById("loanGuarantor").innerHTML =
+        guarantorHTML;
+}
+
+function loadCustomerGuarantor(){
+
+    const customerId =
+        document.getElementById("loanCustomer").value;
+
+    const customers = aarveeOwnedList("customers");
+
+    const customer =
+        customers.find(c => c.id == customerId);
+
+    if(!customer){
+        alert("Customer not found.");
+        return;
+    }
+
+    const guarantor =
+        customer.guarantor || "";
+
+    document.getElementById("loanGuarantor").innerHTML =
+        `<option value="${guarantor}">
+            ${guarantor || "No Guarantor"}
+        </option>`;
+}
+
+function saveLoan(){
+
+    try{
+
+        if(!aarveeUserRequired()) return;
+
+        let loans =
+            JSON.parse(localStorage.getItem("loans")) || [];
+
+        const customers =
+            aarveeOwnedList("customers");
+
+        const customerId =
+            document.getElementById("loanCustomer").value;
+
+        if(!customerId){
+            alert("Please select customer.");
+            return;
+        }
+
+        const customer =
+            customers.find(c => c.id == customerId);
+
+        if(!customer){
+            alert("Customer not found.");
+            return;
+        }
+
+        const amount =
+            Number(document.getElementById("loanAmount").value);
+
+        if(amount <= 0){
+            alert("Enter valid loan amount.");
+            return;
+        }
+
+        const processing =
+            Number(document.getElementById("processingFee")?.value || 0);
+
+        const insurance =
+            Number(document.getElementById("insuranceFee")?.value || 0);
+
+        const interest =
+            Number(document.getElementById("loanInterest").value || 0);
+
+        const weeks =
+            Number(document.getElementById("loanWeeks").value || 1);
+
+        const loanDate =
+            document.getElementById("loanDate").value;
+
+        if(!loanDate){
+            alert("Please select Loan Date.");
+            return;
+        }
+
+        const parts = loanDate.split("-");
+
+        if(
+            parts.length !== 3 ||
+            parts[0].length !== 4 ||
+            Number(parts[0]) < 2000 ||
+            Number(parts[0]) > 2099
+        ){
+            alert("Please enter a valid date with a 4-digit year.");
+            return;
+        }
+
+        /* Processing Fee and Insurance do NOT affect EMI. */
+        const total =
+            amount + (amount * interest / 100);
+
+        const loan = {
+            id:"LOAN"+String(loans.length+1).padStart(4,"0"),
+            ownerUser:aarveeCurrentUser(),
+            customerId:customer.id,
+            customerName:customer.name,
+            group:customer.group,
+            guarantor:
+                document.getElementById("loanGuarantor")?.value || "",
+            amount,
+            processing,
+            insurance,
+            interest,
+            interestAmount:amount * interest / 100,
+            total,
+            weekly:total / weeks,
+            weeks,
+            paid:0,
+            balance:total,
+            loanDate,
+            loanType:document.getElementById("loanType").value,
+            status:"Pending"
+        };
+
+        loans.push(loan);
+
+        localStorage.setItem("loans",JSON.stringify(loans));
+
+        alert("Loan Saved Successfully");
+
+        closeLoanModal();
+        loadLoans();
+
+    }catch(err){
+
+        alert(err.message);
+        console.error(err);
+    }
+}
+
+function loadLoans(){
+
+    if(!aarveeUserRequired()) return;
+
+    const allLoans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loans =
+        allLoans.filter(l => aarveeOwned(l));
+
+    const keyword =
+        document.getElementById("searchLoan")?.value.toLowerCase() || "";
+
+    let html = "";
+
+    loans.forEach(loan => {
+
+        if(
+            (loan.customerName || "").toLowerCase().includes(keyword) ||
+            (loan.id || "").toLowerCase().includes(keyword)
+        ){
+
+            const originalIndex =
+                allLoans.findIndex(x => x.id === loan.id);
+
+            html += `
+                <tr>
+                    <td>${loan.id}</td>
+                    <td>${loan.customerName}</td>
+                    <td>${loan.loanType}</td>
+                    <td>${formatDateDDMMYYYY(loan.loanDate)}</td>
+                    <td>₹${Number(loan.amount).toFixed(2)}</td>
+                    <td>₹${Number(loan.balance).toFixed(2)}</td>
+                    <td>₹${Number(loan.weekly).toFixed(2)}</td>
+                    <td>
+                        <span style="background:#28a745;color:white;padding:4px 10px;border-radius:20px;">
+                            ${loan.status}
+                        </span>
+                    </td>
+                    <td>
+                        <button onclick="viewLoan(${originalIndex})"
+                            style="background:#2196f3;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;margin:2px;">
+                            View
+                        </button>
+
+                        <button onclick="editLoan(${originalIndex})"
+                            style="background:#ff9800;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;margin:2px;">
+                            Edit
+                        </button>
+
+                        <button onclick="printPromissoryLoan(${originalIndex})"
+                            style="background:#4caf50;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;margin:2px;">
+                            Promissory
+                        </button>
+
+                        <button onclick="printCollectionCard(${originalIndex})"
+                            style="background:#673ab7;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;margin:2px;">
+                            Collection Card
+                        </button>
+
+                        <button onclick="deleteLoan(${originalIndex})"
+                            style="background:red;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;margin:2px;">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+
+    const table = document.getElementById("loanTable");
+    if(table) table.innerHTML = html;
+}
+
+function viewLoan(index){
+
+    const loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loan = loans[index];
+
+    if(!aarveeOwned(loan)){
+        alert("Loan not found.");
+        return;
+    }
+
+    alert(
+        "Loan ID : " + loan.id +
+        "\nCustomer : " + loan.customerName +
+        "\nAmount : ₹" + loan.amount +
+        "\nBalance : ₹" + loan.balance +
+        "\nStatus : " + loan.status
+    );
+}
+
+function deleteLoan(index){
+
+    const loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    if(!aarveeOwned(loans[index])){
+        alert("You cannot delete another user's loan.");
+        return;
+    }
+
+    if(confirm("Delete this loan?")){
+
+        loans.splice(index,1);
+
+        localStorage.setItem("loans",JSON.stringify(loans));
+
+        loadLoans();
+        showDashboard();
+    }
+}
+
+/* ---------- LOAN APPROVAL / EMI / COLLECTION ---------- */
+
+function loadApproval(){
+
+    if(!aarveeUserRequired()) return;
+
+    const allLoans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loans =
+        allLoans.filter(l =>
+            aarveeOwned(l) && l.status === "Pending"
+        );
+
+    let html = "";
+
+    loans.forEach(loan => {
+
+        const originalIndex =
+            allLoans.findIndex(x => x.id === loan.id);
+
+        html += `
+            <tr>
+                <td>${loan.id}</td>
+                <td>${loan.customerName}</td>
+                <td>₹${loan.amount}</td>
+                <td>
+                    <span style="background:orange;color:white;padding:5px 12px;border-radius:20px;">
+                        Pending
+                    </span>
+                </td>
+                <td>
+                    <button
+                        onclick="approveLoan(${originalIndex})"
+                        style="background:#28a745;color:white;border:none;padding:8px 15px;border-radius:5px;">
+                        Approve
+                    </button>
+                </td>
+                <td>
+                    <button
+                        onclick="rejectLoan(${originalIndex})"
+                        style="background:red;color:white;border:none;padding:8px 15px;border-radius:5px;">
+                        Reject
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+
+    const table = document.getElementById("approvalTable");
+    if(table) table.innerHTML = html;
+}
+
+function approveLoan(index){
+
+    const loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loan = loans[index];
+
+    if(!aarveeOwned(loan)){
+        alert("You cannot approve another user's loan.");
+        return;
+    }
+
+    const currentUser =
+        document.getElementById("currentUser").innerText;
+
+    loan.status = "Active";
+    loan.approvedBy = currentUser;
+    loan.approvedDate = new Date().toLocaleString();
+
+    localStorage.setItem("loans",JSON.stringify(loans));
+
+    loadApproval();
+    loadLoans();
+    showDashboard();
+
+    alert("Loan Approved Successfully.");
+}
+
+function rejectLoan(index){
+
+    const loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loan = loans[index];
+
+    if(!aarveeOwned(loan)){
+        alert("You cannot reject another user's loan.");
+        return;
+    }
+
+    const reason = prompt("Reason for rejection?");
+
+    if(reason === null) return;
+
+    const currentUser =
+        document.getElementById("currentUser").innerText;
+
+    loan.status = "Rejected";
+    loan.rejectedBy = currentUser;
+    loan.rejectedDate = new Date().toLocaleString();
+    loan.rejectReason = reason;
+
+    localStorage.setItem("loans",JSON.stringify(loans));
+
+    loadApproval();
+    showDashboard();
+
+    alert("Loan Rejected Successfully.");
+}
+
+function loadEMI(){
+
+    if(!aarveeUserRequired()) return;
+
+    const allLoans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loans =
+        allLoans.filter(l => aarveeOwned(l));
+
+    const keyword =
+        document.getElementById("searchEMI")?.value.toLowerCase() || "";
+
+    let html = "";
+
+    loans.forEach(loan => {
+
+        if(
+            (loan.customerName || "").toLowerCase().includes(keyword) ||
+            (loan.id || "").toLowerCase().includes(keyword) ||
+            (loan.group || "").toLowerCase().includes(keyword)
+        ){
+
+            const originalIndex =
+                allLoans.findIndex(x => x.id === loan.id);
+
+            html += `
+                <tr>
+                    <td>${loan.id}</td>
+                    <td>${loan.customerName}</td>
+                    <td>${loan.group || ""}</td>
+                    <td>₹${Number(loan.weekly).toFixed(2)}</td>
+                    <td>₹${Number(loan.paid||0).toFixed(2)}</td>
+                    <td>₹${Number(loan.balance||0).toFixed(2)}</td>
+                    <td>${loan.lastCollectionDate || "-"}</td>
+                    <td>${loan.status}</td>
+                    <td>
+                        ${
+                            loan.status === "Closed"
+                            ? "Closed"
+                            : `<button
+                                style="background:#0b7a3e;color:white;border:none;padding:6px 12px;border-radius:5px;"
+                                onclick="collectEMI(${originalIndex})">
+                                Collect
+                              </button>`
+                        }
+                    </td>
+                </tr>
+            `;
+        }
+    });
+
+    const table = document.getElementById("emiTable");
+    if(table) table.innerHTML = html;
+}
+
+function loadCollections(){
+
+    if(!aarveeUserRequired()) return;
+
+    const allLoans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loans =
+        allLoans.filter(l => aarveeOwned(l));
+
+    const keyword =
+        document.getElementById("searchCollection")?.value.toLowerCase() || "";
+
+    let html = "";
+
+    loans.forEach(loan => {
+
+        if((loan.customerName || "").toLowerCase().includes(keyword)){
+
+            const originalIndex =
+                allLoans.findIndex(x => x.id === loan.id);
+
+            html += `
+                <tr>
+                    <td>${loan.id}</td>
+                    <td>${loan.customerName}</td>
+                    <td>₹${Number(loan.weekly).toFixed(2)}</td>
+                    <td>₹${Number(loan.balance).toFixed(2)}</td>
+                    <td>${loan.status}</td>
+                    <td>
+                        <button
+                            style="background:#0b7a3e;color:white;border:none;padding:6px 12px;border-radius:5px;cursor:pointer;"
+                            onclick="collectEMI(${originalIndex})">
+                            Collect
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+
+    const table = document.getElementById("collectionTable");
+    if(table) table.innerHTML = html;
+}
+
+function collectEMI(index){
+
+    if(!aarveeUserRequired()) return;
+
+    const loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loan = loans[index];
+
+    if(!aarveeOwned(loan)){
+        alert("You cannot collect another user's loan.");
+        return;
+    }
+
+    let schedule =
+        JSON.parse(localStorage.getItem("emiSchedule")) || [];
+
+    let history =
+        JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+    if(!loan){
+        alert("Loan not found.");
+        return;
+    }
+
+    if(loan.status === "Closed"){
+        alert("Loan already closed.");
+        return;
+    }
+
+    let emi =
+        schedule.find(e =>
+            e.loanId == loan.id &&
+            (e.ownerUser === aarveeCurrentUser() || !e.ownerUser) &&
+            !e.paid
+        );
+
+    if(!emi){
+        /* Preserve existing behaviour if the schedule is not available. */
+        alert("No pending EMI.");
+        return;
+    }
+
+    const amount = Number(loan.weekly);
+
+    loan.balance =
+        Math.max(0,Number(loan.balance) - amount);
+
+    loan.paid =
+        Number(loan.paid || 0) + amount;
+
+    loan.lastCollectionDate =
+        new Date().toLocaleDateString();
+
+    emi.paid = true;
+    emi.paidDate = new Date().toLocaleDateString();
+    emi.balance = 0;
+    emi.ownerUser = aarveeCurrentUser();
+
+    history.push({
+        ownerUser: aarveeCurrentUser(),
+        receiptNo:
+            "RCPT" + String(history.length+1).padStart(4,"0"),
+        loanId: loan.id,
+        customer: loan.customerName,
+        group: loan.group,
+        amount,
+        date: new Date().toLocaleDateString(),
+        balance: loan.balance,
+        collectedBy:
+            document.getElementById("currentUser").innerText
+    });
+
+    localStorage.setItem("loans",JSON.stringify(loans));
+    localStorage.setItem("emiSchedule",JSON.stringify(schedule));
+    localStorage.setItem("collectionHistory",JSON.stringify(history));
+
+    if(document.getElementById("loanTable")) loadLoans();
+    if(document.getElementById("dailyCollectionTable")) loadDailyCollection();
+    if(document.getElementById("emiTable")) loadEMI();
+    if(document.getElementById("historyTable")) loadHistory();
+
+    showDashboard();
+
+    alert("EMI Collected Successfully.");
+}
+
+/* ---------- DAILY COLLECTION / HISTORY ---------- */
+
+function loadCollectionCentres(){
+
+    if(!aarveeUserRequired()) return;
+
+    const groups = aarveeOwnedList("groups");
+
+    let html = '<option value="">All Centres</option>';
+
+    groups.forEach(g=>{
+        html += `
+            <option value="${g.name}" data-day="${g.collection}">
+                ${g.name}
+            </option>
+        `;
+    });
+
+    const el = document.getElementById("collectionCentre");
+
+    if(!el) return;
+
+    el.innerHTML = html;
+
+    el.onchange = function(){
+
+        const opt =
+            this.options[this.selectedIndex];
+
+        document.getElementById("collectionDay").value =
+            opt.getAttribute("data-day") || "";
+
+        loadDailyCollection();
+    };
+}
+
+function loadDailyCollection(){
+
+    if(!aarveeUserRequired()) return;
+
+    const allLoans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loans =
+        allLoans.filter(l =>
+            aarveeOwned(l) && l.status === "Active"
+        );
+
+    const keyword =
+        document.getElementById("dailySearch")?.value.toLowerCase() || "";
+
+    const centre =
+        document.getElementById("collectionCentre")?.value || "";
+
+    const history =
+        aarveeOwnedList("collectionHistory");
+
+    const today =
+        new Date().toLocaleDateString();
+
+    const todayTotal =
+        history
+            .filter(h => h.date === today)
+            .reduce((s,h) => s + Number(h.amount || 0), 0);
+
+    let html = "";
+
+    loans
+        .sort((a,b)=>{
+            if((a.group||"") === (b.group||"")){
+                return (a.customerName||"")
+                    .localeCompare(b.customerName||"");
+            }
+            return (a.group||"")
+                .localeCompare(b.group||"");
+        })
+        .forEach(loan=>{
+
+            if(
+                (centre === "" || loan.group === centre) &&
+                (
+                    (loan.customerName||"").toLowerCase().includes(keyword) ||
+                    (loan.group||"").toLowerCase().includes(keyword) ||
+                    (loan.id||"").toLowerCase().includes(keyword)
+                )
+            ){
+
+                const originalIndex =
+                    allLoans.findIndex(x => x.id === loan.id);
+
+                html += `
+                    <tr>
+                        <td>${loan.id}</td>
+                        <td>${loan.customerName}</td>
+                        <td>${loan.group || ""}</td>
+                        <td>₹${Number(loan.weekly).toFixed(2)}</td>
+                        <td>₹${Number(loan.paid||0).toFixed(2)}</td>
+                        <td>₹${Number(loan.balance||0).toFixed(2)}</td>
+                        <td>${loan.lastCollectionDate || "-"}</td>
+                        <td>
+                            <button
+                                style="background:#0b7a3e;color:white;padding:6px 12px;border:none;border-radius:5px;"
+                                onclick="collectEMI(${originalIndex})">
+                                Collect
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+
+    const table =
+        document.getElementById("dailyCollectionTable");
+
+    if(table) table.innerHTML = html;
+
+    const totalEl =
+        document.getElementById("todayTotal");
+
+    if(totalEl){
+        totalEl.innerHTML =
+            "Today's Total : ₹" + todayTotal.toFixed(2);
+    }
+}
+
+function loadHistory(){
+
+    if(!aarveeUserRequired()) return;
+
+    const allHistory =
+        JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+    const history =
+        allHistory.filter(h => aarveeOwned(h));
+
+    const keyword =
+        document.getElementById("historySearch")?.value.toLowerCase() || "";
+
+    let html = "";
+
+    history.forEach(h => {
+
+        if((h.customer||"").toLowerCase().includes(keyword)){
+
+            const originalIndex =
+                allHistory.findIndex(x =>
+                    x.receiptNo === h.receiptNo
+                );
+
+            html += `
+                <tr>
+                    <td>${h.receiptNo || "-"}</td>
+                    <td>${h.date}</td>
+                    <td>${h.loanId}</td>
+                    <td>${h.customer}</td>
+                    <td>₹${Number(h.amount).toFixed(2)}</td>
+                    <td>₹${Number(h.balance).toFixed(2)}</td>
+                    <td>${h.collectedBy || "-"}</td>
+                    <td>
+                        <button
+                            style="background:#007bff;color:white;border:none;padding:5px 10px;border-radius:5px;"
+                            onclick="printReceipt(${originalIndex})">
+                            Print
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+
+    const table = document.getElementById("historyTable");
+
+    if(table) table.innerHTML = html;
+}
+
+function printReceipt(index){
+
+    const history =
+        JSON.parse(localStorage.getItem("collectionHistory")) || [];
+
+    const h = history[index];
+
+    if(!aarveeOwned(h)){
+        alert("Receipt not found.");
+        return;
+    }
+
+    /* Keep existing print function behaviour by opening a simple receipt. */
+    const w =
+        window.open("", "_blank", "width=500,height=700");
+
+    if(!w) return;
+
+    w.document.write(`
+        <html>
+        <head>
+            <title>Receipt</title>
+            <style>
+                body{font-family:Arial;padding:25px;}
+                h1{text-align:center;}
+                table{width:100%;border-collapse:collapse;}
+                td{padding:8px;border-bottom:1px solid #ddd;}
+            </style>
+        </head>
+        <body>
+            <h1>AARVEE ASSOCIATES</h1>
+            <h2 style="text-align:center;">Collection Receipt</h2>
+            <table>
+                <tr><td>Receipt</td><td>${h.receiptNo || "-"}</td></tr>
+                <tr><td>Date</td><td>${h.date || "-"}</td></tr>
+                <tr><td>Loan</td><td>${h.loanId || "-"}</td></tr>
+                <tr><td>Customer</td><td>${h.customer || "-"}</td></tr>
+                <tr><td>Amount</td><td>₹${Number(h.amount||0).toFixed(2)}</td></tr>
+                <tr><td>Balance</td><td>₹${Number(h.balance||0).toFixed(2)}</td></tr>
+                <tr><td>Collected By</td><td>${h.collectedBy || "-"}</td></tr>
+            </table>
+        </body>
+        </html>
+    `);
+
+    w.document.close();
+    w.print();
+}
+
+/* ---------- REPORTS ---------- */
+
+function loadReport(){
+
+    if(!aarveeUserRequired()) return;
+
+    const groups = aarveeOwnedList("groups");
+    const customers = aarveeOwnedList("customers");
+    const loans = aarveeOwnedList("loans");
+
+    const outstanding =
+        loans.reduce((s,l) => s + Number(l.balance || 0), 0);
+
+    const rGroups = document.getElementById("rGroups");
+    const rCustomers = document.getElementById("rCustomers");
+    const rLoans = document.getElementById("rLoans");
+    const rOutstanding = document.getElementById("rOutstanding");
+
+    if(rGroups) rGroups.innerHTML = groups.length;
+    if(rCustomers) rCustomers.innerHTML = customers.length;
+    if(rLoans) rLoans.innerHTML = loans.length;
+    if(rOutstanding) rOutstanding.innerHTML =
+        "₹" + outstanding.toFixed(2);
+}
+
+function showGroupReport(){
+
+    if(!aarveeUserRequired()) return;
+
+    const groups = aarveeOwnedList("groups");
+    const customers = aarveeOwnedList("customers");
+    const loans = aarveeOwnedList("loans");
+
+    let html = `
+        <div class="table-container">
+            <div style="padding:20px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;">
+                <h2>Group Report</h2>
+                <button class="btn btn-primary" onclick="printGroupReport()">🖨 Print</button>
+            </div>
+            <div style="overflow-x:auto;">
+            <table id="groupReportTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Group Name</th>
+                        <th>Area</th>
+                        <th>Meeting Day</th>
+                        <th>Collection Day</th>
+                        <th>Customers</th>
+                        <th>Loans</th>
+                        <th>Outstanding</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    groups.forEach(g=>{
+
+        const groupCustomers =
+            customers.filter(c => c.group === g.name);
+
+        const groupLoans =
+            loans.filter(l => l.group === g.name);
+
+        const outstanding =
+            groupLoans.reduce(
+                (sum,l)=>sum+Number(l.balance||0),0
+            );
+
+        html += `
+            <tr>
+                <td>${g.id || "-"}</td>
+                <td>${g.name || "-"}</td>
+                <td>${g.area || "-"}</td>
+                <td>${g.meeting || "-"}</td>
+                <td>${g.collection || "-"}</td>
+                <td>${groupCustomers.length}</td>
+                <td>${groupLoans.length}</td>
+                <td>₹${outstanding.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+
+    if(!groups.length){
+        html += `<tr><td colspan="8" style="text-align:center;">No Groups Found</td></tr>`;
+    }
+
+    html += `</tbody></table></div></div>`;
+
+    document.getElementById("reportDetails").innerHTML = html;
+}
+
+function showCustomerReport(){
+
+    if(!aarveeUserRequired()) return;
+
+    const customers = aarveeOwnedList("customers");
+    const loans = aarveeOwnedList("loans");
+
+    let html = `
+        <div class="table-container">
+            <div style="padding:20px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;">
+                <h2>Customer Report</h2>
+                <button class="btn btn-info" onclick="printCustomerReport()">🖨 Print</button>
+            </div>
+            <div style="overflow-x:auto;">
+            <table id="customerReportTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer Name</th>
+                        <th>Father / Husband</th>
+                        <th>Mobile</th>
+                        <th>Aadhaar</th>
+                        <th>Group</th>
+                        <th>Guarantor</th>
+                        <th>Loans</th>
+                        <th>Outstanding</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    customers.forEach(c=>{
+
+        const customerLoans =
+            loans.filter(l => l.customerId === c.id);
+
+        const outstanding =
+            customerLoans.reduce(
+                (sum,l)=>sum+Number(l.balance||0),0
+            );
+
+        html += `
+            <tr>
+                <td>${c.id || "-"}</td>
+                <td>${c.name || "-"}</td>
+                <td>${c.father || "-"}</td>
+                <td>${c.mobile || "-"}</td>
+                <td>${c.aadhaar || "-"}</td>
+                <td>${c.group || "-"}</td>
+                <td>${c.guarantor || "-"}</td>
+                <td>${customerLoans.length}</td>
+                <td>₹${outstanding.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+
+    if(!customers.length){
+        html += `<tr><td colspan="9" style="text-align:center;">No Customers Found</td></tr>`;
+    }
+
+    html += `</tbody></table></div></div>`;
+
+    document.getElementById("reportDetails").innerHTML = html;
+}
+
+/* ---------- EXPENSES ---------- */
+
+function saveExpense(){
+
+    if(!aarveeUserRequired()) return;
+
+    const expenses =
+        JSON.parse(localStorage.getItem("expenses")) || [];
+
+    expenses.push({
+        ownerUser: aarveeCurrentUser(),
+        date:document.getElementById("expenseDate").value,
+        head:document.getElementById("expenseHead").value,
+        description:document.getElementById("expenseDesc").value,
+        amount:Number(document.getElementById("expenseAmount").value)
+    });
+
+    localStorage.setItem("expenses",JSON.stringify(expenses));
+
+    closeExpenseModal();
+    loadExpenses();
+}
+
+function loadExpenses(){
+
+    if(!aarveeUserRequired()) return;
+
+    const all =
+        JSON.parse(localStorage.getItem("expenses")) || [];
+
+    const expenses =
+        all.filter(e => aarveeOwned(e));
+
+    const keyword =
+        document.getElementById("expenseSearch")?.value.toLowerCase() || "";
+
+    let html = "";
+
+    expenses.forEach(e=>{
+
+        if(
+            (e.head||"").toLowerCase().includes(keyword) ||
+            (e.description||"").toLowerCase().includes(keyword)
+        ){
+
+            const originalIndex =
+                all.findIndex(x =>
+                    x.date === e.date &&
+                    x.head === e.head &&
+                    x.description === e.description &&
+                    x.amount === e.amount &&
+                    x.ownerUser === e.ownerUser
+                );
+
+            html += `
+                <tr>
+                    <td>${e.date}</td>
+                    <td>${e.head}</td>
+                    <td>${e.description}</td>
+                    <td>₹${Number(e.amount||0).toFixed(2)}</td>
+                    <td>
+                        <button
+                            onclick="deleteExpense(${originalIndex})"
+                            style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;cursor:pointer;">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+
+    const table = document.getElementById("expenseTable");
+    if(table) table.innerHTML = html;
+}
+
+function deleteExpense(index){
+
+    const expenses =
+        JSON.parse(localStorage.getItem("expenses")) || [];
+
+    if(!aarveeOwned(expenses[index])){
+        alert("You cannot delete another user's expense.");
+        return;
+    }
+
+    if(confirm("Delete Expense?")){
+        expenses.splice(index,1);
+        localStorage.setItem("expenses",JSON.stringify(expenses));
+        loadExpenses();
+    }
+}
+
+/* ---------- DOCUMENTS ---------- */
+
+function openDocumentModal(){
+
+    if(!aarveeUserRequired()) return;
+
+    document.getElementById("documentModal").style.display="flex";
+
+    const customers = aarveeOwnedList("customers");
+
+    const el = document.getElementById("docCustomer");
+
+    if(el){
+        el.innerHTML =
+            customers.map(c =>
+                `<option value="${c.id}">${c.name}</option>`
+            ).join("");
+    }
+}
+
+function saveDocuments(){
+
+    if(!aarveeUserRequired()) return;
+
+    const customerId =
+        document.getElementById("docCustomer").value;
+
+    const customers =
+        aarveeOwnedList("customers");
+
+    if(!customers.some(c => c.id === customerId)){
+        alert("Customer not found.");
+        return;
+    }
+
+    const docs =
+        JSON.parse(localStorage.getItem("documents")) || [];
+
+    docs.push({
+        ownerUser: aarveeCurrentUser(),
+        customerId,
+        photo:document.getElementById("docPhoto").files[0]?.name || "",
+        aadhaar:document.getElementById("docAadhaar").files[0]?.name || "",
+        pan:document.getElementById("docPan").files[0]?.name || "",
+        agreement:document.getElementById("docAgreement").files[0]?.name || ""
+    });
+
+    localStorage.setItem("documents",JSON.stringify(docs));
+
+    closeDocumentModal();
+    loadDocuments();
+}
+
+function loadDocuments(){
+
+    if(!aarveeUserRequired()) return;
+
+    const docsAll =
+        JSON.parse(localStorage.getItem("documents")) || [];
+
+    const docs =
+        docsAll.filter(d => aarveeOwned(d));
+
+    const customers =
+        aarveeOwnedList("customers");
+
+    const keyword =
+        document.getElementById("searchDocument")?.value.toLowerCase() || "";
+
+    let html = "";
+
+    docs.forEach(d=>{
+
+        const customer =
+            customers.find(c => c.id === d.customerId);
+
+        if(!customer) return;
+
+        if((customer.name||"").toLowerCase().includes(keyword)){
+
+            const originalIndex =
+                docsAll.findIndex(x =>
+                    x.customerId === d.customerId &&
+                    x.ownerUser === d.ownerUser &&
+                    x.photo === d.photo &&
+                    x.aadhaar === d.aadhaar &&
+                    x.pan === d.pan &&
+                    x.agreement === d.agreement
+                );
+
+            html += `
+                <tr>
+                    <td>${customer.name}</td>
+                    <td>${d.photo || "-"}</td>
+                    <td>${d.aadhaar || "-"}</td>
+                    <td>${d.pan || "-"}</td>
+                    <td>${d.agreement || "-"}</td>
+                    <td>
+                        <button
+                            onclick="deleteDocument(${originalIndex})"
+                            style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+
+    const table = document.getElementById("documentTable");
+    if(table) table.innerHTML = html;
+}
+
+function deleteDocument(index){
+
+    const docs =
+        JSON.parse(localStorage.getItem("documents")) || [];
+
+    if(!aarveeOwned(docs[index])){
+        alert("You cannot delete another user's document.");
+        return;
+    }
+
+    if(confirm("Delete document record?")){
+        docs.splice(index,1);
+        localStorage.setItem("documents",JSON.stringify(docs));
+        loadDocuments();
+    }
+}
+
+/* ---------- DAY BOOK ---------- */
+
+function loadDayBook(){
+
+    if(!aarveeUserRequired()) return;
+
+    const date =
+        document.getElementById("dayBookDate").value;
+
+    const history =
+        aarveeOwnedList("collectionHistory");
+
+    const expenses =
+        aarveeOwnedList("expenses");
+
+    let html = "";
+    let collection = 0;
+    let expense = 0;
+
+    history.forEach(h=>{
+
+        if(h.date === date){
+
+            collection += Number(h.amount || 0);
+
+            html += `
+                <tr>
+                    <td>Collection</td>
+                    <td>${h.customer}</td>
+                    <td style="color:green;">₹${h.amount}</td>
+                </tr>
+            `;
+        }
+    });
+
+    expenses.forEach(e=>{
+
+        if(e.date === date){
+
+            expense += Number(e.amount || 0);
+
+            html += `
+                <tr>
+                    <td>Expense</td>
+                    <td>${e.description || e.head}</td>
+                    <td style="color:red;">₹${e.amount}</td>
+                </tr>
+            `;
+        }
+    });
+
+    const table = document.getElementById("dayBookTable");
+    if(table) table.innerHTML = html;
+
+    const dbCollection = document.getElementById("dbCollection");
+    const dbExpense = document.getElementById("dbExpense");
+    const dbBalance = document.getElementById("dbBalance");
+
+    if(dbCollection) dbCollection.innerHTML = "₹" + collection.toFixed(2);
+    if(dbExpense) dbExpense.innerHTML = "₹" + expense.toFixed(2);
+    if(dbBalance) dbBalance.innerHTML =
+        "₹" + (collection - expense).toFixed(2);
+}
+
+/* ---------- PROMISSORY / LOAN CARD ACCESS GUARDS ---------- */
+
+function loadPromissory(){
+
+    if(!aarveeUserRequired()) return;
+
+    const loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loanId =
+        document.getElementById("promissoryLoanSearch")?.value.trim();
+
+    const loan =
+        loans.find(l => l.id == loanId);
+
+    if(!aarveeOwned(loan)){
+        alert("Loan not found.");
+        return;
+    }
+
+    /* Call the original logic through a private one-time alias. */
+    if(typeof aarveeOriginalLoadPromissory === "function"){
+        return aarveeOriginalLoadPromissory();
+    }
+
+    /* The existing Promissory Note renderer is preserved by the
+       original function alias created below. */
+}
+
+function printPromissoryLoan(index){
+
+    const loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    if(!aarveeOwned(loans[index])){
+        alert("You cannot access another user's promissory note.");
+        return;
+    }
+
+    document.getElementById("promissoryLoanSearch").value =
+        loans[index].id;
+
+    showPromissory();
+
+    setTimeout(()=>{
+        document.getElementById("promissoryLoanSearch").value =
+            loans[index].id;
+
+        if(typeof aarveeOriginalLoadPromissory === "function"){
+            aarveeOriginalLoadPromissory();
+        }
+    },300);
+}
+
+function printCollectionCard(index){
+
+    const loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    if(!aarveeOwned(loans[index])){
+        alert("You cannot access another user's loan card.");
+        return;
+    }
+
+    const customers =
+        JSON.parse(localStorage.getItem("customers")) || [];
+
+    const customer =
+        customers.find(c => c.id === loans[index].customerId);
+
+    if(!aarveeOwned(customer)){
+        alert("Customer not found.");
+        return;
+    }
+
+    const el =
+        document.getElementById("loanCardSearch");
+
+    if(el){
+        el.value = loans[index].id;
+        loadLoanCard();
+        return;
+    }
+
+    alert(
+        "Collection Card\n\n" +
+        "Customer : " + customer.name +
+        "\nLoan : " + loans[index].id +
+        "\nAmount : ₹" + loans[index].amount
+    );
+}
+
+function loadLoanCard(){
+
+    if(!aarveeUserRequired()) return;
+
+    const loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loanId =
+        document.getElementById("loanCardSearch")?.value.trim();
+
+    const loan =
+        loans.find(l => l.id == loanId);
+
+    if(!aarveeOwned(loan)){
+        alert("Loan not found.");
+        return;
+    }
+
+    if(typeof aarveeOriginalLoadLoanCard === "function"){
+        return aarveeOriginalLoadLoanCard();
+    }
+}
+
+function editLoan(index){
+
+    const loans = JSON.parse(localStorage.getItem("loans")) || [];
+    const loan = loans[index];
+
+    if(!aarveeOwned(loan)){
+        alert("You cannot edit another user's loan.");
+        return;
+    }
+
+    /* Preserve the existing edit form behaviour, but only for the
+       logged-in user's loan. */
+    editingLoanIndex = index;
+    openLoanModal();
+
+    setTimeout(function(){
+        const customer = document.getElementById("loanCustomer");
+        const amount = document.getElementById("loanAmount");
+        const processing = document.getElementById("processingFee");
+        const insurance = document.getElementById("insuranceFee");
+        const date = document.getElementById("loanDate");
+        const type = document.getElementById("loanType");
+        const interest = document.getElementById("loanInterest");
+        const weeks = document.getElementById("loanWeeks");
+
+        if(customer) customer.value = loan.customerId || "";
+        if(amount) amount.value = loan.amount || 0;
+        if(processing) processing.value = loan.processing || 0;
+        if(insurance) insurance.value = loan.insurance || 0;
+        if(date) date.value = loan.loanDate || "";
+        if(type) type.value = loan.loanType || "";
+        if(interest) interest.value = loan.interest || 0;
+        if(weeks) weeks.value = loan.weeks || 1;
+
+        loadCustomerGuarantor();
+    },100);
+}
+
+/* ---------- SIGNED PROMISSORY FILES ---------- */
+
+function uploadSignedPromissory(){
+
+    if(!aarveeUserRequired()) return;
+
+    const loanId =
+        document.getElementById("promissoryLoanSearch").value;
+
+    const loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    const loan =
+        loans.find(l => l.id == loanId);
+
+    if(!aarveeOwned(loan)){
+        alert("Loan not found.");
+        return;
+    }
+
+    const file =
+        document.getElementById("signedPromissoryFile").files[0];
+
+    if(!file){
+        alert("Select a file.");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        const docs =
+            JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+        docs[loanId] = {
+            ownerUser: aarveeCurrentUser(),
+            name:file.name,
+            file:e.target.result,
+            date:new Date().toLocaleString()
+        };
+
+        localStorage.setItem(
+            "signedPromissory",
+            JSON.stringify(docs)
+        );
+
+        alert("Signed Promissory Uploaded.");
+
+        if(typeof aarveeOriginalLoadPromissory === "function"){
+            aarveeOriginalLoadPromissory();
+        }
+    };
+
+    reader.readAsDataURL(file);
+}
+
+function downloadSignedPromissory(){
+
+    const loanId =
+        document.getElementById("promissoryLoanSearch").value;
+
+    const loans =
+        JSON.parse(localStorage.getItem("loans")) || [];
+
+    if(!aarveeOwned(loans.find(l => l.id == loanId))){
+        alert("Loan not found.");
+        return;
+    }
+
+    const docs =
+        JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+    const doc = docs[loanId];
+
+    if(!doc || (doc.ownerUser && doc.ownerUser !== aarveeCurrentUser())){
+        alert("No file uploaded.");
+        return;
+    }
+
+    const a = document.createElement("a");
+    a.href = doc.file;
+    a.download = doc.name;
+    a.click();
+}
+
+function deleteSignedPromissory(){
+
+    const loanId =
+        document.getElementById("promissoryLoanSearch").value;
+
+    const docs =
+        JSON.parse(localStorage.getItem("signedPromissory")) || {};
+
+    const doc = docs[loanId];
+
+    if(!doc || (doc.ownerUser && doc.ownerUser !== aarveeCurrentUser())){
+        alert("No file found.");
+        return;
+    }
+
+    if(confirm("Delete this signed file?")){
+
+        delete docs[loanId];
+
+        localStorage.setItem(
+            "signedPromissory",
+            JSON.stringify(docs)
+        );
+
+        if(typeof aarveeOriginalLoadPromissory === "function"){
+            aarveeOriginalLoadPromissory();
+        }
+    }
+}
+
+/* ---------- USER-SCOPED BACKUP ---------- */
+
+function exportBackup(){
+
+    if(!aarveeUserRequired()) return;
+
+    const backup = {
+        ownerUser: aarveeCurrentUser(),
+        groups:aarveeOwnedList("groups"),
+        customers:aarveeOwnedList("customers"),
+        loans:aarveeOwnedList("loans"),
+        guarantors:aarveeOwnedList("guarantors"),
+        history:aarveeOwnedList("collectionHistory"),
+        expenses:aarveeOwnedList("expenses"),
+        documents:aarveeOwnedList("documents")
+    };
+
+    const blob = new Blob(
+        [JSON.stringify(backup,null,2)],
+        {type:"application/json"}
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download =
+        "AARVEE_Backup_" + aarveeCurrentUser() + ".json";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+function restoreBackup(event){
+
+    if(!aarveeUserRequired()) return;
+
+    const file = event.target.files[0];
+
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        try{
+
+            const data = JSON.parse(e.target.result);
+            const current = aarveeCurrentUser();
+
+            if(data.ownerUser && data.ownerUser !== current){
+                alert("This backup belongs to another user.");
+                return;
+            }
+
+            const replaceOwned = (key, incoming) => {
+
+                const all =
+                    JSON.parse(localStorage.getItem(key)) || [];
+
+                const withoutMine =
+                    all.filter(item => item.ownerUser !== current);
+
+                const mine =
+                    (incoming || []).map(item => ({
+                        ...item,
+                        ownerUser: current
+                    }));
+
+                localStorage.setItem(
+                    key,
+                    JSON.stringify(withoutMine.concat(mine))
+                );
+            };
+
+            replaceOwned("groups",data.groups);
+            replaceOwned("customers",data.customers);
+            replaceOwned("loans",data.loans);
+            replaceOwned("guarantors",data.guarantors);
+            replaceOwned("collectionHistory",data.history);
+            replaceOwned("expenses",data.expenses);
+            replaceOwned("documents",data.documents);
+
+            alert("Your backup was restored successfully.");
+
+            showDashboard();
+
+        }catch(err){
+
+            alert("Invalid backup file.");
+
+        }
+    };
+
+    reader.readAsText(file);
+}
+
+/* ---------- INITIAL OWNER-SAFE EXISTING DATA ----------
+   Existing records created before this feature have no ownerUser.
+   They are intentionally hidden from all three users rather than
+   accidentally exposing one user's old records to another user.
+   New records are automatically tagged to the logged-in user.
+   --------------------------------------------------------- */
+
 </script>
 </body>
 </html>
