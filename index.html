@@ -1042,6 +1042,63 @@ table button{
     object-fit:contain;
 }
 
+
+/* ===== AARVEE LMS RESPONSIVE: TABLET + MOBILE ===== */
+html,body{max-width:100%;overflow-x:hidden}
+img,video,canvas{max-width:100%}
+.table-container,.table-responsive,.data-table-container{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:1100px){
+ .sidebar{width:210px!important;padding:20px!important}
+ .main{padding:24px!important}
+ .cards,.dashboard,.dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .form-grid textarea{grid-column:1/3!important}
+ .modal-box{width:min(92vw,650px)!important;max-height:90vh;overflow-y:auto}
+}
+@media(max-width:768px){
+ body{overflow:auto!important}
+ .app{min-height:100vh;height:auto!important;display:block!important}
+ .sidebar{position:sticky!important;top:0;left:0;z-index:1000;width:100%!important;height:auto!important;min-height:0!important;padding:10px 12px!important;display:flex;align-items:center;gap:12px;overflow-x:auto;white-space:nowrap;box-shadow:0 3px 15px rgba(0,0,0,.18)}
+ .brand{flex:0 0 auto;margin:0!important;padding-right:10px;border-right:1px solid rgba(255,255,255,.18)}
+ .brand span{display:none!important}
+ .brand i{font-size:25px}
+ .sidebar ul{display:flex!important;gap:6px;margin:0!important;padding:0!important;min-width:max-content}
+ .sidebar li{display:inline-flex!important;align-items:center;justify-content:center;gap:7px;margin:0!important;padding:10px 12px!important;border-radius:9px!important;font-size:13px;flex:0 0 auto}
+ .sidebar li i{font-size:14px}
+ .main{width:100%!important;padding:16px!important;overflow:visible!important}
+ header{gap:12px;margin-bottom:18px!important;flex-wrap:wrap}
+ header h2,#pageTitle{font-size:22px!important}
+ .profile{width:100%;justify-content:flex-end;gap:10px!important}
+ .profile img{width:38px!important;height:38px!important}
+ .cards,.dashboard{grid-template-columns:1fr!important;gap:14px!important}
+ .dashboard-grid{grid-template-columns:1fr!important}
+ .card{padding:18px!important}.card h1{font-size:28px!important}
+ .page-header{flex-direction:column;align-items:stretch!important;gap:12px}
+ .page-header button,.page-header .btn{width:100%}
+ .customer-toolbar input,#searchCustomer,#searchGroup,#searchLoan,#searchGuarantor,#searchEMI,#searchCollection,#historySearch,#expenseSearch,#dailySearch,#searchDocument{width:100%!important;max-width:100%!important}
+ .form-grid{grid-template-columns:1fr!important;gap:12px!important}
+ .form-grid textarea{grid-column:1!important}
+ .form-row,.form-columns,.two-column,.three-column{grid-template-columns:1fr!important;flex-direction:column!important}
+ .modal{padding:12px;align-items:center}
+ .modal-box{width:100%!important;max-width:100%!important;max-height:92vh!important;overflow-y:auto;padding:20px!important;border-radius:15px!important}
+ .modal-header{position:sticky;top:0;background:#fff;z-index:2;padding-bottom:12px}
+ .modal-footer{position:sticky;bottom:0;background:#fff;padding-top:12px}
+ .modal-footer button{width:100%}
+ table{min-width:700px}
+ .table-container,.customer-table{overflow-x:auto!important;display:block;white-space:nowrap}
+ .panel,.table-container{width:100%!important;margin-bottom:16px}
+ #loginPage{padding:16px}
+ .login-box{width:100%!important;max-width:400px!important;padding:28px 22px 30px!important;border-radius:18px!important}
+ .login-logo{width:145px!important;height:145px!important}
+ .login-box h1{font-size:22px!important}
+ .btn,.btn-primary,.btn-info,.btn-danger{max-width:100%}
+}
+@media(max-width:430px){
+ .main{padding:11px!important}.sidebar{padding:8px!important}.sidebar li{padding:9px 10px!important;font-size:12px}
+ header h2,#pageTitle{font-size:20px!important}.card{border-radius:13px!important}.modal-box{padding:16px!important}
+ .login-logo{width:125px!important;height:125px!important}
+}
+
 </style>
 
 </style>
@@ -1275,7 +1332,7 @@ const users = {
 
 vivek: "2710",
 
-general: "1234",
+generol: "1234",
 
 rasak: "0786"
 
@@ -6750,12 +6807,12 @@ showStep(currentStep);
 
 /* =========================================================
    AARVEE USER DATA ISOLATION
-   3 USERS ONLY: vivek / general / rasak
+   3 USERS ONLY: vivek / generol / rasak
    ========================================================= */
 
 const AARVEE_USERS = {
     vivek: "2710",
-    general: "1234",
+    generol: "1234",
     rasak: "0786"
 };
 
