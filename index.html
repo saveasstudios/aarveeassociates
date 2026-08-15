@@ -2652,6 +2652,7 @@ body{
 }
 
 #loanCardPrintArea{
+    display:block !important;
     width:148mm !important;
     min-width:148mm !important;
     max-width:148mm !important;
@@ -3374,6 +3375,31 @@ w.document.write(`
     margin:10mm;
 }
 
+html,body{
+    width:190mm;
+    margin:0 auto;
+    padding:0;
+    background:#fff;
+}
+
+html{
+    overflow:visible;
+}
+
+body{
+    min-height:0 !important;
+}
+
+.page{
+    width:190mm !important;
+    min-height:0 !important;
+    height:auto !important;
+    margin:0 auto !important;
+    padding:0 !important;
+    page-break-after:auto !important;
+    break-after:auto !important;
+}
+
 body{
     margin:0;
     font-family:Arial,Helvetica,sans-serif;
@@ -3620,6 +3646,7 @@ ${printContent}
 </div>
 
 </body>
+</html>
 
 `);
 
