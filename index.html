@@ -785,6 +785,7 @@ table button{
 =========================== */
 
 .loan-page{
+    font-family:"LT-TM-026","Noto Sans Tamil","Latha",Arial,sans-serif !important;
     width:148mm;
     min-height:210mm;
     margin:auto;
@@ -1097,6 +1098,15 @@ img,video,canvas{max-width:100%}
  .main{padding:11px!important}.sidebar{padding:8px!important}.sidebar li{padding:9px 10px!important;font-size:12px}
  header h2,#pageTitle{font-size:20px!important}.card{border-radius:13px!important}.modal-box{padding:16px!important}
  .login-logo{width:125px!important;height:125px!important}
+}
+
+
+/* ===== TAMIL FONT: LT-TM-026 ===== */
+.tamil-text,
+.tamil,
+[lang="ta"],
+[lang^="ta-"]{
+    font-family:"LT-TM-026", "Noto Sans Tamil", "Latha", sans-serif !important;
 }
 
 </style>
@@ -2338,31 +2348,100 @@ function aarveeOriginalLoadLoanCard(){
     }
 
     /* =========================
-       BACK SIDE - ONE ROW PER WEEK
-       12 WEEKS = 12 ROWS
-       16 WEEKS = 16 ROWS
+       BACK SIDE - 16 ROWS PER PAGE
+       If weeks exceed 16, additional
+       back pages are created automatically.
     ========================= */
 
-    let scheduleRows = "";
-
-    for(let i = 1; i <= weeks; i++){
-
-        scheduleRows += `
-        <tr>
-            <td>${i}</td>
-            <td>${getEMIDate(loanDate, i)}</td>
-            <td>₹${emi.toFixed(2)}</td>
-            <td></td>
-            <td></td>
-        </tr>
-        `;
-    }
+    let backPages = "";
 
     if(weeks === 0){
-        scheduleRows = `
-        <tr>
-            <td colspan="5">No EMI Schedule</td>
-        </tr>`;
+
+        backPages = `
+        <div class="loan-page loan-back-page">
+
+            <h3 class="weekly-title">
+                WEEKLY COLLECTION SCHEDULE
+            </h3>
+
+            <table class="weekly-loan-card weekly-schedule-table">
+                <thead>
+                    <tr>
+                        <th>S.NO</th>
+                        <th>DATE</th>
+                        <th>EMI AMOUNT (₹)</th>
+                        <th>SAVINGS (₹)</th>
+                        <th>SIGN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5">No EMI Schedule</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>`;
+    }else{
+
+        const rowsPerPage = 16;
+        const totalBackPages = Math.ceil(weeks / rowsPerPage);
+
+        for(let pageNo = 0; pageNo < totalBackPages; pageNo++){
+
+            const startWeek = (pageNo * rowsPerPage) + 1;
+            const endWeek = Math.min(
+                startWeek + rowsPerPage - 1,
+                weeks
+            );
+
+            let pageRows = "";
+
+            for(let i = startWeek; i <= endWeek; i++){
+
+                pageRows += `
+                <tr>
+                    <td>${i}</td>
+                    <td>${getEMIDate(loanDate, i)}</td>
+                    <td>₹${emi.toFixed(2)}</td>
+                    <td class="savings-cell"></td>
+                    <td class="sign-cell"></td>
+                </tr>
+                `;
+            }
+
+            backPages += `
+            <div class="loan-page loan-back-page">
+
+                <h3 class="weekly-title">
+                    WEEKLY COLLECTION SCHEDULE
+                    ${totalBackPages > 1
+                        ? `<span class="schedule-page-number">
+                            PAGE ${pageNo + 1} OF ${totalBackPages}
+                           </span>`
+                        : ""}
+                </h3>
+
+                <table class="weekly-loan-card weekly-schedule-table">
+
+                    <thead>
+                        <tr>
+                            <th>S.NO</th>
+                            <th>DATE</th>
+                            <th>EMI AMOUNT (₹)</th>
+                            <th>SAVINGS (₹)</th>
+                            <th>SIGN</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        ${pageRows}
+                    </tbody>
+
+                </table>
+
+            </div>`;
+        }
     }
 
     document.getElementById("loanCardContent").innerHTML = `
@@ -2520,34 +2599,11 @@ function aarveeOriginalLoadLoanCard(){
 
 
         <!-- =====================
-             BACK PAGE - EMI REGISTER
+             BACK PAGE(S) - EMI REGISTER
+             16 ROWS PER PAGE
         ===================== -->
 
-        <div class="loan-page loan-back-page">
-
-            <h3 class="weekly-title">
-                WEEKLY COLLECTION SCHEDULE
-            </h3>
-
-            <table class="weekly-loan-card weekly-schedule-table">
-
-                <thead>
-                    <tr>
-                        <th>S.NO</th>
-                        <th>DATE</th>
-                        <th>EMI AMOUNT (₹)</th>
-                        <th>SAVINGS (₹)</th>
-                        <th>SIGN</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    ${scheduleRows}
-                </tbody>
-
-            </table>
-
-        </div>
+        ${backPages}
 
     </div>
 
@@ -2604,56 +2660,79 @@ ${document.querySelector("style").innerHTML}
     .loan-front-page,
     .loan-back-page{
         page-break-after:always;
+        break-after:page;
+    }
+
+    .loan-card-print-area .loan-page:last-child{
+        page-break-after:auto;
+        break-after:auto;
     }
 
     .weekly-schedule-table{
         width:100%;
+        max-width:100%;
         border-collapse:collapse;
         table-layout:fixed;
-        font-size:11px;
+        font-size:10px;
+        box-sizing:border-box;
     }
 
     .weekly-schedule-table th{
         background:#0F766E;
         color:#fff;
         border:1px solid #000;
-        padding:5px 3px;
+        padding:5px 2px;
         text-align:center;
         font-weight:700;
+        line-height:1.1;
+        overflow:hidden;
     }
 
     .weekly-schedule-table td{
         border:1px solid #000;
-        padding:0 3px;
-        height:22px;
-        line-height:1;
+        padding:0 2px;
+        height:25px;
+        line-height:1.1;
         text-align:center;
         vertical-align:middle;
+        overflow:hidden;
+        white-space:nowrap;
     }
 
     .weekly-schedule-table th:nth-child(1),
     .weekly-schedule-table td:nth-child(1){
-        width:12%;
+        width:10%;
     }
 
     .weekly-schedule-table th:nth-child(2),
     .weekly-schedule-table td:nth-child(2){
-        width:25%;
+        width:22%;
     }
 
     .weekly-schedule-table th:nth-child(3),
     .weekly-schedule-table td:nth-child(3){
-        width:27%;
+        width:25%;
     }
 
     .weekly-schedule-table th:nth-child(4),
     .weekly-schedule-table td:nth-child(4){
-        width:18%;
+        width:20%;
     }
 
     .weekly-schedule-table th:nth-child(5),
     .weekly-schedule-table td:nth-child(5){
-        width:18%;
+        width:23%;
+    }
+
+    .weekly-schedule-table .sign-cell{
+        height:25px;
+    }
+
+    .schedule-page-number{
+        display:block;
+        font-size:10px;
+        font-weight:600;
+        margin-top:3px;
     }
 
     .btn,
@@ -2665,6 +2744,9 @@ ${document.querySelector("style").innerHTML}
 body{
     margin:0;
     background:#fff;
+}
+.tamil-text,.tamil,[lang="ta"],[lang^="ta-"]{
+    font-family:"LT-TM-026","Noto Sans Tamil","Latha",sans-serif !important;
 }
 
 </style>
@@ -2695,22 +2777,40 @@ function printLoanCardSide(side){
         return;
     }
 
-    let pageClass = side === "back"
-        ? ".loan-back-page"
-        : ".loan-front-page";
-
-    const page = card.querySelector(pageClass);
-
-    if(!page){
-        alert("Loan card page not found.");
-        return;
-    }
-
     const win = window.open("", "_blank", "width=900,height=1000");
 
     if(!win){
         alert("Please allow pop-ups to print the loan card.");
         return;
+    }
+
+    let printContent = "";
+
+    if(side === "back"){
+
+        const pages = card.querySelectorAll(".loan-back-page");
+
+        if(!pages.length){
+            win.close();
+            alert("Loan card back page not found.");
+            return;
+        }
+
+        pages.forEach(page => {
+            printContent += page.outerHTML;
+        });
+
+    }else{
+
+        const page = card.querySelector(".loan-front-page");
+
+        if(!page){
+            win.close();
+            alert("Loan card front page not found.");
+            return;
+        }
+
+        printContent = page.outerHTML;
     }
 
     win.document.write(`
@@ -2741,9 +2841,25 @@ html,body{
     margin:0 !important;
     padding:8mm !important;
     box-sizing:border-box !important;
+    page-break-after:always !important;
+    break-after:page !important;
+    overflow:hidden !important;
+}
+
+.loan-page:last-child{
     page-break-after:auto !important;
     break-after:auto !important;
-    overflow:hidden;
+}
+
+.weekly-schedule-table{
+    width:100% !important;
+    max-width:100% !important;
+    table-layout:fixed !important;
+}
+
+.weekly-schedule-table th,
+.weekly-schedule-table td{
+    box-sizing:border-box !important;
 }
 
 .btn,.no-print{
@@ -2752,7 +2868,7 @@ html,body{
 </style>
 </head>
 <body>
-${page.outerHTML}
+${printContent}
 </body>
 </html>`);
 
@@ -3232,6 +3348,9 @@ body{
     font-family:Arial,Helvetica,sans-serif;
     color:#000;
     background:#fff;
+}
+.tamil-text,.tamil,[lang="ta"],[lang^="ta-"]{
+    font-family:"LT-TM-026","Noto Sans Tamil","Latha",sans-serif !important;
 }
 
 .page{
