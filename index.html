@@ -2496,11 +2496,23 @@ function aarveeOriginalLoadLoanCard(){
 
             <br>
 
-            <div class="no-print" style="text-align:center;">
+            <div class="no-print" style="text-align:center;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px;">
                 <button
                     class="btn btn-success"
                     onclick="printLoanCard()">
-                    🖨 Print Loan Card
+                    🖨 Print Front & Back
+                </button>
+
+                <button
+                    class="btn btn-info"
+                    onclick="printLoanCardSide('front')">
+                    🖨 Print Front
+                </button>
+
+                <button
+                    class="btn btn-warning"
+                    onclick="printLoanCardSide('back')">
+                    🖨 Print Back
                 </button>
             </div>
 
@@ -2557,7 +2569,7 @@ function printLoanCard(){
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Loan Card</title>
+<title></title>
 
 <style>
 
@@ -2668,11 +2680,92 @@ ${card.innerHTML}
     win.document.close();
 
     setTimeout(function(){
+        win.document.title = "";
         win.focus();
         win.print();
         win.close();
     },500);
 }
+function printLoanCardSide(side){
+
+    const card = document.getElementById("loanCardPrintArea");
+
+    if(!card){
+        alert("Loan card not found.");
+        return;
+    }
+
+    let pageClass = side === "back"
+        ? ".loan-back-page"
+        : ".loan-front-page";
+
+    const page = card.querySelector(pageClass);
+
+    if(!page){
+        alert("Loan card page not found.");
+        return;
+    }
+
+    const win = window.open("", "_blank", "width=900,height=1000");
+
+    if(!win){
+        alert("Please allow pop-ups to print the loan card.");
+        return;
+    }
+
+    win.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<style>
+${document.querySelector("style").innerHTML}
+
+@page{
+    size:A5 portrait;
+    margin:0;
+}
+
+html,body{
+    width:148mm;
+    margin:0;
+    padding:0;
+    background:#fff;
+}
+
+.loan-page{
+    width:148mm !important;
+    height:210mm !important;
+    min-height:210mm !important;
+    margin:0 !important;
+    padding:8mm !important;
+    box-sizing:border-box !important;
+    page-break-after:auto !important;
+    break-after:auto !important;
+    overflow:hidden;
+}
+
+.btn,.no-print{
+    display:none !important;
+}
+</style>
+</head>
+<body>
+${page.outerHTML}
+</body>
+</html>`);
+
+    win.document.close();
+
+    setTimeout(function(){
+        win.document.title = "";
+        win.focus();
+        win.print();
+        win.close();
+    },500);
+}
+
 function numberToWordsIndian(num) {
 
     num = Math.floor(Number(num));
@@ -3125,7 +3218,7 @@ w.document.write(`
 
 <head>
 
-<title>Promissory Note</title>
+<title></title>
 
 <style>
 
