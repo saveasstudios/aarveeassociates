@@ -2620,6 +2620,11 @@ function printLoanCard(){
 
     const win = window.open("", "_blank", "width=900,height=1000");
 
+    if(!win){
+        alert("Please allow pop-ups to print the loan card.");
+        return;
+    }
+
     win.document.write(`
 <!DOCTYPE html>
 <html>
@@ -2628,133 +2633,115 @@ function printLoanCard(){
 <title></title>
 
 <style>
+${Array.from(document.querySelectorAll("style")).map(s => s.innerHTML).join("\n")}
 
-${document.querySelector("style").innerHTML}
-
+/* ===== LOAN CARD PRINT OVERRIDE ===== */
 @page{
     size:A5 portrait;
     margin:0;
 }
 
-@media print{
-
-    html,body{
-        width:148mm;
-        margin:0;
-        padding:0;
-        background:#fff;
-    }
-
-    .loan-page{
-        width:148mm;
-        min-height:210mm;
-        height:210mm;
-        margin:0;
-        padding:8mm;
-        box-sizing:border-box;
-        page-break-after:always;
-        break-after:page;
-        overflow:hidden;
-    }
-
-    .loan-front-page,
-    .loan-back-page{
-        page-break-after:always;
-        break-after:page;
-    }
-
-    .loan-card-print-area .loan-page:last-child{
-        page-break-after:auto;
-        break-after:auto;
-    }
-
-    .weekly-schedule-table{
-        width:100%;
-        max-width:100%;
-        border-collapse:collapse;
-        table-layout:fixed;
-        font-size:10px;
-        box-sizing:border-box;
-    }
-
-    .weekly-schedule-table th{
-        background:#0F766E;
-        color:#fff;
-        border:1px solid #000;
-        padding:5px 2px;
-        text-align:center;
-        font-weight:700;
-        line-height:1.1;
-        overflow:hidden;
-    }
-
-    .weekly-schedule-table td{
-        border:1px solid #000;
-        padding:0 2px;
-        height:25px;
-        line-height:1.1;
-        text-align:center;
-        vertical-align:middle;
-        overflow:hidden;
-        white-space:nowrap;
-    }
-
-    .weekly-schedule-table th:nth-child(1),
-    .weekly-schedule-table td:nth-child(1){
-        width:10%;
-    }
-
-    .weekly-schedule-table th:nth-child(2),
-    .weekly-schedule-table td:nth-child(2){
-        width:22%;
-    }
-
-    .weekly-schedule-table th:nth-child(3),
-    .weekly-schedule-table td:nth-child(3){
-        width:25%;
-    }
-
-    .weekly-schedule-table th:nth-child(4),
-    .weekly-schedule-table td:nth-child(4){
-        width:20%;
-    }
-
-    .weekly-schedule-table th:nth-child(5),
-    .weekly-schedule-table td:nth-child(5){
-        width:23%;
-    }
-
-    .weekly-schedule-table .sign-cell{
-        height:25px;
-    }
-
-    .schedule-page-number{
-        display:block;
-        font-size:10px;
-        font-weight:600;
-        margin-top:3px;
-    }
-
-    .btn,
-    .no-print{
-        display:none !important;
-    }
-}
-
+html,
 body{
-    margin:0;
-    background:#fff;
+    width:148mm !important;
+    min-width:148mm !important;
+    max-width:148mm !important;
+    margin:0 !important;
+    padding:0 !important;
+    background:#fff !important;
 }
-.tamil-text,.tamil,[lang="ta"],[lang^="ta-"]{
-    font-family:"LT-TM-026","Noto Sans Tamil","Latha",sans-serif !important;
+
+#loanCardPrintArea{
+    width:148mm !important;
+    min-width:148mm !important;
+    max-width:148mm !important;
+    margin:0 !important;
+    padding:0 !important;
+}
+
+.loan-page,
+.loan-front-page,
+.loan-back-page{
+    display:block !important;
+    visibility:visible !important;
+    width:148mm !important;
+    height:210mm !important;
+    min-height:210mm !important;
+    max-height:210mm !important;
+    margin:0 !important;
+    padding:8mm !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+    page-break-after:always !important;
+    break-after:page !important;
+}
+
+.loan-page:last-child,
+.loan-back-page:last-child{
+    page-break-after:auto !important;
+    break-after:auto !important;
+}
+
+.weekly-schedule-table{
+    display:table !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    border-collapse:collapse !important;
+    table-layout:fixed !important;
+    font-size:10px !important;
+}
+
+.weekly-schedule-table th,
+.weekly-schedule-table td{
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+}
+
+.weekly-schedule-table th:nth-child(1),
+.weekly-schedule-table td:nth-child(1){ width:10% !important; }
+
+.weekly-schedule-table th:nth-child(2),
+.weekly-schedule-table td:nth-child(2){ width:22% !important; }
+
+.weekly-schedule-table th:nth-child(3),
+.weekly-schedule-table td:nth-child(3){ width:25% !important; }
+
+.weekly-schedule-table th:nth-child(4),
+.weekly-schedule-table td:nth-child(4){ width:20% !important; }
+
+.weekly-schedule-table th:nth-child(5),
+.weekly-schedule-table td:nth-child(5){ width:23% !important; }
+
+.weekly-schedule-table .sign-cell{
+    display:table-cell !important;
+    visibility:visible !important;
+    width:23% !important;
+    height:25px !important;
+}
+
+.weekly-schedule-table thead{
+    display:table-header-group !important;
+}
+
+.weekly-schedule-table tbody{
+    display:table-row-group !important;
+}
+
+.weekly-schedule-table tr{
+    page-break-inside:avoid !important;
+    break-inside:avoid !important;
+}
+
+.btn,
+.no-print{
+    display:none !important;
 }
 
 </style>
 </head>
 <body>
-
-${card.innerHTML}
-
+${card.outerHTML}
 </body>
 </html>
     `);
@@ -2768,6 +2755,7 @@ ${card.innerHTML}
         win.close();
     },500);
 }
+
 function printLoanCardSide(side){
 
     const card = document.getElementById("loanCardPrintArea");
@@ -2819,31 +2807,39 @@ function printLoanCardSide(side){
 <head>
 <meta charset="UTF-8">
 <title></title>
-<style>
-${document.querySelector("style").innerHTML}
 
+<style>
+${Array.from(document.querySelectorAll("style")).map(s => s.innerHTML).join("\n")}
+
+/* ===== SINGLE-SIDE LOAN CARD PRINT OVERRIDE ===== */
 @page{
     size:A5 portrait;
     margin:0;
 }
 
-html,body{
-    width:148mm;
-    margin:0;
-    padding:0;
-    background:#fff;
+html,
+body{
+    width:148mm !important;
+    min-width:148mm !important;
+    max-width:148mm !important;
+    margin:0 !important;
+    padding:0 !important;
+    background:#fff !important;
 }
 
 .loan-page{
+    display:block !important;
+    visibility:visible !important;
     width:148mm !important;
     height:210mm !important;
     min-height:210mm !important;
+    max-height:210mm !important;
     margin:0 !important;
     padding:8mm !important;
     box-sizing:border-box !important;
+    overflow:hidden !important;
     page-break-after:always !important;
     break-after:page !important;
-    overflow:hidden !important;
 }
 
 .loan-page:last-child{
@@ -2852,19 +2848,54 @@ html,body{
 }
 
 .weekly-schedule-table{
+    display:table !important;
     width:100% !important;
     max-width:100% !important;
+    min-width:0 !important;
+    border-collapse:collapse !important;
     table-layout:fixed !important;
 }
 
-.weekly-schedule-table th,
-.weekly-schedule-table td{
-    box-sizing:border-box !important;
+.weekly-schedule-table th:nth-child(1),
+.weekly-schedule-table td:nth-child(1){ width:10% !important; }
+
+.weekly-schedule-table th:nth-child(2),
+.weekly-schedule-table td:nth-child(2){ width:22% !important; }
+
+.weekly-schedule-table th:nth-child(3),
+.weekly-schedule-table td:nth-child(3){ width:25% !important; }
+
+.weekly-schedule-table th:nth-child(4),
+.weekly-schedule-table td:nth-child(4){ width:20% !important; }
+
+.weekly-schedule-table th:nth-child(5),
+.weekly-schedule-table td:nth-child(5){ width:23% !important; }
+
+.weekly-schedule-table .sign-cell{
+    display:table-cell !important;
+    visibility:visible !important;
+    width:23% !important;
+    height:25px !important;
 }
 
-.btn,.no-print{
+.weekly-schedule-table thead{
+    display:table-header-group !important;
+}
+
+.weekly-schedule-table tbody{
+    display:table-row-group !important;
+}
+
+.weekly-schedule-table tr{
+    page-break-inside:avoid !important;
+    break-inside:avoid !important;
+}
+
+.btn,
+.no-print{
     display:none !important;
 }
+
 </style>
 </head>
 <body>
