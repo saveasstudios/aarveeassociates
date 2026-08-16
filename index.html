@@ -1352,6 +1352,90 @@ let editingLoanIndex = -1;
 let customerPhoto="";
 let aadhaarFrontData = "";
 let aadhaarBackData = "";
+let customerPhotoKey = "";
+let aadhaarFrontKey = "";
+let aadhaarBackKey = "";
+
+const AARVEE_IMAGE_DB = "AARVEE_ImageStorage";
+const AARVEE_IMAGE_STORE = "images";
+
+function aarveeOpenImageDB(){
+    return new Promise((resolve,reject)=>{
+        if(!window.indexedDB){ reject(new Error("IndexedDB is not supported by this browser.")); return; }
+        const request = indexedDB.open(AARVEE_IMAGE_DB,1);
+        request.onupgradeneeded = e => {
+            const db=e.target.result;
+            if(!db.objectStoreNames.contains(AARVEE_IMAGE_STORE)) db.createObjectStore(AARVEE_IMAGE_STORE);
+        };
+        request.onsuccess=()=>resolve(request.result);
+        request.onerror=()=>reject(request.error || new Error("Unable to open image storage."));
+    });
+}
+function aarveeDataUrlToBlob(dataUrl){
+    if(!dataUrl || typeof dataUrl!=="string" || !dataUrl.startsWith("data:")) return null;
+    const parts=dataUrl.split(","), meta=parts[0], binary=atob(parts[1]||"");
+    const bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+    const mime=(meta.match(/data:([^;]+)/)||[,"application/octet-stream"])[1];
+    return new Blob([bytes],{type:mime});
+}
+function aarveeBlobToDataUrl(blob){
+    return new Promise((resolve,reject)=>{
+        if(!blob){resolve("");return;}
+        const r=new FileReader(); r.onload=()=>resolve(r.result||""); r.onerror=()=>reject(r.error); r.readAsDataURL(blob);
+    });
+}
+async function aarveeSaveImage(key,dataUrl){
+    if(!key || !dataUrl) return;
+    const blob=aarveeDataUrlToBlob(dataUrl); if(!blob) return;
+    const db=await aarveeOpenImageDB();
+    await new Promise((resolve,reject)=>{
+        const tx=db.transaction(AARVEE_IMAGE_STORE,"readwrite");
+        tx.objectStore(AARVEE_IMAGE_STORE).put(blob,key);
+        tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error); tx.onabort=()=>reject(tx.error);
+    });
+    db.close();
+}
+async function aarveeGetImage(key){
+    if(!key) return "";
+    try{
+        const db=await aarveeOpenImageDB();
+        const blob=await new Promise((resolve,reject)=>{
+            const tx=db.transaction(AARVEE_IMAGE_STORE,"readonly");
+            const req=tx.objectStore(AARVEE_IMAGE_STORE).get(key);
+            req.onsuccess=()=>resolve(req.result||null); req.onerror=()=>reject(req.error);
+        });
+        db.close(); return await aarveeBlobToDataUrl(blob);
+    }catch(e){ console.warn("Image load failed",e); return ""; }
+}
+async function aarveeMigrateCustomerImages(){
+    const user=aarveeCurrentUser(); if(!user) return;
+    let customers; try{customers=JSON.parse(localStorage.getItem("customers")||"[]");}catch(e){return;}
+    if(!Array.isArray(customers)) return;
+    let changed=false;
+    for(const c of customers){
+        if(!c || c.ownerUser!==user) continue;
+        try{
+            if(c.photo && c.photo.startsWith("data:")){ const k=c.photoKey||c.id+"_photo"; await aarveeSaveImage(k,c.photo); c.photoKey=k; c.photo=""; changed=true; }
+            if(c.aadhaarFront && c.aadhaarFront.startsWith("data:")){ const k=c.aadhaarFrontKey||c.id+"_aadhaar_front"; await aarveeSaveImage(k,c.aadhaarFront); c.aadhaarFrontKey=k; c.aadhaarFront=""; changed=true; }
+            if(c.aadhaarBack && c.aadhaarBack.startsWith("data:")){ const k=c.aadhaarBackKey||c.id+"_aadhaar_back"; await aarveeSaveImage(k,c.aadhaarBack); c.aadhaarBackKey=k; c.aadhaarBack=""; changed=true; }
+        }catch(e){console.warn("Could not migrate customer image",c.id,e);}
+    }
+    if(changed){ try{localStorage.setItem("customers",JSON.stringify(customers));}catch(e){console.error(e);} }
+}
+async function aarveeLoadCustomerImages(customer){
+    if(!customer) return {photo:"",aadhaarFront:"",aadhaarBack:""};
+
+    let photo = customer.photo || "";
+    let aadhaarFront = customer.aadhaarFront || "";
+    let aadhaarBack = customer.aadhaarBack || "";
+
+    if(!photo && customer.photoKey) photo = await aarveeGetImage(customer.photoKey);
+    if(!aadhaarFront && customer.aadhaarFrontKey) aadhaarFront = await aarveeGetImage(customer.aadhaarFrontKey);
+    if(!aadhaarBack && customer.aadhaarBackKey) aadhaarBack = await aarveeGetImage(customer.aadhaarBackKey);
+
+    return {photo, aadhaarFront, aadhaarBack};
+}
 
 
 
@@ -1444,8 +1528,10 @@ function showPage(page){
     page.charAt(0).toUpperCase() + page.slice(1);
 
     if(page=="dashboard"){
-        loadDashboard();
-        showDashboard();
+        aarveeMigrateCustomerImages().finally(()=>{
+            loadDashboard();
+            showDashboard();
+        });
     }
 
     if(page=="groups"){
@@ -2262,7 +2348,7 @@ Select a Loan ID and click
 `;
 
 }
-function aarveeOriginalLoadLoanCard(){
+async function aarveeOriginalLoadLoanCard(){
 
     let loanId =
         document.getElementById("loanCardSearch").value.trim();
@@ -2292,6 +2378,8 @@ function aarveeOriginalLoadLoanCard(){
         alert("Customer Not Found");
         return;
     }
+    const customerImages = await aarveeLoadCustomerImages(customer);
+    customer.photo = customerImages.photo || "";
 
     /* =========================
        TOTAL CWF / INSURANCE
@@ -3003,7 +3091,7 @@ function formatPromissoryDate(dateValue) {
 
     return `${day}/${month}/${year}`;
 }
-function aarveeOriginalLoadPromissory(){
+async function aarveeOriginalLoadPromissory(){
 
     let loans =
         JSON.parse(localStorage.getItem("loans")) || [];
@@ -3033,6 +3121,11 @@ function aarveeOriginalLoadPromissory(){
 
         return;
     }
+
+    const customerImages = await aarveeLoadCustomerImages(customer);
+    customer.photo = customerImages.photo || "";
+    customer.aadhaarFront = customerImages.aadhaarFront || "";
+    customer.aadhaarBack = customerImages.aadhaarBack || "";
 
 
     /* =========================
@@ -3277,7 +3370,8 @@ function aarveeOriginalLoadPromissory(){
 
                 <img
                     src="${customer.photo || ''}"
-                    alt="Customer Photo">
+                    alt="Customer Photo"
+                    onerror="this.style.display='none';">
 
             </div>
 
@@ -3286,7 +3380,8 @@ function aarveeOriginalLoadPromissory(){
 
                 <img
                     src="${customer.aadhaarFront || ''}"
-                    alt="Aadhaar Front">
+                    alt="Aadhaar Front"
+                    onerror="this.style.display='none';">
 
             </div>
 
@@ -3295,7 +3390,8 @@ function aarveeOriginalLoadPromissory(){
 
                 <img
                     src="${customer.aadhaarBack || ''}"
-                    alt="Aadhaar Back">
+                    alt="Aadhaar Back"
+                    onerror="this.style.display='none';">
 
             </div>
 
@@ -3362,313 +3458,92 @@ function aarveeOriginalLoadPromissory(){
 
 }
 
-function printPromissory(){
+async function printPromissory(){
 
-let printContent = document.getElementById("promissoryPrint").innerHTML;
+    const source = document.getElementById("promissoryPrint");
+    if(!source){ alert("Promissory Note not loaded."); return; }
 
-let w = window.open("", "_blank");
+    // Clone the note so we can make sure all IndexedDB-backed images are
+    // converted to real data URLs before the print window is opened.
+    const clone = source.cloneNode(true);
 
-w.document.write(`
+    // Copy image sources from the current rendered note.
+    const sourceImages = Array.from(source.querySelectorAll("img"));
+    const cloneImages = Array.from(clone.querySelectorAll("img"));
+    sourceImages.forEach((img,i)=>{
+        if(cloneImages[i]) cloneImages[i].src = img.currentSrc || img.src || "";
+    });
 
+    // Remove broken/empty image elements rather than printing broken-image icons.
+    cloneImages.forEach(img=>{
+        if(!img.getAttribute("src")){
+            img.style.display="none";
+        }
+    });
+
+    const printContent = clone.innerHTML;
+    const w = window.open("", "_blank", "width=1000,height=1000");
+
+    if(!w){
+        alert("Please allow pop-ups to print the Promissory Note.");
+        return;
+    }
+
+    w.document.write(`
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
+<meta charset="UTF-8">
 <title></title>
-
 <style>
-
-@page{
-    size:A4 portrait;
-    margin:10mm;
-}
-
-html,body{
-    width:190mm;
-    margin:0 auto;
-    padding:0;
-    background:#fff;
-}
-
-html{
-    overflow:visible;
-}
-
-body{
-    min-height:0 !important;
-}
-
-.page{
-    width:190mm !important;
-    min-height:0 !important;
-    height:auto !important;
-    margin:0 auto !important;
-    padding:0 !important;
-    page-break-after:auto !important;
-    break-after:auto !important;
-}
-
-body{
-    margin:0;
-    font-family:Arial,Helvetica,sans-serif;
-    color:#000;
-    background:#fff;
-}
-.tamil-text,.tamil,[lang="ta"],[lang^="ta-"]{
-    font-family:"LT-TM-026","Noto Sans Tamil","Latha",sans-serif !important;
-}
-
-.page{
-    width:190mm;
-    min-height:277mm;
-    margin:auto;
-}
-
-h1{
-    text-align:center;
-    font-size:24px;
-    margin:0;
-    margin-bottom:20px;
-    border-bottom:2px solid #000;
-    display:inline-block;
-    padding-bottom:5px;
-}
-
-.title{
-    text-align:center;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    table-layout:fixed;
-    font-size:14px;
-}
-
-th,
-td{
-    padding:4px;
-    height:34px;
-}
-
-td{
-    padding:6px;
-    vertical-align:top;
-    font-size:16px;
-}
-.promissory-details{
-    width:100%;
-    border-collapse:collapse;
-    table-layout:fixed;
-    margin-top:10px;
-}
-
-.promissory-details td{
-    border:none;
-    height:auto;
-    padding:7px 5px;
-    vertical-align:top;
-    font-size:15px;
-}
-
-.promissory-details .label{
-    width:22%;
-    font-weight:bold;
-    white-space:nowrap;
-}
-
-.promissory-details .colon{
-    width:3%;
-    text-align:center;
-    font-weight:bold;
-}
-
-.promissory-details .value{
-    width:75%;
-    font-weight:500;
-    word-wrap:break-word;
-}
-
-.promissory-details .left-value{
-    width:43%;
-}
-
-.promissory-details .date-label{
-    width:9%;
-    font-weight:bold;
-    text-align:right;
-}
-
-.promissory-details .date-value{
-    width:18%;
-    font-weight:600;
-    white-space:nowrap;
-}
-
-.promissory-details .amount-value{
-    font-weight:bold;
-    font-size:17px;
-}
-
-.promissory-details .amount-words{
-    font-weight:600;
-    text-transform:capitalize;
-}
-
-.paragraph{
-
-    text-align:justify;
-
-    line-height:30px;
-
-    font-size:17px;
-
-    margin-top:25px;
-
-}
-
-.thumb{
-
-    width:100px;
-
-    height:100px;
-
-    border:1px solid #000;
-
-    float:right;
-
-    margin-top:10px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:flex-end;
-
-    align-items:center;
-
-    padding-bottom:6px;
-
-    box-sizing:border-box;
-
-    font-size:12px;
-
-    font-weight:bold;
-
-    text-align:center;
-
-}
-
-.images{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:flex-start;
-
-    gap:12px;
-
-    margin-top:35px;
-
-}
-
-.photo-box{
-
-    width:22%;
-
-}
-
-.aadhaar-box{
-
-    width:38%;
-
-}
-
-.photo-box img{
-
-    width:100%;
-
-    height:160px;
-
-    border:1px solid #000;
-
-    object-fit:cover;
-
-}
-
-.aadhaar-box img{
-
-    width:100%;
-
-    height:160px;
-
-    border:1px solid #000;
-
-    object-fit:contain;
-
-}
-
-.signatures{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    margin-top:60px;
-
-}
-
-.signatures div{
-
-    width:40%;
-
-    text-align:center;
-
-}
-
-.line{
-
-    border-top:1px solid #000;
-
-    margin-bottom:8px;
-
-}
-
-button{
-
-display:none;
-
-}
-
+@page{size:A4 portrait;margin:10mm;}
+html,body{width:190mm;margin:0 auto;padding:0;background:#fff;}
+body{font-family:Arial,Helvetica,sans-serif;color:#000;}
+.tamil-text,.tamil,[lang="ta"],[lang^="ta-"]{font-family:"LT-TM-026","Noto Sans Tamil","Latha",sans-serif !important;}
+.page{width:190mm!important;min-height:0!important;height:auto!important;margin:0 auto!important;padding:0!important;}
+.promissory-details{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:10px;}
+.promissory-details td{border:none;height:auto;padding:7px 5px;vertical-align:top;font-size:15px;}
+.promissory-details .label{width:22%;font-weight:bold;white-space:nowrap;}
+.promissory-details .colon{width:3%;text-align:center;font-weight:bold;}
+.promissory-details .value{width:75%;font-weight:500;word-wrap:break-word;}
+.promissory-details .left-value{width:43%;}
+.promissory-details .date-label{width:9%;font-weight:bold;text-align:right;}
+.promissory-details .date-value{width:18%;font-weight:600;white-space:nowrap;}
+.promissory-details .amount-value{font-weight:bold;font-size:17px;}
+.promissory-details .amount-words{font-weight:600;text-transform:capitalize;}
+.title{text-align:center;}
+h1{text-align:center;font-size:24px;margin:0 0 20px;border-bottom:2px solid #000;display:inline-block;padding-bottom:5px;}
+.paragraph{text-align:justify;line-height:30px;font-size:17px;margin-top:25px;}
+.thumb{width:100px;height:100px;border:1px solid #000;float:right;margin-top:10px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding-bottom:6px;box-sizing:border-box;font-size:12px;font-weight:bold;text-align:center;}
+.images{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-top:35px;}
+.photo-box{width:22%;}.aadhaar-box{width:38%;}
+.photo-box img{width:100%;height:160px;border:1px solid #000;object-fit:cover;}
+.aadhaar-box img{width:100%;height:160px;border:1px solid #000;object-fit:contain;}
+.signatures{display:flex;justify-content:space-between;margin-top:60px;}
+.signatures div{width:40%;text-align:center;}.line{border-top:1px solid #000;margin-bottom:8px;}
+button{display:none!important;}
 </style>
-
 </head>
-
 <body>
-
-<div class="page">
-
-${printContent}
-
-</div>
-
+<div class="page">${printContent}</div>
+<script>
+(async function(){
+    const imgs=[...document.images];
+    await Promise.all(imgs.map(img=>new Promise(resolve=>{
+        if(!img.src){resolve();return;}
+        if(img.complete){resolve();return;}
+        img.onload=resolve; img.onerror=resolve;
+    })));
+    setTimeout(()=>{window.focus();window.print();},300);
+})();
+</script>
 </body>
-</html>
+</html>`);
 
-`);
+    w.document.close();
+}
 
-w.document.close();
-
-setTimeout(function(){
-
-w.print();
-
-},500);
-
-}function showApproval(){
+function showApproval(){
 
 document.getElementById("pageTitle").innerHTML="Loan Approval";
 
@@ -4566,6 +4441,9 @@ function openCustomerModal(){
     customerPhoto = "";
     aadhaarFrontData = "";
     aadhaarBackData = "";
+    customerPhotoKey = "";
+    aadhaarFrontKey = "";
+    aadhaarBackKey = "";
 
     const modal = document.getElementById("customerModal");
 
@@ -4615,226 +4493,53 @@ function openCustomerModal(){
     });
 }
 
-function saveCustomer(){
-
+async function saveCustomer(){
     if(!aarveeUserRequired()) return;
-
     try{
-
-        const getValue = id => {
-            const el = document.getElementById(id);
-            return el ? el.value.trim() : "";
+        const getValue=id=>document.getElementById(id)?.value.trim()||"";
+        const name=getValue("cName"), mobile=getValue("cMobile");
+        if(!name){alert("Customer Name is required.");document.getElementById("cName")?.focus();return;}
+        if(!mobile){alert("Mobile Number is required.");document.getElementById("cMobile")?.focus();return;}
+        let customers=[]; try{customers=JSON.parse(localStorage.getItem("customers")||"[]");}catch(e){}
+        if(!Array.isArray(customers)) customers=[];
+        let id;
+        if(editingCustomerIndex===-1){
+            let n=customers.length+1; id="CUS"+String(n).padStart(4,"0");
+            while(customers.some(c=>c&&c.id===id)){n++;id="CUS"+String(n).padStart(4,"0");}
+        }else id=customers[editingCustomerIndex]?.id;
+        if(!id){alert("Customer record not found.");return;}
+        const existing=editingCustomerIndex===-1?null:customers[editingCustomerIndex];
+        if(existing&&!aarveeOwned(existing)){alert("You cannot edit another user's customer.");return;}
+        const address=[getValue("cDoorNo"),getValue("cStreet"),getValue("cArea"),getValue("cCity"),getValue("cDistrict")].filter(Boolean).join(", ")
+            +((getValue("cState")||getValue("cPincode"))?", "+(getValue("cState")||"")+(getValue("cPincode")?" - "+getValue("cPincode"):""):"");
+        if(customerPhoto){customerPhotoKey=customerPhotoKey||(id+"_photo_"+Date.now());await aarveeSaveImage(customerPhotoKey,customerPhoto);}
+        if(aadhaarFrontData){aadhaarFrontKey=aadhaarFrontKey||(id+"_aadhaar_front_"+Date.now());await aarveeSaveImage(aadhaarFrontKey,aadhaarFrontData);}
+        if(aadhaarBackData){aadhaarBackKey=aadhaarBackKey||(id+"_aadhaar_back_"+Date.now());await aarveeSaveImage(aadhaarBackKey,aadhaarBackData);}
+        const data={
+            id,ownerUser:aarveeCurrentUser(),photo:"",aadhaarFront:"",aadhaarBack:"",
+            photoKey:customerPhotoKey||existing?.photoKey||"",aadhaarFrontKey:aadhaarFrontKey||existing?.aadhaarFrontKey||"",aadhaarBackKey:aadhaarBackKey||existing?.aadhaarBackKey||"",
+            name,father:getValue("cFather"),mobile,altMobile:getValue("cAltMobile"),aadhaar:getValue("cAadhaar"),pan:getValue("cPan"),
+            doorNo:getValue("cDoorNo"),street:getValue("cStreet"),area:getValue("cArea"),city:getValue("cCity"),district:getValue("cDistrict"),state:getValue("cState")||"Tamil Nadu",pincode:getValue("cPincode"),address,group:getValue("cGroup"),guarantor:getValue("cGuarantor")
         };
-
-        const name = getValue("cName");
-        const mobile = getValue("cMobile");
-
-        if(!name){
-            alert("Customer Name is required.");
-            document.getElementById("cName")?.focus();
-            return;
-        }
-
-        if(!mobile){
-            alert("Mobile Number is required.");
-            document.getElementById("cMobile")?.focus();
-            return;
-        }
-
-        let customers = [];
-        try{
-            customers = JSON.parse(localStorage.getItem("customers") || "[]");
-            if(!Array.isArray(customers)) customers = [];
-        }catch(e){
-            customers = [];
-        }
-
-        const address = [
-            getValue("cDoorNo"),
-            getValue("cStreet"),
-            getValue("cArea"),
-            getValue("cCity"),
-            getValue("cDistrict")
-        ].filter(Boolean).join(", ")
-        + (getValue("cState") || getValue("cPincode")
-            ? ", " + (getValue("cState") || "") +
-              (getValue("cPincode") ? " - " + getValue("cPincode") : "")
-            : "");
-
-        const currentUser = aarveeCurrentUser();
-
-        const customerData = {
-            ownerUser: currentUser,
-            photo: customerPhoto || "",
-            aadhaarFront: aadhaarFrontData || "",
-            aadhaarBack: aadhaarBackData || "",
-            name,
-            father: getValue("cFather"),
-            mobile,
-            altMobile: getValue("cAltMobile"),
-            aadhaar: getValue("cAadhaar"),
-            pan: getValue("cPan"),
-            doorNo: getValue("cDoorNo"),
-            street: getValue("cStreet"),
-            area: getValue("cArea"),
-            city: getValue("cCity"),
-            district: getValue("cDistrict"),
-            state: getValue("cState") || "Tamil Nadu",
-            pincode: getValue("cPincode"),
-            address,
-            group: getValue("cGroup"),
-            guarantor: getValue("cGuarantor")
-        };
-
-        if(editingCustomerIndex === -1){
-
-            // Generate a truly unused customer ID even if old records were deleted.
-            let nextNo = customers.length + 1;
-            let id = "CUS" + String(nextNo).padStart(4,"0");
-            while(customers.some(c => c && c.id === id)){
-                nextNo++;
-                id = "CUS" + String(nextNo).padStart(4,"0");
-            }
-
-            customers.push({
-                id,
-                ...customerData
-            });
-
-        }else{
-
-            const c = customers[editingCustomerIndex];
-
-            if(!aarveeOwned(c)){
-                alert("You cannot edit another user's customer.");
-                return;
-            }
-
-            Object.assign(c, customerData);
-            editingCustomerIndex = -1;
-        }
-
-        // First try saving the complete customer including documents.
-        try{
-            localStorage.setItem("customers", JSON.stringify(customers));
-        }catch(storageError){
-
-            // Browser localStorage is limited. Large camera/Aadhaar images can
-            // exceed that limit. Keep the customer record safe even if images
-            // cannot fit, rather than making the Save button appear broken.
-            if(storageError && (
-                storageError.name === "QuotaExceededError" ||
-                /quota|storage/i.test(storageError.message || "")
-            )){
-
-                const lightweight = customers.map(c => ({
-                    ...c,
-                    photo: "",
-                    aadhaarFront: "",
-                    aadhaarBack: ""
-                }));
-
-                localStorage.setItem("customers", JSON.stringify(lightweight));
-
-                customerPhoto = "";
-                aadhaarFrontData = "";
-                aadhaarBackData = "";
-
-                closeCustomerModal();
-                loadCustomers();
-                showDashboard();
-
-                alert(
-                    "Customer saved successfully.\n\n" +
-                    "Photo/Aadhaar images were not saved because browser storage is full. " +
-                    "Please reduce the stored files or clear old browser data before uploading large images."
-                );
-                return;
-            }
-
-            throw storageError;
-        }
-
-        closeCustomerModal();
-        loadCustomers();
-        showDashboard();
-
-        alert("Customer Saved Successfully.");
-
-    }catch(err){
-
-        console.error("saveCustomer error:", err);
-        alert("Customer could not be saved.\n\nError: " + (err.message || err));
-    }
+        if(editingCustomerIndex===-1) customers.push(data); else customers[editingCustomerIndex]={...existing,...data};
+        localStorage.setItem("customers",JSON.stringify(customers));
+        editingCustomerIndex=-1;customerPhoto="";aadhaarFrontData="";aadhaarBackData="";customerPhotoKey="";aadhaarFrontKey="";aadhaarBackKey="";
+        closeCustomerModal();await loadCustomers();showDashboard();alert("Customer saved successfully.");
+    }catch(err){console.error("saveCustomer error:",err);alert("Customer could not be saved.\n\n"+(err.message||err));}
 }
 
-function loadCustomers(){
-
+async function loadCustomers(){
     if(!aarveeUserRequired()) return;
-
-    const allCustomers =
-        JSON.parse(localStorage.getItem("customers")) || [];
-
-    const customers =
-        allCustomers.filter(c => aarveeOwned(c));
-
-    const keyword =
-        document.getElementById("searchCustomer")?.value.toLowerCase() || "";
-
-    let html = "";
-
-    customers.forEach(c => {
-
-        if(
-            (c.name || "").toLowerCase().includes(keyword) ||
-            (c.mobile || "").includes(keyword)
-        ){
-
-            const originalIndex =
-                allCustomers.findIndex(x => x.id === c.id);
-
-            html += `
-                <tr>
-                    <td>
-                        ${c.photo
-                            ? `<img src="${c.photo}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;">`
-                            : `<div style="width:45px;height:45px;border-radius:50%;background:#ddd;"></div>`
-                        }
-                    </td>
-                    <td>${c.id}</td>
-                    <td>${c.name}</td>
-                    <td>${c.father || ""}</td>
-                    <td>${c.mobile}</td>
-                    <td>${c.aadhaar || ""}</td>
-                    <td>${c.group || ""}</td>
-                    <td>${c.guarantor || ""}</td>
-                    <td>
-                        <button
-                            style="background:#17a2b8;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;"
-                            onclick="viewCustomer(${originalIndex})">
-                            View
-                        </button>
-
-                        <button
-                            style="background:#007bff;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;"
-                            onclick="editCustomer(${originalIndex})">
-                            Edit
-                        </button>
-
-                        <button
-                            style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;"
-                            onclick="deleteCustomer(${originalIndex})">
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }
-    });
-
-    const table = document.getElementById("customerTable");
-
-    if(table) table.innerHTML = html;
+    const allCustomers=JSON.parse(localStorage.getItem("customers")||"[]");
+    const customers=allCustomers.filter(c=>aarveeOwned(c));
+    const keyword=document.getElementById("searchCustomer")?.value.toLowerCase()||"";
+    const table=document.getElementById("customerTable"); if(!table)return;
+    const rows=await Promise.all(customers.map(async c=>{
+        if(!((c.name||"").toLowerCase().includes(keyword)||(c.mobile||"").includes(keyword)))return "";
+        const img=await aarveeLoadCustomerImages(c), originalIndex=allCustomers.findIndex(x=>x.id===c.id);
+        return `<tr><td>${img.photo?`<img src="${img.photo}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;">`:`<div style="width:45px;height:45px;border-radius:50%;background:#ddd;"></div>`}</td><td>${c.id}</td><td>${c.name}</td><td>${c.father||""}</td><td>${c.mobile}</td><td>${c.aadhaar||""}</td><td>${c.group||""}</td><td>${c.guarantor||""}</td><td><button style="background:#17a2b8;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;" onclick="viewCustomer(${originalIndex})">View</button><button style="background:#007bff;color:white;border:none;padding:6px 12px;border-radius:5px;margin-right:5px;" onclick="editCustomer(${originalIndex})">Edit</button><button style="background:red;color:white;border:none;padding:6px 12px;border-radius:5px;" onclick="deleteCustomer(${originalIndex})">Delete</button></td></tr>`;
+    }));
+    table.innerHTML=rows.join("");
 }
 
 function viewCustomer(index){
@@ -4904,7 +4609,7 @@ function viewCustomer(index){
     `;
 }
 
-function editCustomer(index){
+async function editCustomer(index){
 
     const customers =
         JSON.parse(localStorage.getItem("customers")) || [];
@@ -4918,9 +4623,13 @@ function editCustomer(index){
 
     editingCustomerIndex = index;
 
-    customerPhoto = c.photo || "";
-    aadhaarFrontData = c.aadhaarFront || "";
-    aadhaarBackData = c.aadhaarBack || "";
+    customerPhotoKey = c.photoKey || "";
+    aadhaarFrontKey = c.aadhaarFrontKey || "";
+    aadhaarBackKey = c.aadhaarBackKey || "";
+    const storedImages = await aarveeLoadCustomerImages(c);
+    customerPhoto = storedImages.photo || "";
+    aadhaarFrontData = storedImages.aadhaarFront || "";
+    aadhaarBackData = storedImages.aadhaarBack || "";
 
     const modal = document.getElementById("customerModal");
 
@@ -6714,3 +6423,6 @@ function restoreBackup(event){
 </script>
 </body>
 </html>
+<script>
+if(localStorage.getItem("currentUser")){ aarveeMigrateCustomerImages().catch(()=>{}); }
+</script>
