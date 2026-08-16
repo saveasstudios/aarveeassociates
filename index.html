@@ -1316,13 +1316,13 @@ img,video,canvas{max-width:100%}
 
     <div class="modal-buttons">
 
-        <button onclick="saveCustomer()">
+        <button type="button" onclick="saveCustomer()">
 
             Save Customer
 
         </button>
 
-        <button onclick="closeCustomerModal()">
+        <button type="button" onclick="closeCustomerModal()">
 
             Cancel
 
@@ -2348,8 +2348,8 @@ function aarveeOriginalLoadLoanCard(){
     }
 
     /* =========================
-       BACK SIDE - 16 ROWS PER PAGE
-       If weeks exceed 16, additional
+       BACK SIDE - 20 ROWS PER PAGE
+       If weeks exceed 20, additional
        back pages are created automatically.
     ========================= */
 
@@ -2384,7 +2384,7 @@ function aarveeOriginalLoadLoanCard(){
         </div>`;
     }else{
 
-        const rowsPerPage = 16;
+        const rowsPerPage = 20;
         const totalBackPages = Math.ceil(weeks / rowsPerPage);
 
         for(let pageNo = 0; pageNo < totalBackPages; pageNo++){
@@ -2636,6 +2636,16 @@ function printLoanCard(){
 ${Array.from(document.querySelectorAll("style")).map(s => s.innerHTML).join("\n")}
 
 /* ===== LOAN CARD PRINT OVERRIDE ===== */
+/* ===== 20 ROWS PER A5 BACK PAGE ===== */
+.weekly-schedule-table th,
+.weekly-schedule-table td{
+    padding:5px 4px !important;
+    line-height:1.15 !important;
+}
+.weekly-schedule-table tbody tr{
+    height:7.0mm !important;
+}
+
 @page{
     size:A5 portrait;
     margin:0;
@@ -4609,100 +4619,153 @@ function saveCustomer(){
 
     if(!aarveeUserRequired()) return;
 
-    const name =
-        document.getElementById("cName").value.trim();
+    try{
 
-    const mobile =
-        document.getElementById("cMobile").value.trim();
+        const getValue = id => {
+            const el = document.getElementById(id);
+            return el ? el.value.trim() : "";
+        };
 
-    if(!name){
-        alert("Customer Name is required.");
-        return;
-    }
+        const name = getValue("cName");
+        const mobile = getValue("cMobile");
 
-    if(!mobile){
-        alert("Mobile Number is required.");
-        return;
-    }
-
-    let customers =
-        JSON.parse(localStorage.getItem("customers")) || [];
-
-    const address =
-        document.getElementById("cDoorNo").value + ", " +
-        document.getElementById("cStreet").value + ", " +
-        document.getElementById("cArea").value + ", " +
-        document.getElementById("cCity").value + ", " +
-        document.getElementById("cDistrict").value + ", " +
-        document.getElementById("cState").value + " - " +
-        document.getElementById("cPincode").value;
-
-    if(editingCustomerIndex === -1){
-
-        const id =
-            "CUS" + String(customers.length + 1).padStart(4,"0");
-
-        customers.push({
-            id,
-            ownerUser: aarveeCurrentUser(),
-            photo: customerPhoto,
-            aadhaarFront: aadhaarFrontData,
-            aadhaarBack: aadhaarBackData,
-            name,
-            father: document.getElementById("cFather").value,
-            mobile,
-            altMobile: document.getElementById("cAltMobile").value,
-            aadhaar: document.getElementById("cAadhaar").value,
-            pan: document.getElementById("cPan").value,
-            doorNo: document.getElementById("cDoorNo").value,
-            street: document.getElementById("cStreet").value,
-            area: document.getElementById("cArea").value,
-            city: document.getElementById("cCity").value,
-            district: document.getElementById("cDistrict").value,
-            state: document.getElementById("cState").value,
-            pincode: document.getElementById("cPincode").value,
-            address,
-            group: document.getElementById("cGroup").value,
-            guarantor: document.getElementById("cGuarantor").value
-        });
-
-    }else{
-
-        const c = customers[editingCustomerIndex];
-
-        if(!aarveeOwned(c)){
-            alert("You cannot edit another user's customer.");
+        if(!name){
+            alert("Customer Name is required.");
+            document.getElementById("cName")?.focus();
             return;
         }
 
-        c.photo = customerPhoto;
-        c.aadhaarFront = aadhaarFrontData;
-        c.aadhaarBack = aadhaarBackData;
-        c.name = name;
-        c.father = document.getElementById("cFather").value;
-        c.mobile = mobile;
-        c.altMobile = document.getElementById("cAltMobile").value;
-        c.aadhaar = document.getElementById("cAadhaar").value;
-        c.pan = document.getElementById("cPan").value;
-        c.doorNo = document.getElementById("cDoorNo").value;
-        c.street = document.getElementById("cStreet").value;
-        c.area = document.getElementById("cArea").value;
-        c.city = document.getElementById("cCity").value;
-        c.district = document.getElementById("cDistrict").value;
-        c.state = document.getElementById("cState").value;
-        c.pincode = document.getElementById("cPincode").value;
-        c.address = address;
-        c.group = document.getElementById("cGroup").value;
-        c.guarantor = document.getElementById("cGuarantor").value;
+        if(!mobile){
+            alert("Mobile Number is required.");
+            document.getElementById("cMobile")?.focus();
+            return;
+        }
 
-        editingCustomerIndex = -1;
+        let customers = [];
+        try{
+            customers = JSON.parse(localStorage.getItem("customers") || "[]");
+            if(!Array.isArray(customers)) customers = [];
+        }catch(e){
+            customers = [];
+        }
+
+        const address = [
+            getValue("cDoorNo"),
+            getValue("cStreet"),
+            getValue("cArea"),
+            getValue("cCity"),
+            getValue("cDistrict")
+        ].filter(Boolean).join(", ")
+        + (getValue("cState") || getValue("cPincode")
+            ? ", " + (getValue("cState") || "") +
+              (getValue("cPincode") ? " - " + getValue("cPincode") : "")
+            : "");
+
+        const currentUser = aarveeCurrentUser();
+
+        const customerData = {
+            ownerUser: currentUser,
+            photo: customerPhoto || "",
+            aadhaarFront: aadhaarFrontData || "",
+            aadhaarBack: aadhaarBackData || "",
+            name,
+            father: getValue("cFather"),
+            mobile,
+            altMobile: getValue("cAltMobile"),
+            aadhaar: getValue("cAadhaar"),
+            pan: getValue("cPan"),
+            doorNo: getValue("cDoorNo"),
+            street: getValue("cStreet"),
+            area: getValue("cArea"),
+            city: getValue("cCity"),
+            district: getValue("cDistrict"),
+            state: getValue("cState") || "Tamil Nadu",
+            pincode: getValue("cPincode"),
+            address,
+            group: getValue("cGroup"),
+            guarantor: getValue("cGuarantor")
+        };
+
+        if(editingCustomerIndex === -1){
+
+            // Generate a truly unused customer ID even if old records were deleted.
+            let nextNo = customers.length + 1;
+            let id = "CUS" + String(nextNo).padStart(4,"0");
+            while(customers.some(c => c && c.id === id)){
+                nextNo++;
+                id = "CUS" + String(nextNo).padStart(4,"0");
+            }
+
+            customers.push({
+                id,
+                ...customerData
+            });
+
+        }else{
+
+            const c = customers[editingCustomerIndex];
+
+            if(!aarveeOwned(c)){
+                alert("You cannot edit another user's customer.");
+                return;
+            }
+
+            Object.assign(c, customerData);
+            editingCustomerIndex = -1;
+        }
+
+        // First try saving the complete customer including documents.
+        try{
+            localStorage.setItem("customers", JSON.stringify(customers));
+        }catch(storageError){
+
+            // Browser localStorage is limited. Large camera/Aadhaar images can
+            // exceed that limit. Keep the customer record safe even if images
+            // cannot fit, rather than making the Save button appear broken.
+            if(storageError && (
+                storageError.name === "QuotaExceededError" ||
+                /quota|storage/i.test(storageError.message || "")
+            )){
+
+                const lightweight = customers.map(c => ({
+                    ...c,
+                    photo: "",
+                    aadhaarFront: "",
+                    aadhaarBack: ""
+                }));
+
+                localStorage.setItem("customers", JSON.stringify(lightweight));
+
+                customerPhoto = "";
+                aadhaarFrontData = "";
+                aadhaarBackData = "";
+
+                closeCustomerModal();
+                loadCustomers();
+                showDashboard();
+
+                alert(
+                    "Customer saved successfully.\n\n" +
+                    "Photo/Aadhaar images were not saved because browser storage is full. " +
+                    "Please reduce the stored files or clear old browser data before uploading large images."
+                );
+                return;
+            }
+
+            throw storageError;
+        }
+
+        closeCustomerModal();
+        loadCustomers();
+        showDashboard();
+
+        alert("Customer Saved Successfully.");
+
+    }catch(err){
+
+        console.error("saveCustomer error:", err);
+        alert("Customer could not be saved.\n\nError: " + (err.message || err));
     }
-
-    localStorage.setItem("customers",JSON.stringify(customers));
-
-    closeCustomerModal();
-    loadCustomers();
-    showDashboard();
 }
 
 function loadCustomers(){
